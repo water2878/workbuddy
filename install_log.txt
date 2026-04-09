@@ -1,0 +1,3 @@
+Found existing installation: modelscope 1.35.0
+Uninstalling modelscope-1.35.0:
+  Successfully uninstalled modelscope-1.35.0

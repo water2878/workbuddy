@@ -1,0 +1,41 @@
+{
+  "id": "20260317_183840",
+  "contact": "马赛赛",
+  "messages": [
+    {
+      "speaker": "other",
+      "text": "Alt+EnterTAR文件"
+    },
+    {
+      "speaker": "other",
+      "text": "其他选项专换为PDF"
+    },
+    {
+      "speaker": "self",
+      "text": "没有预览。"
+    },
+    {
+      "speaker": "other",
+      "text": "缩"
+    },
+    {
+      "speaker": "other",
+      "text": "复身"
+    },
+    {
+      "speaker": "other",
+      "text": "丁印/批量重命名/更多"
+    },
+    {
+      "speaker": "other",
+      "text": "端中打开"
+    },
+    {
+      "speaker": "other",
+      "text": "更多选项"
+    }
+  ],
+  "time": "2026-03-17T18:38:40.665900",
+  "status": "waiting_wb",
+  "wb_prompt": "你是用户的微信助手，代替用户回复消息。要求：语气自然像真人、简洁不啰嗦、中文回复、不要使用 emoji。\n\n对方昵称：马赛赛\n最近聊天记录：\n马赛赛：Alt+EnterTAR文件\n马赛赛：其他选项专换为PDF\n我：没有预览。\n马赛赛：缩\n马赛赛：复身\n马赛赛：丁印/批量重命名/更多\n马赛赛：端中打开\n马赛赛：更多选项\n\n请根据上面的聊天记录，生成一条合适的回复。只输出回复内容本身，不要任何解释或前缀。"
+}

@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>T423升降桌 - 智能客服系统</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 700px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+            height: 85vh;
+            max-height: 900px;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 20px 20px 0 0;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+        
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .status {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            background: #4ade80;
+            border-radius: 50%;
+            margin-right: 5px;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .chat-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            background: #f9fafb;
+        }
+        
+        .message {
+            margin-bottom: 20px;
+            display: flex;
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .message.customer {
+            justify-content: flex-end;
+        }
+        
+        .message.service {
+            justify-content: flex-start;
+        }
+        
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            margin: 0 10px;
+            flex-shrink: 0;
+        }
+        
+        .customer .avatar {
+            background: #e0e7ff;
+            order: 2;
+            margin-left: 10px;
+            margin-right: 0;
+        }
+        
+        .service .avatar {
+            background: #dbeafe;
+        }
+        
+        .bubble {
+            max-width: 75%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            word-wrap: break-word;
+            line-height: 1.6;
+            font-size: 14px;
+        }
+        
+        .customer .bubble {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+        
+        .service .bubble {
+            background: white;
+            color: #333;
+            border: 1px solid #e5e7eb;
+            border-bottom-left-radius: 4px;
+        }
+        
+        .time {
+            font-size: 12px;
+            color: #999;
+            margin-top: 5px;
+        }
+        
+        .input-area {
+            padding: 15px;
+            border-top: 1px solid #e5e7eb;
+            display: flex;
+            gap: 10px;
+            background: white;
+            border-radius: 0 0 20px 20px;
+        }
+        
+        input {
+            flex: 1;
+            border: 1px solid #e5e7eb;
+            border-radius: 24px;
+            padding: 10px 15px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus {
+            border-color: #667eea;
+        }
+        
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 24px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .dot {
+            width: 8px;
+            height: 8px;
+            background: #999;
+            border-radius: 50%;
+            animation: bounce 1.4s infinite;
+        }
+        
+        .dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        
+        .dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+        
+        @keyframes bounce {
+            0%, 80%, 100% {
+                opacity: 0.5;
+                transform: translateY(0);
+            }
+            40% {
+                opacity: 1;
+                transform: translateY(-10px);
+            }
+        }
+        
+        .suggestions {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .suggestion-btn {
+            background: #f0f0f0;
+            color: #333;
+            border: 1px solid #ddd;
+            padding: 6px 12px;
+            border-radius: 16px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .suggestion-btn:hover {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+        
+        .knowledge-base {
+            background: #f3f4f6;
+            border-left: 4px solid #667eea;
+            padding: 12px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+        
+        .highlight {
+            background: #fef3c7;
+            padding: 2px 4px;
+            border-radius: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>T423升降桌 - AI客服</h1>
+            <p><span class="status"></span>智能客服 在线</p>
+        </div>
+        
+        <div class="chat-area" id="chatArea">
+            <div class="message service">
+                <div class="avatar">🤖</div>
+                <div>
+                    <div class="bubble">
+                        <strong>客服AI：</strong>您好！👋 欢迎咨询T423升降桌。我是您的智能客服助手，可以为您解答关于产品、价格、配送、保修等任何问题。请问今天有什么我可以帮您的吗？
+                    </div>
+                    <div class="time" id="time1">14:00</div>
+                    <div class="suggestions" id="suggestions1">
+                        <button class="suggestion-btn" onclick="sendMessage('T423有什么特点？')">产品特点</button>
+                        <button class="suggestion-btn" onclick="sendMessage('价格是多少？')">价格咨询</button>
+                        <button class="suggestion-btn" onclick="sendMessage('有优惠吗？')">优惠活动</button>
+                        <button class="suggestion-btn" onclick="sendMessage('如何配送？')">配送信息</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="input-area">
+            <input type="text" id="messageInput" placeholder="请输入您的问题..." />
+            <button id="sendBtn" onclick="sendMessage()">发送</button>
+        </div>
+    </div>
+    
+    <script>
+        // 产品知识库
+        const knowledgeBase = {
+            '产品信息': {
+                '名称': 'T423电动升降桌',
+                '品牌': 'T系列',
+                '类型': '电动升降办公桌',
+                '特点': ['双电机设计', '智能记忆位置', '防撞感应', '超静音运行', '150kg承重'],
+                '升降范围': '66-126cm',
+                '升降速度': '18mm/s',
+                '最大承重': '150kg',
+                '噪音': '≤50dB',
+                '材质': '德国进口钢材+防爆玻璃面板',
+                '保修': '整机3年，电机5年',
+                '销售量': '50万+台',
+                '好评率': '99.2%'
+            },
+            '价格': {
+                '基础款': '¥2,999（电机+支架）',
+                '豪华款': '¥3,499（+防撞传感器）',
+                '至尊款': '¥3,999（+内存位置+APP控制）',
+                '当前优惠': '满¥3000减¥300',
+                '套装折扣': '95折（升降桌+办公椅）',
+                '分期': '0利息12期分期（花呗、京东白条）'
+            },
+            '优惠': {
+                '3月特惠': '满¥3000减¥300',
+                '新用户': '额外享10%折扣',
+                '推荐奖励': '推荐成功返现¥500',
+                '套装优惠': '升降桌+升降柜，直降¥800',
+                '赠品': '防滑垫、人体工学腰靠、LED灯',
+                '分期优惠': '0手续费12期分期'
+            },
+            '配送': {
+                '范围': '全国配送（偏远地区除外）',
+                '一线城市': '1-2天送达',
+                '二三线城市': '2-3天送达',
+                '西部地区': '5-7天送达',
+                '包装': '五层加强纸箱+泡沫防护',
+                '运输方式': '顺丰/京东物流直达',
+                '破损赔付': '物流全程保险，破损100%赔付',
+                '安装': '免费专业安装（拆箱+组装+调试）',
+                '安装时间': '30-45分钟',
+                '楼层费': '6楼以上每层¥30'
+            },
+            '保修': {
+                '整机保修': '3年（业界最长）',
+                '电机保修': '5年',
+                '7天无条件退货': '收货后7天内无损退货即可',
+                '30天换新': '质量问题立即换新',
+                '人为损坏': '只需花费零部件成本',
+                '维修费用': '全免',
+                '质量认证': 'ISO9001、欧盟CE、中国3C认证'
+            },
+            '使用': {
+                '升降次数': '每小时不超过10次',
+                '注意事项': '避免在升降过程中按停止键',
+                '清洁': '用干软布擦拭，避免水渍',
+                '环境': '远离高温和潮湿环境',
+                '维护周期': '3个月检查螺丝，6个月涂防锈油',
+                '异常处理': '发现异常噪音立即停用并联系售后'
+            }
+        };
+        
+        // 智能应答引擎
+        class SmartServiceAgent {
+            constructor() {
+                this.context = [];
+                this.conversationCount = 0;
+            }
+            
+            // 关键词提取
+            extractKeywords(text) {
+                const keywords = [];
+                const patterns = [
+                    { word: ['价格', '多少钱', '价钱', '费用', '成本'], category: '价格' },
+                    { word: ['配置', '参数', '规格', '功能', '特性', '性能'], category: '产品信息' },
+                    { word: ['优惠', '折扣', '活动', '促销', '便宜'], category: '优惠' },
+                    { word: ['配送', '快递', '物流', '邮寄', '送货', '运费'], category: '配送' },
+                    { word: ['保修', '保障', '质保', '退货', '换货', '售后'], category: '保修' },
+                    { word: ['用途', '使用', '怎么', '怎样', '如何', '怎么用', '保养', '维护'], category: '使用' },
+                    { word: ['推荐', '建议', '哪个', '哪款', '选择', '对比', '对照'], category: '推荐' }
+                ];
+                
+                for (let pattern of patterns) {
+                    if (pattern.word.some(w => text.includes(w))) {
+                        keywords.push(pattern.category);
+                    }
+                }
+                
+                return keywords;
+            }
+            
+            // 生成智能回复
+            generateResponse(userMessage) {
+                this.conversationCount++;
+                const keywords = this.extractKeywords(userMessage);
+                
+                let response = '';
+                
+                // 根据关键词类别生成回复
+                if (keywords.includes('价格')) {
+                    response = this.generatePriceResponse();
+                } else if (keywords.includes('产品信息')) {
+                    response = this.generateProductResponse();
+                } else if (keywords.includes('优惠')) {
+                    response = this.generatePromoResponse();
+                } else if (keywords.includes('配送')) {
+                    response = this.generateShippingResponse();
+                } else if (keywords.includes('保修')) {
+                    response = this.generateWarrantyResponse();
+                } else if (keywords.includes('使用')) {
+                    response = this.generateUsageResponse();
+                } else if (keywords.includes('推荐')) {
+                    response = this.generateRecommendationResponse();
+                } else {
+                    response = this.generateDefaultResponse(userMessage);
+                }
+                
+                return response;
+            }
+            
+            generatePriceResponse() {
+                const prices = knowledgeBase['价格'];
+                return `关于T423的价格，我为您整理如下：\n\n` +
+                    `💰 <strong>产品定价</strong>\n` +
+                    `• 基础款：${prices['基础款']}\n` +
+                    `• 豪华款：${prices['豪华款']}\n` +
+                    `• 至尊款：${prices['至尊款']}\n\n` +
+                    `🎁 <strong>优惠信息</strong>\n` +
+                    `• ${prices['当前优惠']}\n` +
+                    `• ${prices['套装折扣']}\n` +
+                    `• ${prices['分期']}\n\n` +
+                    `💡 建议：豪华款性价比最高，是热销款式。`;
+            }
+            
+            generateProductResponse() {
+                const info = knowledgeBase['产品信息'];
+                return `🎯 <strong>T423产品介绍</strong>\n\n` +
+                    `✨ <strong>核心特点</strong>\n` +
+                    `${info['特点'].map(f => `• ${f}`).join('\n')}\n\n` +
+                    `📊 <strong>技术参数</strong>\n` +
+                    `• 升降范围：${info['升降范围']}\n` +
+                    `• 升降速度：${info['升降速度']}（业界最快）\n` +
+                    `• 最大承重：${info['最大承重']}\n` +
+                    `• 噪音水平：${info['噪音']}\n\n` +
+                    `⭐ <strong>用户口碑</strong>\n` +
+                    `销量：${info['销售量']} | 好评率：${info['好评率']}`;
+            }
+            
+            generatePromoResponse() {
+                const promo = knowledgeBase['优惠'];
+                return `🎉 <strong>最新优惠活动</strong>\n\n` +
+                    `🔥 <strong>当前活动</strong>\n` +
+                    `• ${promo['3月特惠']}\n` +
+                    `• ${promo['新用户']}\n` +
+                    `• ${promo['推荐奖励']}\n\n` +
+                    `🛍️ <strong>套装优惠</strong>\n` +
+                    `• ${promo['套装优惠']}\n\n` +
+                    `💳 <strong>分期优惠</strong>\n` +
+                    `• ${promo['分期优惠']}\n\n` +
+                    `🎁 <strong>赠品</strong>\n` +
+                    `${promo['赠品']}\n\n` +
+                    `⏰ 优惠有效期至本月底，建议抓紧下单！`;
+            }
+            
+            generateShippingResponse() {
+                const shipping = knowledgeBase['配送'];
+                return `🚚 <strong>配送和安装服务</strong>\n\n` +
+                    `📍 <strong>配送速度</strong>\n` +
+                    `• 一线城市：${shipping['一线城市']}\n` +
+                    `• 二三线城市：${shipping['二三线城市']}\n` +
+                    `• 西部地区：${shipping['西部地区']}\n\n` +
+                    `📦 <strong>包装和运输</strong>\n` +
+                    `• ${shipping['包装']}\n` +
+                    `• ${shipping['运输方式']}\n` +
+                    `• ${shipping['破损赔付']}\n\n` +
+                    `👷 <strong>安装服务</strong>\n` +
+                    `• ${shipping['安装']}\n` +
+                    `• 安装时间：${shipping['安装时间']}\n` +
+                    `• ${shipping['楼层费']}\n\n` +
+                    `✅ 我们有专业的安装团队，确保您的满意！`;
+            }
+            
+            generateWarrantyResponse() {
+                const warranty = knowledgeBase['保修'];
+                return `🛡️ <strong>保修和保障服务</strong>\n\n` +
+                    `✅ <strong>保修政策</strong>\n` +
+                    `• 整机保修：${warranty['整机保修']}\n` +
+                    `• 电机保修：${warranty['电机保修']}\n\n` +
+                    `🔄 <strong>退换政策</strong>\n` +
+                    `• ${warranty['7天无条件退货']}\n` +
+                    `• ${warranty['30天换新']}\n\n` +
+                    `🏆 <strong>认证资质</strong>\n` +
+                    `• ${warranty['质量认证']}\n\n` +
+                    `💰 <strong>维修费用</strong>\n` +
+                    `• 人为小损坏：仅收取零部件成本\n` +
+                    `• 安装/拆卸/检测：全部免费\n\n` +
+                    `放心购买，我们会全程保障您的权益！`;
+            }
+            
+            generateUsageResponse() {
+                const usage = knowledgeBase['使用'];
+                return `📖 <strong>产品使用和保养建议</strong>\n\n` +
+                    `⚠️ <strong>使用注意</strong>\n` +
+                    `• ${usage['升降次数']}\n` +
+                    `• ${usage['注意事项']}\n` +
+                    `• ${usage['环境']}\n\n` +
+                    `🧹 <strong>日常清洁</strong>\n` +
+                    `• ${usage['清洁']}\n` +
+                    `• 定期清理升降轨道\n\n` +
+                    `🔧 <strong>定期维护</strong>\n` +
+                    `• ${usage['维护周期']}\n` +
+                    `• ${usage['异常处理']}\n\n` +
+                    `💡 正确的使用和保养能延长产品寿命，我们建议您定期进行维护检查。`;
+            }
+            
+            generateRecommendationResponse() {
+                return `👍 <strong>产品推荐方案</strong>\n\n` +
+                    `<span class="highlight">方案1：豪华款（¥3,499）- 热销推荐</span>\n` +
+                    `✓ 功能齐全，价格合理\n` +
+                    `✓ 包含防撞感应，安全可靠\n` +
+                    `✓ 销量冠军，99.2%好评\n\n` +
+                    `<span class="highlight">方案2：至尊款+人体工学椅（¥5,999左右）</span>\n` +
+                    `✓ APP智控，办公体验最佳\n` +
+                    `✓ 套装享95折优惠\n` +
+                    `✓ 专为长时间办公设计\n\n` +
+                    `<span class="highlight">方案3：基础款+升降柜（¥4,900）</span>\n` +
+                    `✓ 经济实惠组合\n` +
+                    `✓ 充分满足日常需求\n` +
+                    `✓ 储物功能强大\n\n` +
+                    `💭 请问您的预算和使用场景是什么？我可以为您推荐最合适的方案。`;
+            }
+            
+            generateDefaultResponse(userMessage) {
+                const responses = [
+                    `感谢您的提问！😊 根据您的问题，我为您查询相关信息。可以帮您了解关于T423的以下内容：\n\n` +
+                    `• 📊 产品配置和参数\n` +
+                    `• 💰 价格和优惠信息\n` +
+                    `• 🚚 配送和安装服务\n` +
+                    `• 🛡️ 保修和售后保障\n` +
+                    `• 📖 产品使用和保养\n\n` +
+                    `请告诉我您最感兴趣的方面，我会为您详细介绍！`,
+                    
+                    `您好！👋 我理解您的需求。让我为您介绍一下T423升降桌的相关信息：\n\n` +
+                    `T423是一款专业级电动升降办公桌，采用双电机设计，升降范围66-126cm，最大承重150kg，运行静音（≤50dB）。\n\n` +
+                    `🎯 最受欢迎的是豪华款（¥3,499），已有50万+用户使用，好评率99.2%。\n\n` +
+                    `需要我为您详细介绍价格、配置或其他方面吗？`,
+                    
+                    `很高兴为您服务！💼 T423升降桌凭借出色的性能和完善的服务，已成为办公桌市场的热销产品。\n\n` +
+                    `如果您有任何疑问，比如：\n` +
+                    `• 想了解更多产品细节\n` +
+                    `• 需要价格咨询和优惠信息\n` +
+                    `• 关心配送和安装流程\n` +
+                    `• 想知道保修和售后政策\n\n` +
+                    `我都可以为您一一解答！请继续提问~`
+                ];
+                
+                return responses[Math.floor(Math.random() * responses.length)];
+            }
+        }
+        
+        const agent = new SmartServiceAgent();
+        
+        function getCurrentTime() {
+            const now = new Date();
+            return now.getHours().toString().padStart(2, '0') + ':' + 
+                   now.getMinutes().toString().padStart(2, '0');
+        }
+        
+        function addMessage(text, isCustomer = false) {
+            const chatArea = document.getElementById('chatArea');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isCustomer ? 'customer' : 'service'}`;
+            
+            const avatar = isCustomer ? '👤' : '🤖';
+            const name = isCustomer ? '' : '<strong>客服AI：</strong>';
+            
+            messageDiv.innerHTML = `
+                <div class="avatar">${avatar}</div>
+                <div>
+                    <div class="bubble">
+                        ${name} ${text}
+                    </div>
+                    <div class="time">${getCurrentTime()}</div>
+                </div>
+            `;
+            
+            chatArea.appendChild(messageDiv);
+            chatArea.scrollTop = chatArea.scrollHeight;
+        }
+        
+        function showTyping() {
+            const chatArea = document.getElementById('chatArea');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message service';
+            messageDiv.id = 'typingIndicator';
+            messageDiv.innerHTML = `
+                <div class="avatar">🤖</div>
+                <div>
+                    <div class="bubble">
+                        <div class="typing-indicator">
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            chatArea.appendChild(messageDiv);
+            chatArea.scrollTop = chatArea.scrollHeight;
+        }
+        
+        function removeTyping() {
+            const typing = document.getElementById('typingIndicator');
+            if (typing) typing.remove();
+        }
+        
+        function sendMessage(preset = null) {
+            const input = document.getElementById('messageInput');
+            const message = preset || input.value.trim();
+            
+            if (!message) return;
+            
+            addMessage(message, true);
+            input.value = '';
+            
+            const sendBtn = document.getElementById('sendBtn');
+            sendBtn.disabled = true;
+            
+            setTimeout(() => {
+                showTyping();
+                
+                setTimeout(() => {
+                    removeTyping();
+                    
+                    // 使用智能引擎生成回复
+                    const response = agent.generateResponse(message);
+                    addMessage(response, false);
+                    
+                    sendBtn.disabled = false;
+                }, 800 + Math.random() * 1200);
+            }, 300);
+        }
+        
+        document.getElementById('messageInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && !document.getElementById('sendBtn').disabled) {
+                sendMessage();
+            }
+        });
+    </script>
+</body>
+</html>
