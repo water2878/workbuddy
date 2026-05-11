@@ -13,30 +13,30 @@ import time
 ROOT = os.path.dirname(os.path.abspath(__file__))
 procs = []
 
-# 启动阶段计数器
 _stage = [0]
 
+
 def log_stage(msg):
-    """输出启动阶段信息"""
     _stage[0] += 1
     print(f"\n[{_stage[0]}/3] {msg}")
 
 def log_ok(msg):
-    """输出成功信息"""
     print(f"    ✓ {msg}")
 
 def log_info(msg):
-    """输出普通信息"""
     print(f"      {msg}")
 
+
+_output_threads = {}
+
+
 def stream_output(proc, label):
-    """Stream subprocess output with prefix"""
+    """Stream subprocess output with prefix, with auto-restart on failure"""
+    thread_name = threading.current_thread().name
     try:
         while True:
-            # 使用更可靠的方式读取输出
             line = proc.stdout.readline()
             if not line:
-                # 进程结束
                 if proc.poll() is not None:
                     break
                 time.sleep(0.1)
@@ -46,7 +46,6 @@ def stream_output(proc, label):
             if not line:
                 continue
 
-            # 过滤掉 Flask 的静态文件请求日志
             if 'GET /static/' in line or 'GET /favicon.ico' in line:
                 continue
 
@@ -54,23 +53,39 @@ def stream_output(proc, label):
                 sys.stdout.write(f"[{label}] {line}\n")
                 sys.stdout.flush()
             except UnicodeEncodeError:
-                # 编码错误时尝试用替代字符
                 safe_line = line.encode('utf-8', errors='replace').decode('utf-8')
                 sys.stdout.write(f"[{label}] {safe_line}\n")
                 sys.stdout.flush()
+            except (OSError, BrokenPipeError):
+                break
     except Exception as e:
-        # 输出错误信息以便调试
-        print(f"[{label}] 输出流异常: {e}")
-        pass
+        print(f"[{label}] 输出流异常: {e}", flush=True)
+
+    if proc.poll() is None:
+        print(f"[{label}] ⚠ 输出线程退出但进程仍在运行，3秒后重启输出线程...", flush=True)
+        time.sleep(3)
+        if proc.poll() is None:
+            new_thread = threading.Thread(
+                target=stream_output, args=(proc, label),
+                daemon=True, name=f"stream-{label}"
+            )
+            new_thread.start()
+            _output_threads[label] = new_thread
+            print(f"[{label}] ✓ 输出线程已重启", flush=True)
+
 
 def kill_existing_processes():
-    """Kill existing weflow_wb_bridge and app.py processes"""
     import psutil
     killed = []
+    current_pid = os.getpid()
     for proc in psutil.process_iter(['pid', 'name', 'cmdline']):
         try:
+            if proc.info['pid'] == current_pid:
+                continue
             cmdline = ' '.join(proc.info['cmdline'] or [])
-            if 'weflow_wb_bridge.py' in cmdline or (proc.info['name'] == 'python.exe' and 'core/app.py' in cmdline):
+            if ('weflow_wb_bridge.py' in cmdline or
+                'start_all.py' in cmdline or
+                (proc.info['name'] == 'python.exe' and 'core/app.py' in cmdline)):
                 proc.terminate()
                 killed.append(proc.info['pid'])
         except (psutil.NoSuchProcess, psutil.AccessDenied):
@@ -80,13 +95,11 @@ def kill_existing_processes():
         time.sleep(1)
 
 def print_banner():
-    """Print startup banner"""
     print("\n" + "=" * 50)
     print("           Claw Service Launcher")
     print("=" * 50)
 
 def print_services():
-    """Print running services info"""
     print("\n" + "-" * 50)
     print("  服务地址:")
     print("    • API:     http://127.0.0.1:5032")
@@ -97,22 +110,16 @@ def print_services():
 def main():
     print_banner()
 
-    # 1. Kill old processes
     log_stage("清理旧进程...")
     kill_existing_processes()
     log_ok("清理完成")
 
-    # Flask API Server
     flask_cmd = [sys.executable, "-u", os.path.join(ROOT, "core", "app.py")]
-
-    # WeFlow -> WorkBuddy Bridge
     bridge_cmd = [sys.executable, "-u", os.path.join(ROOT, "weflow_wb_bridge.py")]
 
-    # 2. Start Flask
     log_stage("启动 API 服务...")
     log_info(f"命令: {' '.join(flask_cmd)}")
 
-    # 使用环境变量强制 UTF-8 编码
     env = os.environ.copy()
     env['PYTHONIOENCODING'] = 'utf-8'
 
@@ -121,20 +128,22 @@ def main():
         stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
         text=True, encoding="utf-8", errors="replace",
         env=env,
-        bufsize=1,  # 行缓冲
+        bufsize=1,
         creationflags=subprocess.CREATE_NO_WINDOW if sys.platform == "win32" else 0
     )
     procs.append(flask)
 
-    # 启动输出流线程
-    flask_thread = threading.Thread(target=stream_output, args=(flask, "API"), daemon=True)
+    flask_thread = threading.Thread(
+        target=stream_output, args=(flask, "API"),
+        daemon=True, name="stream-API"
+    )
     flask_thread.start()
+    _output_threads["API"] = flask_thread
     log_info("输出线程已启动")
 
     time.sleep(2)
     log_ok("API 服务已启动")
 
-    # 3. Start Bridge
     log_stage("启动 WeFlow 桥接...")
     log_info(f"命令: {' '.join(bridge_cmd)}")
 
@@ -143,13 +152,17 @@ def main():
         stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
         text=True, encoding="utf-8", errors="replace",
         env=env,
-        bufsize=1,  # 行缓冲
+        bufsize=1,
         creationflags=subprocess.CREATE_NO_WINDOW if sys.platform == "win32" else 0
     )
     procs.append(bridge)
 
-    bridge_thread = threading.Thread(target=stream_output, args=(bridge, "Bridge"), daemon=True)
+    bridge_thread = threading.Thread(
+        target=stream_output, args=(bridge, "Bridge"),
+        daemon=True, name="stream-Bridge"
+    )
     bridge_thread.start()
+    _output_threads["Bridge"] = bridge_thread
     log_info("输出线程已启动")
 
     time.sleep(1)
@@ -157,7 +170,6 @@ def main():
 
     print_services()
 
-    # Wait for any process to exit
     try:
         while True:
             for p in procs:
@@ -165,7 +177,21 @@ def main():
                 if ret is not None:
                     print(f"\n[!] {('API' if p is flask else 'Bridge')} 已退出 (code={ret})")
                     raise SystemExit
-            time.sleep(0.5)
+
+            for label, thread in list(_output_threads.items()):
+                if not thread.is_alive():
+                    proc = flask if label == "API" else bridge
+                    if proc.poll() is None:
+                        print(f"[{label}] ⚠ 输出线程已死亡，正在重启...", flush=True)
+                        new_thread = threading.Thread(
+                            target=stream_output, args=(proc, label),
+                            daemon=True, name=f"stream-{label}"
+                        )
+                        new_thread.start()
+                        _output_threads[label] = new_thread
+                        print(f"[{label}] ✓ 输出线程已重启", flush=True)
+
+            time.sleep(2)
     except (KeyboardInterrupt, SystemExit):
         print("\n" + "-" * 50)
         print("  正在停止所有服务...")

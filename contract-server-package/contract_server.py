@@ -326,77 +326,100 @@ def generate_order_no() -> str:
 def _parse_notes_and_add_panel(order: OrderInfo) -> None:
     """从notes中解析颜色、面板信息，并添加面板作为独立产品"""
     notes = order.notes or ""
-    if not notes:
-        return
     
     # 解析颜色（黑色/白色）
     frame_color = ""
-    if "黑色" in notes:
+    if notes and "黑色" in notes:
         frame_color = "黑色"
-    elif "白色" in notes:
+    elif notes and "白色" in notes:
         frame_color = "白色"
     
     # 解析面板等级和尺寸
     panel_type = ""  # E0/E1
     panel_size = ""  # 1.4*0.7米等
     
-    if "E0" in notes.upper() or "e0" in notes:
-        panel_type = "E0级"
-    elif "E1" in notes.upper() or "e1" in notes:
-        panel_type = "E1级"
-    
-    # 匹配尺寸格式：1.4*0.7米、1.4x0.7米、1400*700mm等
-    size_match = re.search(r'(\d+(?:\.\d+)?)\s*[\*xX]\s*(\d+(?:\.\d+)?)\s*米?', notes)
-    if size_match:
-        panel_size = f"{size_match.group(1)}*{size_match.group(2)}米"
+    if notes:
+        if "E0" in notes.upper() or "e0" in notes:
+            panel_type = "E0级"
+        elif "E1" in notes.upper() or "e1" in notes:
+            panel_type = "E1级"
+        
+        # 匹配尺寸格式：1.4*0.7米、1.4x0.7米、1400*700mm等
+        size_match = re.search(r'(\d+(?:\.\d+)?)\s*[\*xX]\s*(\d+(?:\.\d+)?)\s*米?', notes)
+        if size_match:
+            panel_size = f"{size_match.group(1)}*{size_match.group(2)}米"
     
     # 更新现有产品的frame_color
     for prod in order.products:
         if frame_color and not prod.get('frame_color'):
             prod['frame_color'] = frame_color
     
-    # 如果有面板信息，添加面板作为独立产品
+    # 检查是否已有面板产品，如果有则补充frame_size
+    for prod in order.products:
+        model = prod.get('model', '')
+        if model and model.upper() in [p.upper() for p in PANEL_MODELS]:
+            # 这是面板产品，检查是否需要补充frame_size
+            if not prod.get('frame_size') and panel_size:
+                prod['frame_size'] = panel_size
+                log(f"为面板产品 {model} 补充尺寸: {panel_size}", "面板")
+            # 补充描述信息
+            if not prod.get('description') and panel_type:
+                prod['description'] = f'{panel_type}刨花板桌面'
+            # 补充备注信息
+            if not prod.get('remark') and panel_type:
+                prod['remark'] = f'{panel_type}环保等级'
+    
+    # 如果有面板信息但没有面板产品，添加面板作为独立产品
     if panel_type and panel_size:
-        # 获取面板数量（与桌架相同）- 排除面板型号本身
-        panel_qty = 0
+        # 检查是否已存在该面板型号
+        existing_panel = False
         for prod in order.products:
             model = prod.get('model', '')
-            # 排除面板型号，其他都认为是桌架
-            if model and model not in PANEL_MODELS:
-                panel_qty = prod.get('quantity', 1)
+            if model and model.upper() == panel_type.replace('级', '').upper():
+                existing_panel = True
                 break
         
-        if panel_qty > 0:
-            # 根据尺寸确定单价
-            price_map = {
-                "1.2*0.6": 90, "1.4*0.7": 218, "1.6*0.8": 244,
-                "1.6*0.7": 244, "1.8*0.8": 244
-            }
-            unit_price = 0
-            for size_key, price in price_map.items():
-                if size_key in panel_size or panel_size in size_key:
-                    unit_price = price
+        if not existing_panel:
+            # 获取面板数量（与桌架相同）- 排除面板型号本身
+            panel_qty = 0
+            for prod in order.products:
+                model = prod.get('model', '')
+                # 排除面板型号，其他都认为是桌架
+                if model and model not in PANEL_MODELS:
+                    panel_qty = prod.get('quantity', 1)
                     break
-            # 默认价格
-            if unit_price == 0:
-                unit_price = 218
             
-            # E0比E1贵一点
-            if panel_type == "E0级":
-                unit_price += 3
-            
-            panel_product = {
-                'name': f'{panel_type}刨花板面板',
-                'model': panel_type.replace('级', ''),  # E0级 -> E0
-                'description': f'{panel_type}刨花板桌面',
-                'frame_size': panel_size,
-                'quantity': panel_qty,
-                'unit_price': unit_price,
-                'subtotal': unit_price * panel_qty,
-                'frame_color': '定制',
-                'remark': f'{panel_type}环保等级'
-            }
-            order.products.append(panel_product)
+            if panel_qty > 0:
+                # 根据尺寸确定单价
+                price_map = {
+                    "1.2*0.6": 90, "1.4*0.7": 218, "1.6*0.8": 244,
+                    "1.6*0.7": 244, "1.8*0.8": 244
+                }
+                unit_price = 0
+                for size_key, price in price_map.items():
+                    if size_key in panel_size or panel_size in size_key:
+                        unit_price = price
+                        break
+                # 默认价格
+                if unit_price == 0:
+                    unit_price = 218
+                
+                # E0比E1贵一点
+                if panel_type == "E0级":
+                    unit_price += 3
+                
+                panel_product = {
+                    'name': f'{panel_type}刨花板面板',
+                    'model': panel_type.replace('级', ''),  # E0级 -> E0
+                    'description': f'{panel_type}刨花板桌面',
+                    'frame_size': panel_size,
+                    'quantity': panel_qty,
+                    'unit_price': unit_price,
+                    'subtotal': unit_price * panel_qty,
+                    'frame_color': '定制',
+                    'remark': f'{panel_type}环保等级'
+                }
+                order.products.append(panel_product)
 
 
 def generate_pdf(contract: Contract) -> tuple:
@@ -555,7 +578,14 @@ def _generate_from_xlsx_fill(contract: Contract, template_path: str) -> tuple:
             if not prod.get('description'):
                 prod['description'] = _desc
 
-            _frame_size = prod.get('frame_size', '') or kb_params.get('frame_size') or ''
+            # 面板产品特殊处理：使用已设置的面板尺寸，不要被知识库覆盖
+            _model_val_upper = _model_val.upper()
+            if _model_val_upper in [p.upper() for p in PANEL_MODELS]:
+                # 面板产品：优先使用产品自身的frame_size（面板尺寸）
+                _frame_size = prod.get('frame_size', '')
+            else:
+                # 桌架产品：优先使用知识库的frame_size（横梁伸缩范围）
+                _frame_size = prod.get('frame_size', '') or kb_params.get('frame_size') or ''
             _safe_set(f"E{row}", _frame_size)
             if not prod.get('frame_size'):
                 prod['frame_size'] = _frame_size
@@ -875,7 +905,11 @@ def create_contract(order_data: Dict) -> Optional[Contract]:
     if not order.order_no:
         order.order_no = generate_order_no()
     
-    # 注意：面板解析已在本地完成，云端直接使用推送的数据
+    # 云端补充：解析notes中的面板信息，为已存在的面板产品补充frame_size等字段
+    _parse_notes_and_add_panel(order)
+    log(f"创建合同: {order.order_no}, 产品数: {len(order.products)}", "合同")
+    for prod in order.products:
+        log(f"  产品: {prod.get('model')} - {prod.get('frame_size', '无尺寸')}", "合同")
 
     contract = Contract(
         id=order.order_no,

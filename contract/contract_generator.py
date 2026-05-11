@@ -919,10 +919,17 @@ def _push_contract_to_cloud(contract: Contract) -> None:
         log("[合同] 未配置云端服务器，跳过推送")
         return
 
+    log(f"[_push_contract_to_cloud] 开始推送合同: {contract.id}")
+    log(f"[_push_contract_to_cloud] CLOUD_SERVER={CLOUD_SERVER}")
+    log(f"[_push_contract_to_cloud] CLOUD_TOKEN={'已配置' if CLOUD_TOKEN else '未配置'}")
+    log(f"[_push_contract_to_cloud] SALES_ID={SALES_ID}")
+
     try:
         import requests
         order_dict = asdict(contract.order)
         products = order_dict.get('products', [])
+        log(f"[_push_contract_to_cloud] 订单数据: {len(order_dict)} 个字段")
+        log(f"[_push_contract_to_cloud] 产品数量: {len(products)}")
 
         payload = {
             **order_dict,
@@ -932,23 +939,33 @@ def _push_contract_to_cloud(contract: Contract) -> None:
             "agent_id": SALES_ID or "claw",
         }
 
+        log(f"[_push_contract_to_cloud] 准备推送数据到: {CLOUD_SERVER}/api/contracts/sync")
+        log(f"[_push_contract_to_cloud] payload大小: {len(str(payload))} 字符")
+
         headers = {"Content-Type": "application/json"}
         if CLOUD_TOKEN:
             headers["Authorization"] = f"Bearer {CLOUD_TOKEN}"
+            log(f"[_push_contract_to_cloud] 使用 Token 认证")
 
+        log(f"[_push_contract_to_cloud] 发送 POST 请求...")
         resp = requests.post(
             f"{CLOUD_SERVER.rstrip('/')}/api/contracts/sync",
             json=payload, headers=headers, timeout=30,
             proxies={"http": None, "https": None}
         )
 
+        log(f"[_push_contract_to_cloud] 收到响应: HTTP {resp.status_code}")
+
         if resp.status_code == 200:
             data = resp.json()
             log(f"[合同] 已推送到云端: {data.get('contract_id', contract.id)} ({len(products)}个产品)")
         else:
             log(f"[合同] 推送云端失败: HTTP {resp.status_code}")
+            log(f"[_push_contract_to_cloud] 响应内容: {resp.text[:500]}")
     except Exception as e:
         log(f"[合同] 推送云端异常: {e}")
+        import traceback
+        log(f"[_push_contract_to_cloud] 异常详情: {traceback.format_exc()}")
 
 
 def generate_pdf(contract: Contract) -> tuple:
@@ -1040,11 +1057,21 @@ def _generate_from_xlsx_fill(contract: Contract, template_path: str) -> str:
             ws.Range(f"11:{10 + insert_count}").Insert(Shift=-4121)  # xlShiftDown
 
         # 导入产品知识库参数提取函数和标准价格
+        extract_product_params = None
+        get_standard_price = None
         try:
+            # 优先从core目录导入（标准位置）
+            import sys
+            sys.path.insert(0, os.path.join(BASE_DIR, 'core'))
             from product_kb import extract_product_params, get_standard_price
         except ImportError:
-            extract_product_params = None
-            get_standard_price = None
+            # 回退：尝试直接从core导入
+            try:
+                import core.product_kb as product_kb
+                extract_product_params = product_kb.extract_product_params
+                get_standard_price = product_kb.get_standard_price
+            except ImportError:
+                pass
 
         for i, prod in enumerate(products):
             row = 11 + i  # Row11=产品1, Row12=产品2, ...
