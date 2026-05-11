@@ -1,7 +1,16 @@
 # Claw API 调用指南
 
 ## 基础信息
+
+### 本地服务（Agent调用）
 - **Base URL**: `http://127.0.0.1:5032`
+- **说明**: 本地Claw服务，Agent直接调用
+
+### 云端服务（合同审批）
+- **Base URL**: `http://your-cloud-server:5032` （具体地址见配置）
+- **说明**: 合同审批服务器，本地自动转发
+
+### 请求格式
 - **Content-Type**: `application/json`
 
 ---
@@ -165,7 +174,90 @@ POST /api/customers/健康办公研究社/touch
 
 ---
 
-## 7. 联系人/会话 API
+## 7. 合同生成 API
+
+### 生成合同
+```bash
+POST /api/contracts/generate
+{
+  "company_name": "华瑞怡宝",
+  "customer_contact": "李菲儿",
+  "customer_phone": "18088009689",
+  "customer_address": "新疆伊犁河源头工厂",
+  "products": [
+    {
+      "model": "T524",
+      "quantity": 200,
+      "unit_price": 432,
+      "subtotal": 86400,
+      "frame_color": "黑色"
+    },
+    {
+      "model": "E0",
+      "quantity": 200,
+      "unit_price": 218,
+      "subtotal": 43600,
+      "frame_color": "黑色",
+      "frame_size": "1400*700mm*25mm"
+    }
+  ],
+  "session_id": "wxid_nqf5aa9a07mv19",
+  "customer_wxid": "wxid_nqf5aa9a07mv19",
+  "customer_nickname": "健康办公研究社",
+  "delivery_date": "2026-06-10",
+  "payment_terms": "款到发货",
+  "voltage": "220V/50Hz",
+  "plug_type": "国标/欧规/美规",
+  "notes": "整桌650元/套含税含运费"
+}
+```
+
+### 产品字段说明
+| 字段 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| model | string | 是 | 产品型号，如 T524, E0, E1 |
+| quantity | number | 是 | 数量 |
+| unit_price | number | 是 | 单价 |
+| subtotal | number | 是 | 小计 |
+| frame_color | string | 否 | 颜色：黑色/白色 |
+| **frame_size** | string | **面板必填** | 尺寸+厚度，如 "1400*700mm*25mm" |
+
+### ⚠️ 重要提示
+- **面板产品（E0/E1）必须提供 frame_size**，否则合同表格中的"台架尺寸"列为空
+- **桌架产品（T524等）不需要 frame_size**，系统自动从知识库获取
+- frame_size 格式：`长*宽*厚度`，如 `"1400*700mm*25mm"`
+
+### 查询合同列表
+```bash
+GET /api/contracts/list?status=pending&page=1&page_size=10
+```
+
+### 获取合同PDF
+```bash
+GET /api/contracts/pdf/{contract_id}
+```
+
+### 审批合同
+```bash
+POST /api/contracts/approve
+{
+  "contract_id": "CT20260511162525",
+  "approver": "管理员"
+}
+```
+
+### 拒绝合同
+```bash
+POST /api/contracts/reject
+{
+  "contract_id": "CT20260511162525",
+  "reason": "价格有误"
+}
+```
+
+---
+
+## 8. 联系人/会话 API
 
 ### 获取联系人列表
 ```bash

@@ -82,7 +82,7 @@ WEB_DIR = os.path.join(BASE_DIR, "web")
 
 # 字段名称映射（用于修改记录显示）
 _field_names = {
-    "customer_name": "客户名称",
+    "company_name": "公司名称",
     "customer_contact": "联系人",
     "customer_phone": "联系电话",
     "customer_address": "收货地址",
@@ -119,10 +119,10 @@ class ContractStatus(Enum):
 
 @dataclass
 class OrderInfo:
-    customer_name: str = ""
-    customer_contact: str = ""
-    customer_phone: str = ""
-    customer_address: str = ""
+    company_name: str = ""  # 公司名称（乙方）
+    customer_contact: str = ""  # 联系人
+    customer_phone: str = ""  # 联系电话
+    customer_address: str = ""  # 收货地址
     products: List[Dict[str, Any]] = field(default_factory=list)
     order_no: str = ""
     order_date: str = ""
@@ -336,7 +336,7 @@ def _parse_notes_and_add_panel(order: OrderInfo) -> None:
     
     # 解析面板等级和尺寸
     panel_type = ""  # E0/E1
-    panel_size = ""  # 1.4*0.7米等
+    panel_size = ""  # 1.4*0.7米 或 1400*700mm*25mm 等
     
     if notes:
         if "E0" in notes.upper() or "e0" in notes:
@@ -344,10 +344,21 @@ def _parse_notes_and_add_panel(order: OrderInfo) -> None:
         elif "E1" in notes.upper() or "e1" in notes:
             panel_type = "E1级"
         
-        # 匹配尺寸格式：1.4*0.7米、1.4x0.7米、1400*700mm等
-        size_match = re.search(r'(\d+(?:\.\d+)?)\s*[\*xX]\s*(\d+(?:\.\d+)?)\s*米?', notes)
+        # 匹配尺寸格式：
+        # 1. 带厚度：1400*700mm*25mm、1400*700*25mm、1.4*0.7米*25mm
+        # 2. 不带厚度：1.4*0.7米、1400*700mm
+        size_match = re.search(r'(\d+(?:\.\d+)?)\s*[\*xX]\s*(\d+(?:\.\d+)?)\s*(米|mm)?\s*(?:\*\s*(\d+)\s*(mm)?)?', notes)
         if size_match:
-            panel_size = f"{size_match.group(1)}*{size_match.group(2)}米"
+            w, h, unit, thick, thick_unit = size_match.groups()
+            if unit == '米' or (not unit and '.' in w):
+                # 使用米为单位：1.4*0.7米
+                panel_size = f"{w}*{h}米"
+            else:
+                # 使用mm为单位：1400*700mm
+                panel_size = f"{w}*{h}mm"
+            # 如果有厚度，追加厚度
+            if thick:
+                panel_size += f"*{thick}mm"
     
     # 更新现有产品的frame_color
     for prod in order.products:
@@ -519,7 +530,9 @@ def _generate_from_xlsx_fill(contract: Contract, template_path: str) -> tuple:
 
         date_str = order.order_date or datetime.now().strftime('%Y-%m-%d')
 
-        _safe_set("F3", f"  乙方：{order.customer_name or contract.customer_nickname or ''}")
+        # 优先使用公司名称(company_name)，如果没有则使用微信昵称(customer_nickname)
+        company_display = order.company_name.strip() if order.company_name and order.company_name.strip() else (contract.customer_nickname or '')
+        _safe_set("F3", f"  乙方：{company_display}")
         _safe_set("F4", f"  联系人：{order.customer_contact or ''}")
         _safe_set("F5", f"  电话：{order.customer_phone or ''}")
         _safe_set("F6", f"  地址：{order.customer_address or ''}")
@@ -578,14 +591,18 @@ def _generate_from_xlsx_fill(contract: Contract, template_path: str) -> tuple:
             if not prod.get('description'):
                 prod['description'] = _desc
 
-            # 面板产品特殊处理：使用已设置的面板尺寸，不要被知识库覆盖
+            # 优先使用推送的数据，没有则使用知识库（桌架）或notes解析（面板）
             _model_val_upper = _model_val.upper()
-            if _model_val_upper in [p.upper() for p in PANEL_MODELS]:
-                # 面板产品：优先使用产品自身的frame_size（面板尺寸）
-                _frame_size = prod.get('frame_size', '')
-            else:
-                # 桌架产品：优先使用知识库的frame_size（横梁伸缩范围）
-                _frame_size = prod.get('frame_size', '') or kb_params.get('frame_size') or ''
+            # 先检查产品自身是否有frame_size（推送的数据优先）
+            _frame_size = prod.get('frame_size', '')
+            if not _frame_size:
+                # 没有推送数据，根据产品类型获取默认值
+                if _model_val_upper in [p.upper() for p in PANEL_MODELS]:
+                    # 面板产品：从notes解析（已在_parse_notes_and_add_panel中处理）
+                    _frame_size = ''
+                else:
+                    # 桌架产品：从知识库获取
+                    _frame_size = kb_params.get('frame_size', '')
             _safe_set(f"E{row}", _frame_size)
             if not prod.get('frame_size'):
                 prod['frame_size'] = _frame_size
@@ -778,7 +795,7 @@ def _generate_from_xlsx_fill(contract: Contract, template_path: str) -> tuple:
         h_brand = 41 + sign_offset
         h_phone = 43 + sign_offset
 
-        name_val = (order.customer_name or contract.customer_nickname or '').replace('\n', ' ').replace('\r', ' ').strip()
+        name_val = (order.company_name or contract.customer_nickname or '').replace('\n', ' ').replace('\r', ' ').strip()
         phone_val = (order.customer_phone or '').replace('\n', ' ').replace('\r', ' ').strip()
 
         if name_val:
@@ -1226,7 +1243,7 @@ def get_summary(status_filter: str = "all", date_from: str = "", date_to: str = 
 
     by_customer = {}
     for c in all_contracts:
-        name = c.order.customer_name or c.customer_nickname or "未知"
+        name = c.order.company_name or c.customer_nickname or "未知"
         if name not in by_customer:
             by_customer[name] = {"name": name, "count": 0, "amount": 0, "latest": ""}
         by_customer[name]["count"] += 1
@@ -1549,7 +1566,7 @@ class ContractHandler(BaseHTTPRequestHandler):
                 if search_keyword:
                     filtered = [c for c in filtered if 
                         search_keyword in (c.customer_nickname or "").lower() or
-                        search_keyword in (c.order.customer_name or "").lower() or
+                        search_keyword in (c.order.company_name or "").lower() or
                         search_keyword in (c.order.order_no or "").lower() or
                         search_keyword in (c.order.customer_phone or "").lower() or
                         search_keyword in (c.agent_id or "").lower()
@@ -1561,8 +1578,8 @@ class ContractHandler(BaseHTTPRequestHandler):
                     products = [f"{p.get('model','')}×{p.get('quantity',1)}" for p in c.order.products]
                     result.append({
                         "id": c.id,
-                        "customer": c.customer_nickname or c.order.customer_name or "未知",
-                        "customer_name": c.order.customer_name or "",
+                        "customer": c.customer_nickname or c.order.company_name or "未知",
+                        "company_name": c.order.company_name or "",
                         "customer_nickname": c.customer_nickname or "",
                         "order_no": c.order.order_no,
                         "products": products,

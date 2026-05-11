@@ -512,7 +512,7 @@ def list_tools():
             "endpoint": "/api/contracts/generate",
             "method": "POST",
             "params": {
-                "customer_name": {"type": "string", "description": "客户公司名称", "required": True},
+                "company_name": {"type": "string", "description": "公司名称（乙方）", "required": True},
                 "customer_contact": {"type": "string", "description": "联系人姓名", "required": True},
                 "customer_phone": {"type": "string", "description": "联系电话", "required": True},
                 "customer_address": {"type": "string", "description": "收货地址", "required": True},
@@ -2290,7 +2290,7 @@ def api_contracts_generate():
     """生成合同：接收订单数据 → 推送云端自动生成 → 云端审批
 
     Body: {
-        "customer_name": "公司名",
+        "company_name": "公司名",
         "customer_contact": "联系人",
         "customer_phone": "电话",
         "customer_address": "地址",
@@ -2307,7 +2307,7 @@ def api_contracts_generate():
     }
     """
     data = request.json or {}
-    log(f"[合同生成] 收到生成请求: 客户={data.get('customer_name', '?')}, "
+    log(f"[合同生成] 收到生成请求: 公司={data.get('company_name', '?')}, "
         f"联系人={data.get('customer_contact', '?')}, "
         f"产品数={len(data.get('products', []))}")
 
@@ -2619,7 +2619,7 @@ def contract_callback():
                     return
 
                 contract = contracts[contract_id]
-                target = customer_contact or contract.customer_nickname or contract.order.customer_name
+                target = customer_contact or contract.customer_nickname or contract.order.company_name
 
                 # 1. 优先从云端下载PDF（云端可能编辑过，本地版本已过时）
                 pdf_path = ""
@@ -3023,7 +3023,7 @@ def _send_approved_contract(contract_id: str, pdf_url: str, customer_wxid: str, 
             return
 
         contract = contracts[contract_id]
-        target = customer_nickname or contract.customer_nickname or contract.order.customer_name
+        target = customer_nickname or contract.customer_nickname or contract.order.company_name
 
         # 检查是否已经发送过（通过状态判断）- 暂时禁用，允许重复发送
         # if hasattr(contract, 'sent_at') and contract.sent_at:

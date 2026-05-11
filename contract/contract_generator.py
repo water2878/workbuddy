@@ -800,10 +800,26 @@ def _parse_notes_and_add_panel(order: OrderInfo) -> None:
     elif "E1" in notes.upper() or "e1" in notes:
         panel_type = "E1级"
     
-    # 匹配尺寸格式：1.4*0.7米、1.4x0.7米、1400*700mm等
-    size_match = re.search(r'(\d+(?:\.\d+)?)\s*[\*xX]\s*(\d+(?:\.\d+)?)\s*米?', notes)
+    # 匹配尺寸格式：1400*700*25mm、1400*700 25mm、1.4*0.7米等
+    # 提取长*宽*厚，厚度可选
+    size_match = re.search(r'(\d+(?:\.\d+)?)\s*[\*xX]\s*(\d+(?:\.\d+)?)(?:\s*[\*xX\s]\s*(\d+)\s*mm)?', notes)
     if size_match:
-        panel_size = f"{size_match.group(1)}*{size_match.group(2)}米"
+        length = float(size_match.group(1))
+        width = float(size_match.group(2))
+        thickness = size_match.group(3)  # 厚度，可能为None
+        
+        # 判断单位：如果是小数（如1.4），认为是米，需要转换成毫米
+        if length < 100 or width < 100:
+            length = int(length * 1000)
+            width = int(width * 1000)
+        else:
+            length = int(length)
+            width = int(width)
+        
+        if thickness:
+            panel_size = f"{length}*{width}*{thickness}mm"
+        else:
+            panel_size = f"{length}*{width}mm"
     
     # 更新现有产品的frame_color
     for prod in order.products:
@@ -822,16 +838,21 @@ def _parse_notes_and_add_panel(order: OrderInfo) -> None:
                 break
         
         if panel_qty > 0:
-            # 根据尺寸确定单价
+            # 根据尺寸确定单价（统一使用毫米格式）
             price_map = {
-                "1.2*0.6": 90, "1.4*0.7": 218, "1.6*0.8": 244,
-                "1.6*0.7": 244, "1.8*0.8": 244
+                ("1200", "600"): 90,
+                ("1400", "700"): 218,
+                ("1600", "800"): 244,
+                ("1600", "700"): 244,
+                ("1800", "800"): 244,
             }
             unit_price = 0
-            for size_key, price in price_map.items():
-                if size_key in panel_size or panel_size in size_key:
-                    unit_price = price
-                    break
+            # 从 panel_size 提取长和宽（去掉厚度和单位）
+            size_parts = panel_size.replace("mm", "").split("*")
+            if len(size_parts) >= 2:
+                length = size_parts[0]
+                width = size_parts[1]
+                unit_price = price_map.get((length, width), 0)
             # 默认价格
             if unit_price == 0:
                 unit_price = 218
