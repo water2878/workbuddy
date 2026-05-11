@@ -71,6 +71,23 @@ def favicon():
     return "", 204
 
 
+@app.before_request
+def _log_request():
+    if request.path.startswith("/api/"):
+        args = ""
+        if request.args:
+            args = " " + "&".join(f"{k}={v}" for k, v in request.args.items())
+        body_hint = ""
+        if request.method in ("POST", "PUT") and request.is_json:
+            try:
+                data = request.get_json(silent=True) or {}
+                keys = list(data.keys())[:5]
+                body_hint = f" body={{{', '.join(keys)}}}"
+            except Exception:
+                pass
+        log(f"← {request.method} {request.path}{args}{body_hint}", "API")
+
+
 @app.after_request
 def _add_pna_header(response):
     """允许公网页面访问本地API（Chrome Private Network Access）"""
@@ -487,6 +504,25 @@ def list_tools():
             "params": {
                 "contact_id": {"type": "string", "description": "客户ID", "required": True},
                 "notes": {"type": "string", "description": "备注内容", "required": True}
+            }
+        },
+        "generate_contract": {
+            "name": "generate_contract",
+            "description": "生成销售合同并推送云端审批。客户确认订单后调用，需要提供客户信息和产品明细",
+            "endpoint": "/api/contracts/generate",
+            "method": "POST",
+            "params": {
+                "customer_name": {"type": "string", "description": "客户公司名称", "required": True},
+                "customer_contact": {"type": "string", "description": "联系人姓名", "required": True},
+                "customer_phone": {"type": "string", "description": "联系电话", "required": True},
+                "customer_address": {"type": "string", "description": "收货地址", "required": True},
+                "products": {"type": "array", "description": "产品列表 [{model, quantity, unit_price, subtotal}]", "required": True},
+                "session_id": {"type": "string", "description": "微信会话ID", "required": False},
+                "customer_wxid": {"type": "string", "description": "客户微信ID", "required": False},
+                "customer_nickname": {"type": "string", "description": "客户微信昵称", "required": False},
+                "delivery_date": {"type": "string", "description": "交货日期", "required": False},
+                "payment_terms": {"type": "string", "description": "付款方式", "required": False},
+                "notes": {"type": "string", "description": "备注（颜色、面板等）", "required": False}
             }
         },
         "list_contracts": {
@@ -2247,6 +2283,80 @@ def api_contracts_summary():
     return proxy_contracts("summary")
 
 
+# ── 合同生成（AI调用入口）──
+
+@app.route("/api/contracts/generate", methods=["POST"])
+def api_contracts_generate():
+    """生成合同：接收订单数据 → 推送云端自动生成 → 云端审批
+
+    Body: {
+        "customer_name": "公司名",
+        "customer_contact": "联系人",
+        "customer_phone": "电话",
+        "customer_address": "地址",
+        "products": [{"model": "T412", "quantity": 10, "unit_price": 750, "subtotal": 7500}],
+        "session_id": "wxid_xxx",
+        "customer_wxid": "wxid_xxx",
+        "customer_nickname": "昵称",
+        "delivery_date": "2026-05-20",
+        "payment_terms": "预付30%",
+        "voltage": "220V/50Hz",
+        "plug_type": "国标",
+        "shipping_country": "中国",
+        "notes": "备注"
+    }
+    """
+    data = request.json or {}
+    log(f"[合同生成] 收到生成请求: 客户={data.get('customer_name', '?')}, "
+        f"联系人={data.get('customer_contact', '?')}, "
+        f"产品数={len(data.get('products', []))}")
+
+    products = data.get("products", [])
+    if not products:
+        log("[合同生成] 失败: 缺少产品信息")
+        return jsonify({"success": False, "error": "缺少产品信息（products不能为空）"}), 400
+
+    if not CLOUD_SERVER:
+        log("[合同生成] 失败: 未配置云端服务器")
+        return jsonify({"success": False, "error": "未配置云端服务器（CLOUD_SERVER）"}), 503
+
+    try:
+        import requests as req
+
+        payload = {**data, "agent_id": SALES_ID or "claw"}
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {CLOUD_TOKEN}",
+        }
+
+        cloud_url = f"{CLOUD_SERVER.rstrip('/')}/api/contracts/sync"
+        log(f"[合同生成] 推送数据到云端: {cloud_url}")
+
+        resp = req.post(
+            cloud_url, json=payload, headers=headers, timeout=30,
+            proxies={"http": None, "https": None},
+        )
+
+        if resp.status_code == 200:
+            result = resp.json()
+            contract_id = result.get("contract_id", "")
+            log(f"[合同生成] 云端生成成功: 合同号={contract_id}")
+            _notify_contract_sse()
+            return jsonify(success_response({
+                "contract_id": contract_id,
+                "status": "pending",
+                "created": result.get("created", True),
+            }, message="合同已推送云端生成并进入审批流程"))
+        else:
+            log(f"[合同生成] 云端返回错误: HTTP {resp.status_code} - {resp.text[:200]}")
+            return jsonify({"success": False, "error": f"云端返回 HTTP {resp.status_code}: {resp.text[:200]}"}), 502
+
+    except Exception as e:
+        log(f"[合同生成] 异常: {e}")
+        traceback.print_exc()
+        return jsonify({"success": False, "error": f"合同生成失败: {e}"}), 500
+
+
 # ── approve/reject 不在本地处理，走 proxy_contracts 代理到云端 ──
 # 云端审批 → 云端回调本机 → 下载云端PDF → 本地发送
 
@@ -2717,10 +2827,12 @@ def proxy_contracts(subpath):
             body = request.get_data()
             headers["Content-Type"] = request.content_type or "application/json"
 
+        log(f"[合同代理] {request.method} /api/contracts/{subpath} → 云端")
         resp = req.request(
             request.method, url, headers=headers, data=body,
             timeout=120,
         )
+        log(f"[合同代理] 云端响应: HTTP {resp.status_code} ({len(resp.content)} bytes)")
         return (resp.content, resp.status_code, {"Content-Type": resp.headers.get("Content-Type", "application/json")})
     except Exception as e:
         log(f"[合同代理] 请求失败: {e}")

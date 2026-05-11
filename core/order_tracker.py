@@ -7,7 +7,16 @@ import json
 import time
 from datetime import datetime
 
-from monitor_config import _log, _BASE_DIR
+try:
+    from core.config import log as _log, BASE_DIR as _BASE_DIR
+except ImportError:
+    try:
+        from config import log as _log, BASE_DIR as _BASE_DIR
+    except ImportError:
+        from datetime import datetime as _dt
+        def _log(text: str, tag: str = "INFO"):
+            print(f"[{_dt.now().strftime('%Y-%m-%d %H:%M:%S')}] [{tag}] {text}", flush=True)
+        _BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # 订单状态定义
 ORDER_STATUS = {
