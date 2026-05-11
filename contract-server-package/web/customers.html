@@ -1,0 +1,1371 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>客户无忧信息推送审批系统 - 畅腾升降桌</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        /* 导航栏 */
+        .navbar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 15px 30px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .navbar-brand {
+            color: white;
+            font-size: 20px;
+            font-weight: bold;
+        }
+        
+        .navbar-nav {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            transition: background 0.3s;
+            opacity: 0.9;
+        }
+        
+        .nav-link:hover {
+            background: rgba(255,255,255,0.2);
+            opacity: 1;
+        }
+        
+        .nav-link.active {
+            background: rgba(255,255,255,0.3);
+            font-weight: bold;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        
+        .header-actions {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .btn-refresh, .btn-batch-push {
+            background: #52c41a;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .btn-refresh:hover, .btn-batch-push:hover {
+            background: #73d13d;
+        }
+        
+        .btn-batch-push {
+            background: #1890ff;
+        }
+        
+        .btn-batch-push:hover {
+            background: #40a9ff;
+        }
+        
+        .btn-batch-push:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        
+        .select-all-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px;
+            background: white;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+        
+        .select-all-container input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+        
+        .select-all-container label {
+            cursor: pointer;
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            background: white;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .tab {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            background: #f5f5f5;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        
+        .tab:hover {
+            background: #e8e8e8;
+        }
+        
+        .tab.active {
+            background: #1890ff;
+            color: white;
+        }
+        
+        .tab-badge {
+            background: #ff4d4f;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-size: 12px;
+            margin-left: 5px;
+        }
+        
+        .customer-list {
+            display: grid;
+            gap: 15px;
+        }
+        
+        .customer-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            gap: 15px;
+            align-items: flex-start;
+        }
+        
+        .customer-card.selected {
+            border: 2px solid #1890ff;
+            background: #e6f7ff;
+        }
+        
+        .customer-checkbox {
+            margin-top: 5px;
+        }
+        
+        .customer-checkbox input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+        
+        .customer-content {
+            flex: 1;
+        }
+        
+        .customer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .customer-name {
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .customer-status {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+        
+        .status-pending {
+            background: #fff7e6;
+            color: #fa8c16;
+        }
+        
+        .status-approved {
+            background: #f6ffed;
+            color: #52c41a;
+        }
+        
+        .status-sent {
+            background: #e6f7ff;
+            color: #1890ff;
+        }
+        
+        .customer-info {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        
+        .customer-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .btn {
+            flex: 1;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        
+        .btn-approve {
+            background: #52c41a;
+            color: white;
+        }
+        
+        .btn-approve:hover {
+            background: #73d13d;
+        }
+        
+        .btn-reject {
+            background: #ff4d4f;
+            color: white;
+        }
+        
+        .btn-reject:hover {
+            background: #ff7875;
+        }
+        
+        .btn-view {
+            background: #1890ff;
+            color: white;
+        }
+        
+        .btn-view:hover {
+            background: #40a9ff;
+        }
+        
+        .btn-push {
+            background: #722ed1;
+            color: white;
+        }
+        
+        .btn-push:hover {
+            background: #9254de;
+        }
+        
+        .btn-edit {
+            background: #fa8c16;
+            color: white;
+        }
+        
+        .btn-edit:hover {
+            background: #ffa940;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+        
+        /* 分页样式 */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-top: 30px;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .pagination-btn {
+            padding: 8px 16px;
+            border: 1px solid #d9d9d9;
+            background: white;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+        
+        .pagination-btn:hover:not(:disabled) {
+            border-color: #1890ff;
+            color: #1890ff;
+        }
+        
+        .pagination-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .pagination-info {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .pagination-select {
+            padding: 6px 10px;
+            border: 1px solid #d9d9d9;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 12px 24px;
+            border-radius: 4px;
+            color: white;
+            font-size: 14px;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .toast.show {
+            opacity: 1;
+        }
+        
+        .toast-success {
+            background: #52c41a;
+        }
+        
+        .toast-error {
+            background: #ff4d4f;
+        }
+        
+        .selected-count {
+            color: #1890ff;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 导航栏 -->
+        <nav class="navbar">
+            <div class="navbar-brand">🏢 畅腾办公系统</div>
+            <div class="navbar-nav">
+                <a href="/contracts" class="nav-link">📄 合同审批</a>
+                <a href="/customers" class="nav-link active">👥 客户无忧</a>
+                <a href="/materials" class="nav-link">📦 产品资料</a>
+            </div>
+        </nav>
+
+        <h1>客户无忧信息推送审批系统</h1>
+        
+        <div class="header-actions">
+            <button class="btn-refresh" onclick="loadCustomers()">
+                🔄 刷新数据
+            </button>
+            <button class="btn-batch-push" id="btn-batch-push" onclick="batchPushToCRM()" style="display: none;">
+                📤 批量推送到客户无忧
+            </button>
+        </div>
+        
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('pending')">
+                ⏳ 待审批 <span class="tab-badge" id="count-pending">0</span>
+            </button>
+            <button class="tab" onclick="switchTab('approved')">
+                ✅ 已审批 <span class="tab-badge" id="count-approved">0</span>
+            </button>
+            <button class="tab" onclick="switchTab('sent')">
+                📤 已推送 <span class="tab-badge" id="count-sent">0</span>
+            </button>
+        </div>
+        
+        <!-- 业务员筛选和推送 -->
+        <div class="agent-filter-bar" style="display: flex; justify-content: space-between; align-items: center; margin: 15px 0; padding: 12px 15px; background: #f5f5f5; border-radius: 8px;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <label style="color: #666; font-size: 14px;">业务员:</label>
+                <select id="agentFilter" onchange="filterByAgent()" style="padding: 8px 12px; border: 1px solid #d9d9d9; border-radius: 4px; font-size: 14px; min-width: 150px;">
+                    <option value="">全部业务员</option>
+                </select>
+                <span id="agent-stats" style="color: #999; font-size: 13px;"></span>
+            </div>
+        </div>
+        
+        <!-- 全选控件（仅在已审批标签显示） -->
+        <div class="select-all-container" id="select-all-container" style="display: none;">
+            <input type="checkbox" id="select-all" onchange="toggleSelectAll()">
+            <label for="select-all">全选</label>
+            <span class="selected-count" id="selected-count"></span>
+        </div>
+        
+        <div class="customer-list" id="customer-list">
+            <div class="loading">加载中...</div>
+        </div>
+        
+        <!-- 分页控件 -->
+        <div class="pagination" id="pagination" style="display: none;">
+            <button class="pagination-btn" id="btn-prev" onclick="changePage(-1)">上一页</button>
+            <span class="pagination-info">
+                第 <span id="current-page">1</span> / <span id="total-pages">1</span> 页
+                （共 <span id="total-count">0</span> 条）
+            </span>
+            <button class="pagination-btn" id="btn-next" onclick="changePage(1)">下一页</button>
+            <select class="pagination-select" id="page-size" onchange="changePageSize()">
+                <option value="10">10条/页</option>
+                <option value="20">20条/页</option>
+                <option value="50">50条/页</option>
+            </select>
+        </div>
+    </div>
+    
+    <div class="toast" id="toast"></div>
+    
+    <!-- 自定义弹窗 -->
+    <div class="modal-overlay" id="dialogOverlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="dialogTitle">提示</h3>
+                <button class="modal-close" onclick="closeDialog(false)">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="dialogMsg"></p>
+                <div id="dialogInputWrap" style="display: none; margin-top: 15px;">
+                    <input type="text" id="dialogInput" placeholder="">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="dialogCancel" onclick="closeDialog(false)">取消</button>
+                <button class="btn btn-primary" id="dialogOk" onclick="closeDialog(true)">确定</button>
+            </div>
+        </div>
+    </div>
+    
+    <style>
+        /* 弹窗样式 */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-overlay.active {
+            display: flex;
+        }
+        .modal {
+            background: white;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 420px;
+            max-height: 80vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            animation: modalSlideIn 0.3s ease;
+        }
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .modal-header {
+            padding: 15px 20px;
+            border-bottom: 1px solid #e8e8e8;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .modal-header h3 {
+            margin: 0;
+            font-size: 16px;
+            color: #333;
+        }
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: #999;
+            cursor: pointer;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+        }
+        .modal-close:hover {
+            background: #f5f5f5;
+            color: #666;
+        }
+        .modal-body {
+            padding: 20px;
+            overflow-y: auto;
+            flex: 1;
+            min-height: 0;
+        }
+        .modal-body p {
+            margin: 0;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #333;
+            word-break: break-all;
+        }
+        .modal-body input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #d9d9d9;
+            border-radius: 6px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        .modal-body input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        .modal-footer {
+            padding: 15px 20px;
+            border-top: 1px solid #e8e8e8;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+        .btn {
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s;
+        }
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+        .btn-primary:hover {
+            background: #5a6fd6;
+        }
+        .btn-secondary {
+            background: #f5f5f5;
+            color: #666;
+            border: 1px solid #d9d9d9;
+        }
+        .btn-secondary:hover {
+            background: #e8e8e8;
+        }
+    </style>
+    
+    <script>
+        const API_BASE = '';
+        let currentTab = 'pending';
+        let currentPage = 1;
+        let pageSize = 10;
+        let totalPages = 1;
+        let paginationData = null;
+        let selectedIds = new Set();
+        let currentCustomers = [];
+        let currentAgentFilter = '';
+        
+        // 切换标签
+        async function switchTab(tab) {
+            currentTab = tab;
+            currentPage = 1;
+            selectedIds.clear();
+            updateSelectedCount();
+
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            event.target.closest('.tab').classList.add('active');
+
+            // 显示/隐藏批量操作控件
+            const selectAllContainer = document.getElementById('select-all-container');
+            const batchPushBtn = document.getElementById('btn-batch-push');
+
+            if (tab === 'approved') {
+                selectAllContainer.style.display = 'flex';
+            } else {
+                selectAllContainer.style.display = 'none';
+                batchPushBtn.style.display = 'none';
+            }
+
+            document.getElementById('select-all').checked = false;
+
+            // 保存当前选中的业务员
+            const savedAgentFilter = currentAgentFilter;
+            
+            // 切换标签时刷新业务员列表（因为不同状态下的业务员客户数不同）
+            await loadAgentList();
+            
+            // 恢复之前选中的业务员
+            if (savedAgentFilter) {
+                const agentSelect = document.getElementById('agentFilter');
+                // 检查保存的业务员是否在新列表中存在
+                const optionExists = Array.from(agentSelect.options).some(opt => opt.value === savedAgentFilter);
+                if (optionExists) {
+                    agentSelect.value = savedAgentFilter;
+                    currentAgentFilter = savedAgentFilter;
+                } else {
+                    // 如果该业务员在当前状态下没有客户，重置为全部
+                    currentAgentFilter = '';
+                    agentSelect.value = '';
+                }
+            }
+            
+            await loadCustomers();
+        }
+        
+        // 切换页码
+        function changePage(delta) {
+            const newPage = currentPage + delta;
+            if (newPage >= 1 && newPage <= totalPages) {
+                currentPage = newPage;
+                loadCustomers();
+            }
+        }
+        
+        // 切换每页条数
+        function changePageSize() {
+            pageSize = parseInt(document.getElementById('page-size').value);
+            currentPage = 1;
+            loadCustomers();
+        }
+        
+        // 加载业务员列表（根据当前状态筛选）
+        async function loadAgentList() {
+            try {
+                const response = await fetch(`${API_BASE}/api/customers/agents`);
+                const result = await response.json();
+
+                if (result.success && result.data) {
+                    const select = document.getElementById('agentFilter');
+                    // 保留第一个选项（全部）
+                    select.innerHTML = '<option value="">全部业务员</option>';
+
+                    // 获取当前状态下的客户列表，用于统计每个业务员的客户数
+                    const statusResponse = await fetch(`${API_BASE}/api/customers/${currentTab}?page=1&page_size=1000`);
+                    const statusResult = await statusResponse.json();
+                    let customers = [];
+                    if (statusResult && statusResult.data && Array.isArray(statusResult.data)) {
+                        customers = statusResult.data;
+                    } else if (statusResult && Array.isArray(statusResult)) {
+                        customers = statusResult;
+                    }
+
+                    // 统计当前状态下每个业务员的客户数
+                    const agentCounts = {};
+                    customers.forEach(c => {
+                        const agentId = c.agent_id || c.sales_id || '未分配';
+                        agentCounts[agentId] = (agentCounts[agentId] || 0) + 1;
+                    });
+
+                    result.data.forEach(agent => {
+                        const option = document.createElement('option');
+                        option.value = agent.id;
+                        // 只显示业务员名字
+                        option.textContent = agent.name;
+                        select.appendChild(option);
+                    });
+                }
+            } catch (err) {
+                console.error('加载业务员列表失败:', err);
+            }
+        }
+        
+        // 按业务员筛选
+        function filterByAgent() {
+            const agentId = document.getElementById('agentFilter').value;
+            currentAgentFilter = agentId;
+            currentPage = 1;
+            loadCustomers();
+            updateAgentStats();
+        }
+        
+        // 更新业务员统计
+        function updateAgentStats() {
+            const agentId = document.getElementById('agentFilter').value;
+            if (!agentId) {
+                document.getElementById('agent-stats').textContent = '';
+                return;
+            }
+            
+            // 使用分页数据中的总数，或者当前客户列表长度
+            const totalCount = paginationData ? paginationData.total : currentCustomers.length;
+            document.getElementById('agent-stats').textContent = `显示 ${currentCustomers.length} 个客户 (共${totalCount}个)`;
+        }
+        
+        // 按业务员推送
+        async function pushByAgent() {
+            const agentId = document.getElementById('agentFilter').value;
+            if (!agentId) {
+                showToast('请先选择一个业务员', 'error');
+                return;
+            }
+            
+            // 获取当前筛选的业务员的客户
+            const agentCustomers = currentCustomers.filter(c => 
+                (c.agent_id || c.sales_id) === agentId
+            );
+            
+            if (agentCustomers.length === 0) {
+                showToast('该业务员下没有客户', 'error');
+                return;
+            }
+            
+            const confirmed = await showDialog({
+                title: '按业务员推送',
+                msg: `确定要推送业务员「${agentId}」的 ${agentCustomers.length} 个客户到客户无忧系统吗？`,
+                type: 'confirm',
+                okText: '确定推送',
+                cancelText: '取消'
+            });
+            
+            if (!confirmed) return;
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/customers/push-by-agent`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        agent_id: agentId,
+                        customer_ids: agentCustomers.map(c => c.id || c.record_id)
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showToast(`✅ ${result.message}`, 'success');
+                    loadCustomers();
+                    loadAllStats();
+                } else {
+                    showToast('❌ ' + result.error, 'error');
+                }
+            } catch (err) {
+                showToast('❌ 推送失败: ' + err.message, 'error');
+            }
+        }
+        
+        // 更新分页控件显示
+        function updatePagination(pagination) {
+            const paginationEl = document.getElementById('pagination');
+            if (!pagination || pagination.total === 0) {
+                paginationEl.style.display = 'none';
+                return;
+            }
+            
+            paginationEl.style.display = 'flex';
+            document.getElementById('current-page').textContent = pagination.page;
+            document.getElementById('total-pages').textContent = pagination.total_pages;
+            document.getElementById('total-count').textContent = pagination.total;
+            
+            document.getElementById('btn-prev').disabled = pagination.page <= 1;
+            document.getElementById('btn-next').disabled = pagination.page >= pagination.total_pages;
+        }
+        
+        // 全选/取消全选
+        function toggleSelectAll() {
+            const selectAllCheckbox = document.getElementById('select-all');
+            
+            if (selectAllCheckbox.checked) {
+                currentCustomers.forEach(c => {
+                    const id = c.id || c.record_id;
+                    if (id) selectedIds.add(id);
+                });
+            } else {
+                selectedIds.clear();
+            }
+            
+            updateSelectedCount();
+            renderCustomerList();
+        }
+        
+        // 切换单个选择
+        function toggleSelect(id) {
+            if (selectedIds.has(id)) {
+                selectedIds.delete(id);
+            } else {
+                selectedIds.add(id);
+            }
+            
+            updateSelectedCount();
+            updateSelectAllCheckbox();
+        }
+        
+        // 更新全选复选框状态
+        function updateSelectAllCheckbox() {
+            const selectAllCheckbox = document.getElementById('select-all');
+            const allIds = currentCustomers.map(c => c.id || c.record_id).filter(Boolean);
+            
+            if (allIds.length > 0 && allIds.every(id => selectedIds.has(id))) {
+                selectAllCheckbox.checked = true;
+            } else {
+                selectAllCheckbox.checked = false;
+            }
+        }
+        
+        // 更新选中数量显示
+        function updateSelectedCount() {
+            const count = selectedIds.size;
+            const countEl = document.getElementById('selected-count');
+            const batchPushBtn = document.getElementById('btn-batch-push');
+            
+            if (count > 0) {
+                countEl.textContent = `已选择 ${count} 条`;
+                batchPushBtn.style.display = 'flex';
+                batchPushBtn.textContent = `📤 批量推送到客户无忧 (${count})`;
+            } else {
+                countEl.textContent = '';
+                batchPushBtn.style.display = 'none';
+            }
+        }
+        
+        // 加载客户列表
+        async function loadCustomers() {
+            const container = document.getElementById('customer-list');
+            container.innerHTML = '<div class="loading">加载中...</div>';
+            document.getElementById('pagination').style.display = 'none';
+
+            try {
+                // 构建URL，如果选择了业务员则添加到查询参数
+                let url = `${API_BASE}/api/customers/${currentTab}?page=${currentPage}&page_size=${pageSize}`;
+                if (currentAgentFilter) {
+                    url += `&agent_id=${encodeURIComponent(currentAgentFilter)}`;
+                }
+
+                const response = await fetch(url);
+                const result = await response.json();
+
+                let customers = [];
+                if (result && result.data && Array.isArray(result.data)) {
+                    customers = result.data;
+                    paginationData = result.pagination;
+                } else if (result && Array.isArray(result)) {
+                    customers = result;
+                    paginationData = null;
+                } else {
+                    container.innerHTML = '<div class="empty-state">数据格式错误</div>';
+                    return;
+                }
+
+                currentCustomers = customers;
+                updatePagination(paginationData);
+
+                // 更新标签计数（如果没有筛选业务员）
+                if (!currentAgentFilter) {
+                    const totalCount = paginationData ? paginationData.total : customers.length;
+                    document.getElementById(`count-${currentTab}`).textContent = totalCount;
+                }
+
+                if (customers.length === 0) {
+                    container.innerHTML = '<div class="empty-state">暂无数据</div>';
+                    return;
+                }
+
+                renderCustomerList();
+            } catch (err) {
+                container.innerHTML = `<div class="empty-state">加载失败: ${err.message}</div>`;
+            }
+        }
+        
+        // 渲染客户列表
+        function renderCustomerList() {
+            const container = document.getElementById('customer-list');
+            container.innerHTML = currentCustomers.map(c => renderCustomerCard(c)).join('');
+        }
+        
+        // 渲染客户卡片
+        function renderCustomerCard(customer) {
+            const statusClass = `status-${customer.status || 'pending'}`;
+            const statusText = {
+                'pending': '待审批',
+                'approved': '已审批',
+                'sent': '已推送',
+                'rejected': '已拒绝'
+            }[customer.status] || '待审批';
+            
+            const customerName = customer.cus_name || customer.customer_name || customer.customer_nickname || customer.name || '未知客户';
+            const phone = customer.mobile_phone || customer.phone || customer.customer_phone || '-';
+            const company = customer.work_name || customer.company || '-';
+            const time = customer.created_at || customer.get_time || customer.time || '-';
+            const intro = customer.cus_intro || customer.content || customer.notes || '';
+            const agentId = customer.agent_id || customer.sales_id || '未分配';
+            const id = customer.id || customer.record_id;
+            const isSelected = selectedIds.has(id);
+            
+            let actions = '';
+            let checkbox = '';
+            
+            if (currentTab === 'pending') {
+                actions = `
+                    <button class="btn btn-approve" onclick="approveCustomer('${id}')">✅ 通过</button>
+                    <button class="btn btn-reject" onclick="rejectCustomer('${id}')">❌ 拒绝</button>
+                    <button class="btn btn-edit" onclick="editCustomer('${id}')">✏️ 编辑</button>
+                    <button class="btn btn-view" onclick="viewCustomer('${id}')">👁️ 查看</button>
+                `;
+            } else if (currentTab === 'approved') {
+                checkbox = `
+                    <div class="customer-checkbox">
+                        <input type="checkbox" ${isSelected ? 'checked' : ''} onchange="toggleSelect('${id}')">
+                    </div>
+                `;
+                actions = `
+                    <button class="btn btn-push" onclick="pushToCRM('${id}', '${customerName}')">📤 推送到客户无忧</button>
+                    <button class="btn btn-edit" onclick="editCustomer('${id}')">✏️ 编辑</button>
+                    <button class="btn btn-view" onclick="viewCustomer('${id}')">👁️ 查看</button>
+                `;
+            } else {
+                actions = `
+                    <button class="btn btn-edit" onclick="editCustomer('${id}')">✏️ 编辑</button>
+                    <button class="btn btn-view" onclick="viewCustomer('${id}')">👁️ 查看</button>
+                `;
+            }
+            
+            return `
+                <div class="customer-card ${isSelected ? 'selected' : ''}">
+                    ${checkbox}
+                    <div class="customer-content">
+                        <div class="customer-header">
+                            <span class="customer-name">${customerName}</span>
+                            <span class="customer-status ${statusClass}">${statusText}</span>
+                        </div>
+                        <div class="customer-info">
+                            <p>📱 电话: ${phone}</p>
+                            <p>🏢 公司: ${company}</p>
+                            <p>👤 业务员: ${agentId}</p>
+                            <p>📅 时间: ${time}</p>
+                            ${intro ? `<p>📝 介绍: ${intro.substring(0, 100)}${intro.length > 100 ? '...' : ''}</p>` : ''}
+                        </div>
+                        <div class="customer-actions">
+                            ${actions}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // 审批通过
+        async function approveCustomer(id) {
+            try {
+                const response = await fetch(`${API_BASE}/api/customers/approve/${id}`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'}
+                });
+                const result = await response.json();
+                
+                if (result.success) {
+                    showToast('审批通过', 'success');
+                    // 异步刷新业务员列表和客户列表
+                    await loadAgentList();
+                    await loadCustomers();
+                    await loadAllStats();
+                } else {
+                    showToast('审批失败: ' + result.error, 'error');
+                }
+            } catch (err) {
+                showToast('❌ 操作失败: ' + err.message, 'error');
+            }
+        }
+        
+        // 显示提示
+        function showToast(message, type) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = `toast toast-${type} show`;
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+        
+        // 自定义弹窗系统
+        let _dialogResolve = null;
+        function showDialog({title, msg, type, placeholder, okText, cancelText}) {
+            return new Promise(resolve => {
+                _dialogResolve = resolve;
+                const overlay = document.getElementById('dialogOverlay');
+                const inputWrap = document.getElementById('dialogInputWrap');
+                const input = document.getElementById('dialogInput');
+                const cancelBtn = document.getElementById('dialogCancel');
+                const okBtn = document.getElementById('dialogOk');
+                
+                document.getElementById('dialogTitle').textContent = title || '提示';
+                document.getElementById('dialogMsg').innerHTML = msg;
+                
+                if (type === 'prompt') {
+                    inputWrap.style.display = 'block';
+                    input.value = '';
+                    input.placeholder = placeholder || '';
+                } else {
+                    inputWrap.style.display = 'none';
+                }
+                
+                okBtn.textContent = okText || '确定';
+                cancelBtn.textContent = cancelText || '取消';
+                
+                overlay.classList.add('active');
+                if (type === 'prompt') setTimeout(() => input.focus(), 100);
+            });
+        }
+        
+        function closeDialog(ok) {
+            const overlay = document.getElementById('dialogOverlay');
+            overlay.classList.remove('active');
+            if (_dialogResolve) {
+                const input = document.getElementById('dialogInput');
+                const type = document.getElementById('dialogInputWrap').style.display !== 'none' ? 'prompt' : '';
+                _dialogResolve(ok && type === 'prompt' ? input.value : ok);
+                _dialogResolve = null;
+            }
+        }
+        
+        // 拒绝客户
+        async function rejectCustomer(id) {
+            const reason = await showDialog({
+                title: '拒绝客户',
+                msg: '请输入拒绝原因（可选）:',
+                type: 'prompt',
+                placeholder: '拒绝原因',
+                okText: '确定拒绝',
+                cancelText: '取消'
+            });
+            if (!reason) return;
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/customers/reject/${id}`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({reason})
+                });
+                const result = await response.json();
+                
+                if (result.success) {
+                    showToast('已拒绝', 'success');
+                    // 异步刷新业务员列表和客户列表
+                    await loadAgentList();
+                    await loadCustomers();
+                    await loadAllStats();
+                } else {
+                    showToast('拒绝失败: ' + result.error, 'error');
+                }
+            } catch (err) {
+                showToast('❌ 操作失败: ' + err.message, 'error');
+            }
+        }
+        
+        // 推送到客户无忧CRM
+        async function pushToCRM(id, name) {
+            const confirmed = await showDialog({
+                title: '确认推送',
+                msg: `确定要将客户「${name}」推送到客户无忧系统吗？`,
+                type: 'confirm',
+                okText: '确定推送',
+                cancelText: '取消'
+            });
+            if (!confirmed) return;
+            
+            try {
+                const response = await fetch(`${API_BASE}/push/${id}`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'}
+                });
+                const result = await response.json();
+                
+                if (result.success) {
+                    showToast('✅ ' + result.message, 'success');
+                    selectedIds.delete(id);
+                    updateSelectedCount();
+                    loadCustomers();
+                } else {
+                    showToast('❌ ' + result.error, 'error');
+                }
+            } catch (err) {
+                showToast('❌ 推送失败: ' + err.message, 'error');
+            }
+        }
+        
+        // 批量推送到客户无忧CRM
+        async function batchPushToCRM() {
+            if (selectedIds.size === 0) {
+                showToast('请先选择要推送的客户', 'error');
+                return;
+            }
+            
+            const confirmed = await showDialog({
+                title: '批量推送确认',
+                msg: `确定要将选中的 ${selectedIds.size} 个客户批量推送到客户无忧系统吗？`,
+                type: 'confirm',
+                okText: '确定推送',
+                cancelText: '取消'
+            });
+            if (!confirmed) return;
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/customers/batch-push`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ids: Array.from(selectedIds)})
+                });
+                const result = await response.json();
+                
+                if (result.success) {
+                    showToast(result.message, 'success');
+                    selectedIds.clear();
+                    updateSelectedCount();
+                    document.getElementById('select-all').checked = false;
+                    // 异步刷新业务员列表和客户列表
+                    await loadAgentList();
+                    await loadCustomers();
+                    await loadAllStats();
+                } else {
+                    showToast('批量推送失败: ' + result.error, 'error');
+                }
+            } catch (err) {
+                showToast('❌ 批量推送失败: ' + err.message, 'error');
+            }
+        }
+        
+        // 查看详情
+        async function viewCustomer(id) {
+            try {
+                const response = await fetch(`${API_BASE}/api/customers/detail/${id}`);
+                const result = await response.json();
+                
+                if (result.success) {
+                    const data = result.data;
+                    const detailHtml = `
+                        <div style="text-align: left;">
+                            <div style="margin-bottom: 12px; padding: 10px 12px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 6px; color: white;">
+                                <div style="font-size: 16px; font-weight: 600;">${data.cus_name || data.customer_name || '未知客户'}</div>
+                                <div style="font-size: 12px; opacity: 0.9; margin-top: 4px;">${data.status === 'pending' ? '📋 待审批' : data.status === 'approved' ? '✅ 已审批' : data.status === 'sent' ? '📤 已推送' : data.status}</div>
+                            </div>
+                            <div style="display: grid; grid-template-columns: 70px 1fr; gap: 8px 12px; font-size: 13px; line-height: 1.5;">
+                                <span style="color: #999;">客户ID</span><span style="color: #333; font-family: monospace;">${data.id || '-'}</span>
+                                <span style="color: #999;">微信ID</span><span style="color: #333;">${data.customer_id || data.wxid || '-'}</span>
+                                <span style="color: #999;">联系电话</span><span style="color: #333;">${data.mobile_phone || data.phone || '-'}</span>
+                                <span style="color: #999;">公司名称</span><span style="color: #333;">${data.work_name || data.company || '-'}</span>
+                                <span style="color: #999;">公司地址</span><span style="color: #333;">${data.work_address || '-'}</span>
+                                <span style="color: #999;">邮箱</span><span style="color: #333;">${data.email || '-'}</span>
+                                <span style="color: #999;">行业</span><span style="color: #333;">${data.industry || '-'}</span>
+                                <span style="color: #999;">来源</span><span style="color: #333;">${data.source || '-'}</span>
+                                <span style="color: #999;">业务员</span><span style="color: #333;">${data.agent_id || data.sales_id || '-'}</span>
+                                <span style="color: #999;">获取时间</span><span style="color: #333;">${data.get_time || data.created_at || '-'}</span>
+                            </div>
+                            <div style="margin-top: 12px; padding: 10px 12px; background: #f6ffed; border-radius: 6px; border-left: 3px solid #52c41a;">
+                                <div style="color: #389e0d; font-size: 12px; font-weight: 500; margin-bottom: 4px;">📝 需求介绍</div>
+                                <div style="color: #333; font-size: 13px; line-height: 1.6;">${data.cus_intro || data.content || data.notes || '无'}</div>
+                            </div>
+                        </div>
+                    `;
+                    await showDialog({
+                        title: '客户详情',
+                        msg: detailHtml,
+                        type: 'alert',
+                        okText: '关闭'
+                    });
+                } else {
+                    showToast('❌ ' + result.error, 'error');
+                }
+            } catch (err) {
+                showToast('❌ 加载失败: ' + err.message, 'error');
+            }
+        }
+        
+        // 编辑客户
+        async function editCustomer(id) {
+            try {
+                // 获取客户详情
+                const response = await fetch(`${API_BASE}/api/customers/detail/${id}`);
+                const result = await response.json();
+                
+                if (!result.success) {
+                    showToast('❌ ' + result.error, 'error');
+                    return;
+                }
+                
+                const customer = result.data;
+                const customerName = customer.cus_name || customer.customer_name || customer.customer_nickname || customer.name || '';
+                const phone = customer.mobile_phone || customer.phone || customer.customer_phone || '';
+                const company = customer.work_name || customer.company || '';
+                const intro = customer.cus_intro || customer.content || customer.notes || '';
+                
+                // 构建编辑表单
+                const formHtml = `
+                    <div style="text-align: left;">
+                        <div style="margin-bottom: 15px;">
+                            <label style="display: block; margin-bottom: 6px; color: #333; font-size: 14px; font-weight: 500;">客户姓名</label>
+                            <input type="text" id="edit-name" value="${customerName}" style="width: 100%; padding: 10px 12px; border: 1px solid #d9d9d9; border-radius: 6px; font-size: 14px; box-sizing: border-box; transition: border-color 0.3s;">
+                        </div>
+                        <div style="margin-bottom: 15px;">
+                            <label style="display: block; margin-bottom: 6px; color: #333; font-size: 14px; font-weight: 500;">联系电话</label>
+                            <input type="text" id="edit-phone" value="${phone}" style="width: 100%; padding: 10px 12px; border: 1px solid #d9d9d9; border-radius: 6px; font-size: 14px; box-sizing: border-box;">
+                        </div>
+                        <div style="margin-bottom: 15px;">
+                            <label style="display: block; margin-bottom: 6px; color: #333; font-size: 14px; font-weight: 500;">公司名称</label>
+                            <input type="text" id="edit-company" value="${company}" style="width: 100%; padding: 10px 12px; border: 1px solid #d9d9d9; border-radius: 6px; font-size: 14px; box-sizing: border-box;">
+                        </div>
+                        <div style="margin-bottom: 5px;">
+                            <label style="display: block; margin-bottom: 6px; color: #333; font-size: 14px; font-weight: 500;">需求介绍</label>
+                            <textarea id="edit-intro" rows="3" style="width: 100%; padding: 10px 12px; border: 1px solid #d9d9d9; border-radius: 6px; font-size: 14px; box-sizing: border-box; resize: vertical; font-family: inherit;">${intro}</textarea>
+                        </div>
+                    </div>
+                `;
+                
+                // 显示编辑弹窗
+                const confirmed = await showDialog({
+                    title: '编辑客户信息',
+                    msg: formHtml,
+                    type: 'confirm',
+                    okText: '保存',
+                    cancelText: '取消'
+                });
+                
+                if (!confirmed) return;
+                
+                // 获取编辑后的值
+                const newName = document.getElementById('edit-name').value.trim();
+                const newPhone = document.getElementById('edit-phone').value.trim();
+                const newCompany = document.getElementById('edit-company').value.trim();
+                const newIntro = document.getElementById('edit-intro').value.trim();
+                
+                // 发送更新请求
+                const updateResponse = await fetch(`${API_BASE}/api/customers/update/${id}`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        cus_name: newName,
+                        mobile_phone: newPhone,
+                        work_name: newCompany,
+                        cus_intro: newIntro
+                    })
+                });
+                
+                const updateResult = await updateResponse.json();
+                
+                if (updateResult.success) {
+                    showToast('✅ 客户信息已更新', 'success');
+                    loadCustomers();
+                } else {
+                    showToast('❌ ' + updateResult.error, 'error');
+                }
+                
+            } catch (err) {
+                showToast('❌ 编辑失败: ' + err.message, 'error');
+            }
+        }
+        
+        // 获取所有状态统计
+        async function loadAllStats() {
+            try {
+                const statsUrl = `${API_BASE}/api/customers/stats`;
+                const response = await fetch(statsUrl);
+                const result = await response.json();
+                
+                if (result && result.success && result.data) {
+                    // 更新各状态计数
+                    document.getElementById('count-pending').textContent = result.data.pending || 0;
+                    document.getElementById('count-approved').textContent = result.data.approved || 0;
+                    document.getElementById('count-sent').textContent = result.data.sent || 0;
+                }
+            } catch (err) {
+                console.error('加载统计失败:', err);
+            }
+        }
+        
+        // 页面加载时自动加载
+        loadCustomers();
+        loadAllStats();
+        loadAgentList();
+        
+        // 每 30 秒异步更新数据
+        setInterval(async () => {
+            await loadAllStats();
+            await asyncUpdate();
+        }, 30000);
+        
+        // 异步更新（只更新变化的数据，无闪屏）
+        async function asyncUpdate() {
+            try {
+                const response = await fetch(`${API_BASE}/api/customers?status=${currentTab}&page=${currentPage}&page_size=${pageSize}`);
+                const result = await response.json();
+                
+                if (!result || !result.success) return;
+                
+                const newData = result.data || [];
+                const newTotal = result.total || 0;
+                
+                // 检查数据是否有变化
+                const hasChanges = newTotal !== totalCount || 
+                                   newData.length !== currentCustomers.length ||
+                                   JSON.stringify(newData.map(c => c.id || c.record_id)) !== 
+                                   JSON.stringify(currentCustomers.map(c => c.id || c.record_id));
+                
+                if (hasChanges) {
+                    // 有变化才更新
+                    currentCustomers = newData;
+                    totalCount = newTotal;
+                    totalPages = result.total_pages || 1;
+                    renderCustomerList();
+                    updatePagination();
+                    console.log('[异步更新] 数据已更新');
+                }
+            } catch (err) {
+                console.error('[异步更新] 失败:', err);
+            }
+        }
+    </script>
+</body>
+</html>

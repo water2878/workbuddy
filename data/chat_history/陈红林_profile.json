@@ -1,0 +1,70 @@
+{
+  "customer_id": "wxid_nobrq1clmd1m22",
+  "nickname": "陈红林",
+  "first_contact": "2026-04-30",
+  "last_contact": "2026-05-04",
+  "profile": {
+    "customer_type": {
+      "value": "未知",
+      "source": "未知",
+      "confidence": 0
+    },
+    "industry": {
+      "value": "",
+      "source": "未知",
+      "confidence": 0
+    },
+    "business": {
+      "value": "",
+      "source": "未知",
+      "confidence": 0
+    },
+    "demand_type": {
+      "value": "未知",
+      "source": "未知",
+      "confidence": 0
+    },
+    "quantity": {
+      "value": "",
+      "source": "未知",
+      "confidence": 0
+    },
+    "pain_points": {
+      "value": "",
+      "source": "未知",
+      "confidence": 0
+    },
+    "usage_scenario": {
+      "value": "四川",
+      "source": "微信信息",
+      "confidence": 0.5
+    },
+    "budget": {
+      "value": "",
+      "source": "未知",
+      "confidence": 0
+    }
+  },
+  "interactions": [
+    {
+      "date": "2026-04-30",
+      "type": "一般咨询",
+      "content": "意向度: 低\nassistant: [视频通话] 27:29...; assistant: [视频通话] 09:20...; customer: [语音通话] 已在其他设备接听...; assistant: 你打过来...; assistant: [语音通话] 00:21...; assistant: [视频通话] 00:24...",
+      "products_mentioned": [],
+      "intention": "低",
+      "next_action": ""
+    },
+    {
+      "date": "2026-05-04",
+      "type": "一般咨询",
+      "content": "意向度: 低\nassistant: [视频通话] 08:41...; customer: [视频通话] 已在其他设备接听...; assistant: [视频通话] 27:29...; assistant: [视频通话] 09:20...; customer: [语音通话] 已在其他设备接听...; assistant: 你打过来...",
+      "products_mentioned": [],
+      "intention": "低",
+      "next_action": ""
+    }
+  ],
+  "orders": [],
+  "tags": [],
+  "notes": "2026-04-30: 意向度: 低\n2026-05-04: 意向度: 低",
+  "priority": "低"
+}

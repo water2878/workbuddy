@@ -1,0 +1,95 @@
+{
+  "customer_id": "wxid_xxx",
+  "nickname": "客户昵称",
+  "first_contact": "2026-04-29",
+  "last_contact": "2026-04-29",
+  "profile": {
+    "customer_type": {
+      "value": "B端/C端/未知",
+      "source": "客户自述/推断/未知",
+      "confidence": 0.8
+    },
+    "customer_name": {
+      "value": "联系人姓名",
+      "source": "客户自述/推断/未知",
+      "confidence": 0.8
+    },
+    "company": {
+      "value": "公司名称",
+      "source": "客户自述/推断/未知",
+      "confidence": 0.8
+    },
+    "phone": {
+      "value": "手机号",
+      "source": "客户自述/推断/未知",
+      "confidence": 0.8
+    },
+    "email": {
+      "value": "邮箱",
+      "source": "客户自述/推断/未知",
+      "confidence": 0.8
+    },
+    "address": {
+      "value": "地址",
+      "source": "客户自述/推断/未知",
+      "confidence": 0.8
+    },
+    "industry": {
+      "value": "行业名称",
+      "source": "客户自述/推断/未知",
+      "confidence": 0.8
+    },
+    "business": {
+      "value": "业务描述",
+      "source": "客户自述/推断/未知",
+      "confidence": 0.8
+    },
+    "demand_type": {
+      "value": "批发/定制/项目/零售/未知",
+      "source": "客户自述/推断/未知",
+      "confidence": 0.8
+    },
+    "quantity": {
+      "value": "数量",
+      "source": "客户自述/推断/未知",
+      "confidence": 0.8
+    },
+    "pain_points": {
+      "value": "痛点描述",
+      "source": "客户自述/推断/未知",
+      "confidence": 0.8
+    },
+    "usage_scenario": {
+      "value": "使用场景",
+      "source": "客户自述/推断/未知",
+      "confidence": 0.8
+    },
+    "budget": {
+      "value": "预算范围",
+      "source": "客户自述/推断/未知",
+      "confidence": 0.8
+    }
+  },
+  "interactions": [
+    {
+      "date": "2026-04-29",
+      "type": "咨询/询价/下单/售后",
+      "content": "对话摘要",
+      "products_mentioned": ["T412", "F4200"],
+      "intention": "购买意向",
+      "next_action": "待跟进内容"
+    }
+  ],
+  "orders": [
+    {
+      "order_no": "CT2026xxxx",
+      "date": "2026-04-29",
+      "products": ["F4200"],
+      "amount": 680,
+      "status": "已成交/跟进中/已流失"
+    }
+  ],
+  "tags": ["批发客户", "定制需求", "高意向"],
+  "notes": "额外备注",
+  "priority": "高/中/低"
+}

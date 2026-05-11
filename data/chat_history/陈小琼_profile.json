@@ -1,0 +1,70 @@
+{
+  "customer_id": "wxid_howivsve1u9022",
+  "nickname": "陈小琼",
+  "first_contact": "2026-04-30",
+  "last_contact": "2026-05-04",
+  "profile": {
+    "customer_type": {
+      "value": "未知",
+      "source": "未知",
+      "confidence": 0
+    },
+    "industry": {
+      "value": "",
+      "source": "未知",
+      "confidence": 0
+    },
+    "business": {
+      "value": "",
+      "source": "未知",
+      "confidence": 0
+    },
+    "demand_type": {
+      "value": "未知",
+      "source": "未知",
+      "confidence": 0
+    },
+    "quantity": {
+      "value": "",
+      "source": "未知",
+      "confidence": 0
+    },
+    "pain_points": {
+      "value": "",
+      "source": "未知",
+      "confidence": 0
+    },
+    "usage_scenario": {
+      "value": "四川 Kwong",
+      "source": "微信信息",
+      "confidence": 0.5
+    },
+    "budget": {
+      "value": "",
+      "source": "未知",
+      "confidence": 0
+    }
+  },
+  "interactions": [
+    {
+      "date": "2026-04-30",
+      "type": "一般咨询",
+      "content": "意向度: 低\nassistant: [视频通话] 忙线未接听...; assistant: [视频通话] 忙线未接听...; assistant: [视频通话] 忙线未接听...; assistant: [视频通话] 忙线未接听...; assistant: [视频通话] 忙线未接听...; customer: [视频通话] 未应答...",
+      "products_mentioned": [],
+      "intention": "低",
+      "next_action": ""
+    },
+    {
+      "date": "2026-05-04",
+      "type": "一般咨询",
+      "content": "意向度: 低\nassistant: [视频通话] 忙线未接听...; assistant: [视频通话] 忙线未接听...; assistant: [视频通话] 忙线未接听...; assistant: [视频通话] 忙线未接听...; assistant: [视频通话] 忙线未接听...; customer: [视频通话] 未应答...",
+      "products_mentioned": [],
+      "intention": "低",
+      "next_action": ""
+    }
+  ],
+  "orders": [],
+  "tags": [],
+  "notes": "2026-04-30: 意向度: 低\n2026-05-04: 意向度: 低",
+  "priority": "低"
+}

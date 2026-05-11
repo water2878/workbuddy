@@ -1,0 +1,1270 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>畅腾产品资料管理 - 资料员工作台</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            background: #f5f5f5;
+            color: #333;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+        
+        .header p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        
+        .stat-card h3 {
+            font-size: 32px;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+        
+        .stat-card p {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .stat-card.warning h3 {
+            color: #ff6b6b;
+        }
+        
+        .stat-card.success h3 {
+            color: #51cf66;
+        }
+        
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            background: white;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .tab {
+            padding: 10px 20px;
+            border: none;
+            background: #f0f0f0;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        
+        .tab:hover {
+            background: #e0e0e0;
+        }
+        
+        .tab.active {
+            background: #667eea;
+            color: white;
+        }
+        
+        .content {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            padding: 20px;
+            min-height: 400px;
+        }
+        
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 15px;
+        }
+        
+        .product-card {
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 15px;
+            transition: all 0.3s;
+        }
+        
+        .product-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        .product-card.missing {
+            border-color: #ff6b6b;
+            background: #fff5f5;
+        }
+        
+        .product-card.needs-more {
+            border-color: #ffd43b;
+            background: #fffbeb;
+        }
+        
+        .product-card.complete {
+            border-color: #51cf66;
+            background: #f0fff4;
+        }
+        
+        .product-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .product-model {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .product-status {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .status-missing {
+            background: #ff6b6b;
+            color: white;
+        }
+        
+        .status-needs-more {
+            background: #ffd43b;
+            color: #333;
+        }
+        
+        .status-complete {
+            background: #51cf66;
+            color: white;
+        }
+        
+        .product-images {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
+        }
+        
+        .product-image {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+        
+        .upload-btn {
+            width: 100%;
+            padding: 10px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.3s;
+        }
+        
+        .upload-btn:hover {
+            background: #5a67d8;
+        }
+        
+        .upload-area {
+            border: 2px dashed #ddd;
+            border-radius: 8px;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .upload-area:hover {
+            border-color: #667eea;
+            background: #f8f9ff;
+        }
+        
+        .upload-area.dragover {
+            border-color: #667eea;
+            background: #f8f9ff;
+        }
+        
+        .upload-icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .modal-header h2 {
+            font-size: 20px;
+        }
+        
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #999;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+        
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .submit-btn {
+            width: 100%;
+            padding: 12px;
+            background: #51cf66;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .submit-btn:hover {
+            background: #40c057;
+        }
+        
+        .submit-btn:disabled {
+            background: #adb5bd;
+            cursor: not-allowed;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+        
+        .empty {
+            text-align: center;
+            padding: 60px;
+            color: #999;
+        }
+        
+        .empty-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+        
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 500;
+            z-index: 2000;
+            transform: translateX(150%);
+            transition: transform 0.3s;
+        }
+        
+        .toast.show {
+            transform: translateX(0);
+        }
+        
+        .toast.success {
+            background: #51cf66;
+        }
+        
+        .toast.error {
+            background: #ff6b6b;
+        }
+        
+        .filter-bar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .filter-bar input {
+            flex: 1;
+            min-width: 200px;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        
+        .filter-bar select {
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            background: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>📦 畅腾产品资料管理</h1>
+        <p>资料员工作台 - 上传和管理产品图片</p>
+    </div>
+    
+    <div class="container">
+        <div class="stats">
+            <div class="stat-card">
+                <h3 id="stat-total">-</h3>
+                <p>产品总数</p>
+            </div>
+            <div class="stat-card success">
+                <h3 id="stat-complete">-</h3>
+                <p>资料完整</p>
+            </div>
+            <div class="stat-card warning">
+                <h3 id="stat-needs-more">-</h3>
+                <p>需要补充</p>
+            </div>
+            <div class="stat-card warning">
+                <h3 id="stat-missing">-</h3>
+                <p>缺少图片</p>
+            </div>
+        </div>
+        
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('missing')">⚠️ 缺少图片</button>
+            <button class="tab" onclick="switchTab('needs-more')">📸 需要补充</button>
+            <button class="tab" onclick="switchTab('all')">📋 全部产品</button>
+            <button class="tab" onclick="switchTab('knowledge')">📚 知识库</button>
+        </div>
+        
+        <div class="content" id="products-content">
+            <div class="filter-bar">
+                <input type="text" id="search-input" placeholder="🔍 搜索产品型号..." oninput="filterProducts()">
+                <select id="filter-select" onchange="filterProducts()">
+                    <option value="all">全部状态</option>
+                    <option value="missing">缺少图片</option>
+                    <option value="needs-more">需要补充</option>
+                    <option value="complete">资料完整</option>
+                </select>
+            </div>
+            
+            <div id="product-list" class="product-grid">
+                <div class="loading">加载中...</div>
+            </div>
+        </div>
+        
+        <div class="content" id="knowledge-content" style="display: none;">
+            <div class="filter-bar">
+                <input type="text" id="knowledge-search" placeholder="🔍 搜索知识库文件..." oninput="filterKnowledgeFiles()">
+                <button class="upload-btn" onclick="openCreateKnowledgeModal()" style="width: auto; padding: 10px 20px;">➕ 新建文件</button>
+            </div>
+            
+            <div id="knowledge-list">
+                <div class="loading">加载知识库文件...</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 上传模态框 -->
+    <div class="modal" id="upload-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>📤 上传产品图片</h2>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+            
+            <form id="upload-form">
+                <div class="form-group">
+                    <label>产品型号</label>
+                    <input type="text" id="upload-model" readonly>
+                </div>
+                
+                <div class="form-group">
+                    <label>选择图片</label>
+                    <div class="upload-area" id="upload-area" onclick="document.getElementById('file-input').click()">
+                        <div class="upload-icon">📁</div>
+                        <p>点击或拖拽图片到此处</p>
+                        <p style="color: #999; font-size: 12px; margin-top: 5px;">支持 JPG、PNG、GIF 格式</p>
+                    </div>
+                    <input type="file" id="file-input" accept="image/*" style="display: none" onchange="handleFileSelect(event)">
+                    <div id="selected-file" style="margin-top: 10px; color: #667eea;"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label>图片描述（可选）</label>
+                    <input type="text" id="image-desc" placeholder="例如：正面图、侧面图、细节图">
+                </div>
+                
+                <button type="submit" class="submit-btn" id="submit-btn">上传图片</button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- 知识库编辑模态框 -->
+    <div class="modal" id="knowledge-modal">
+        <div class="modal-content" style="max-width: 800px; width: 95%;">
+            <div class="modal-header">
+                <h2>📚 编辑知识库文件</h2>
+                <button class="close-btn" onclick="closeKnowledgeModal()">&times;</button>
+            </div>
+            
+            <div class="form-group">
+                <label>文件名</label>
+                <input type="text" id="knowledge-filename" placeholder="例如：T523_product.md">
+            </div>
+            
+            <div class="form-group">
+                <label>文件内容 (Markdown 格式)</label>
+                <textarea id="knowledge-content-text" rows="20" placeholder="# 产品名称
+
+## 产品参数
+- 型号：
+- 尺寸：
+- 颜色：
+
+## 产品描述
+在这里输入产品详细描述..."></textarea>
+            </div>
+            
+            <div style="display: flex; gap: 10px;">
+                <button class="submit-btn" onclick="saveKnowledgeFile()" style="flex: 1;">💾 保存</button>
+                <button class="submit-btn" onclick="createKnowledgeFile()" style="flex: 1; background: #667eea;">➕ 创建新文件</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 图片管理模态框 -->
+    <div class="modal" id="images-modal">
+        <div class="modal-content" style="max-width: 900px; width: 95%;">
+            <div class="modal-header">
+                <h2>🖼️ 图片管理</h2>
+                <button class="close-btn" onclick="closeImagesModal()">&times;</button>
+            </div>
+            
+            <div class="form-group">
+                <label>产品型号</label>
+                <input type="text" id="images-model" readonly>
+            </div>
+            
+            <div id="images-list" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 15px; margin-bottom: 20px;">
+                <div class="loading">加载图片...</div>
+            </div>
+            
+            <div style="display: flex; gap: 10px;">
+                <button class="upload-btn" onclick="openUploadModalFromImages()" style="flex: 1;">➕ 添加图片</button>
+                <button class="submit-btn" onclick="closeImagesModal()" style="flex: 1; background: #adb5bd;">关闭</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 图片预览模态框 -->
+    <div class="modal" id="preview-modal" style="z-index: 1100;">
+        <div class="modal-content" style="max-width: 90vw; max-height: 90vh; padding: 10px; background: transparent; box-shadow: none;">
+            <div style="position: relative; text-align: center;">
+                <button class="close-btn" onclick="closePreviewModal()" style="position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.5); color: white; border: none; border-radius: 50%; width: 40px; height: 40px; line-height: 40px; font-size: 24px; cursor: pointer; z-index: 10;">&times;</button>
+                <img id="preview-image" src="" style="max-width: 100%; max-height: 80vh; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.3);">
+                <div id="preview-filename" style="color: white; margin-top: 10px; text-shadow: 0 2px 4px rgba(0,0,0,0.5);"></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 确认对话框 -->
+    <div class="modal" id="confirm-modal" style="z-index: 1200;">
+        <div class="modal-content" style="max-width: 400px;">
+            <div class="modal-header">
+                <h2 id="confirm-title">⚠️ 确认操作</h2>
+            </div>
+            <p id="confirm-message" style="margin-bottom: 20px; color: #666;"></p>
+            <div style="display: flex; gap: 10px;">
+                <button class="submit-btn" id="confirm-yes" style="flex: 1; background: #ff6b6b;">确认删除</button>
+                <button class="submit-btn" onclick="closeConfirmModal()" style="flex: 1; background: #adb5bd;">取消</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Toast 提示 -->
+    <div class="toast" id="toast"></div>
+    
+    <script>
+        // 动态获取 API 基础地址（支持本地和远程访问）
+        const API_BASE = window.location.origin;
+        let allProducts = [];
+        let currentTab = 'missing';
+        let selectedFile = null;
+        
+        // 页面加载时获取数据
+        window.onload = function() {
+            loadProducts();
+        };
+        
+        // 加载产品列表
+        async function loadProducts() {
+            try {
+                const response = await fetch(`${API_BASE}/api/materials/products`);
+                const result = await response.json();
+                
+                if (result.success) {
+                    allProducts = result.data.products;
+                    updateStats(result.data);
+                    renderProducts();
+                } else {
+                    showToast('加载失败：' + result.error, 'error');
+                }
+            } catch (error) {
+                showToast('网络错误，请检查服务是否运行', 'error');
+            }
+        }
+        
+        // 更新统计
+        function updateStats(data) {
+            document.getElementById('stat-total').textContent = data.total;
+            document.getElementById('stat-complete').textContent = data.with_images;
+            document.getElementById('stat-missing').textContent = data.without_images;
+            document.getElementById('stat-needs-more').textContent = 
+                allProducts.filter(p => p.image_count > 0 && p.image_count < 3).length;
+        }
+        
+        // 切换标签
+        function switchTab(tab) {
+            currentTab = tab;
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // 切换内容显示
+            if (tab === 'knowledge') {
+                document.getElementById('products-content').style.display = 'none';
+                document.getElementById('knowledge-content').style.display = 'block';
+                loadKnowledgeFiles();
+            } else {
+                document.getElementById('products-content').style.display = 'block';
+                document.getElementById('knowledge-content').style.display = 'none';
+                renderProducts();
+            }
+        }
+        
+        // 渲染产品列表
+        function renderProducts() {
+            const container = document.getElementById('product-list');
+            const searchTerm = document.getElementById('search-input').value.toLowerCase();
+            const filterStatus = document.getElementById('filter-select').value;
+            
+            let filtered = allProducts.filter(p => {
+                // 搜索过滤
+                if (searchTerm && !p.model.toLowerCase().includes(searchTerm)) {
+                    return false;
+                }
+                
+                // 标签过滤
+                if (currentTab === 'missing' && p.has_images) return false;
+                if (currentTab === 'needs-more' && (!p.has_images || p.image_count >= 3)) return false;
+                if (currentTab === 'all' && !p.has_images) return false;
+                
+                // 状态下拉过滤
+                if (filterStatus === 'missing' && p.has_images) return false;
+                if (filterStatus === 'needs-more' && (!p.has_images || p.image_count >= 3)) return false;
+                if (filterStatus === 'complete' && (!p.has_images || p.image_count < 3)) return false;
+                
+                return true;
+            });
+            
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    <div class="empty" style="grid-column: 1 / -1;">
+                        <div class="empty-icon">📭</div>
+                        <p>暂无符合条件的产品</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = filtered.map(p => {
+                let statusClass, statusText, cardClass;
+                if (!p.has_images) {
+                    statusClass = 'status-missing';
+                    statusText = '缺少图片';
+                    cardClass = 'missing';
+                } else if (p.image_count < 3) {
+                    statusClass = 'status-needs-more';
+                    statusText = `需补充 (${p.image_count}张)`;
+                    cardClass = 'needs-more';
+                } else {
+                    statusClass = 'status-complete';
+                    statusText = '资料完整';
+                    cardClass = 'complete';
+                }
+                
+                const imagesHtml = p.images.map(img => 
+                    `<img src="${API_BASE}/api/images/serve?path=${encodeURIComponent(img)}" class="product-image" alt="">`
+                ).join('');
+                
+                return `
+                    <div class="product-card ${cardClass}">
+                        <div class="product-header">
+                            <span class="product-model">${p.model}</span>
+                            <span class="product-status ${statusClass}">${statusText}</span>
+                        </div>
+                        <div class="product-images">
+                            ${imagesHtml || '<span style="color: #999; font-size: 12px;">暂无图片</span>'}
+                        </div>
+                        <div style="display: flex; gap: 10px;">
+                            <button class="upload-btn" onclick="openUploadModal('${p.model}')" style="flex: 1;">
+                                ${p.has_images ? '➕ 继续上传' : '📤 上传图片'}
+                            </button>
+                            <button class="upload-btn" onclick="openImagesModal('${p.model}')" style="flex: 1; background: #40c057;">
+                                🖼️ 管理图片
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        // 过滤产品
+        function filterProducts() {
+            renderProducts();
+        }
+        
+        // 打开上传模态框
+        function openUploadModal(model) {
+            document.getElementById('upload-model').value = model;
+            document.getElementById('upload-modal').classList.add('active');
+            selectedFile = null;
+            document.getElementById('selected-file').textContent = '';
+            document.getElementById('image-desc').value = '';
+        }
+        
+        // 关闭模态框
+        function closeModal() {
+            document.getElementById('upload-modal').classList.remove('active');
+        }
+        
+        // 处理文件选择
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (file) {
+                selectedFile = file;
+                document.getElementById('selected-file').textContent = `已选择: ${file.name}`;
+            }
+        }
+        
+        // 处理表单提交
+        document.getElementById('upload-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            if (!selectedFile) {
+                showToast('请先选择图片', 'error');
+                return;
+            }
+            
+            const model = document.getElementById('upload-model').value;
+            const description = document.getElementById('image-desc').value;
+            const submitBtn = document.getElementById('submit-btn');
+            
+            // 验证文件对象
+            if (!(selectedFile instanceof File)) {
+                showToast('文件选择有误，请重新选择', 'error');
+                return;
+            }
+            
+            const formData = new FormData();
+            formData.append('model', model);
+            formData.append('image', selectedFile, selectedFile.name);
+            formData.append('description', description);
+            
+            submitBtn.disabled = true;
+            submitBtn.textContent = '上传中...';
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/materials/upload`, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showToast('✅ 图片上传成功！', 'success');
+                    closeModal();
+                    loadProducts(); // 刷新列表
+                } else {
+                    showToast('❌ ' + result.error, 'error');
+                }
+            } catch (error) {
+                showToast('❌ 上传失败：' + error.message, 'error');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = '上传图片';
+            }
+        });
+        
+        // 拖拽上传
+        const uploadArea = document.getElementById('upload-area');
+        
+        uploadArea.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            this.classList.add('dragover');
+        });
+        
+        uploadArea.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            this.classList.remove('dragover');
+        });
+        
+        uploadArea.addEventListener('drop', function(e) {
+            e.preventDefault();
+            this.classList.remove('dragover');
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                selectedFile = files[0];
+                document.getElementById('selected-file').textContent = `已选择: ${selectedFile.name}`;
+            }
+        });
+        
+        // 显示提示
+        function showToast(message, type) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = `toast ${type} show`;
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+        
+        // 点击模态框外部关闭
+        document.getElementById('upload-modal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+        
+        // ═══════════════════════════════════════════════════════
+        // 图片管理功能（增删改查 + 二次确认）
+        // ═══════════════════════════════════════════════════════
+        
+        let currentImagesModel = null;
+        let currentImages = [];
+        let confirmCallback = null;
+        
+        // 打开图片管理模态框
+        async function openImagesModal(model) {
+            currentImagesModel = model;
+            document.getElementById('images-model').value = model;
+            document.getElementById('images-modal').classList.add('active');
+            await loadProductImages(model);
+        }
+        
+        // 关闭图片管理模态框
+        function closeImagesModal() {
+            document.getElementById('images-modal').classList.remove('active');
+            currentImagesModel = null;
+            currentImages = [];
+        }
+        
+        // 加载产品图片列表
+        async function loadProductImages(model) {
+            const container = document.getElementById('images-list');
+            container.innerHTML = '<div class="loading">加载图片...</div>';
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/materials/products/${encodeURIComponent(model)}/images`);
+                const result = await response.json();
+                
+                if (result.success) {
+                    currentImages = result.data.images;
+                    renderImagesList();
+                } else {
+                    container.innerHTML = `<div class="empty">加载失败: ${result.error}</div>`;
+                }
+            } catch (error) {
+                container.innerHTML = `<div class="empty">网络错误: ${error.message}</div>`;
+            }
+        }
+        
+        // 渲染图片列表
+        function renderImagesList() {
+            const container = document.getElementById('images-list');
+            
+            if (currentImages.length === 0) {
+                container.innerHTML = `
+                    <div class="empty" style="grid-column: 1 / -1;">
+                        <div class="empty-icon">🖼️</div>
+                        <p>暂无图片</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = currentImages.map((img, index) => {
+                // 对路径进行编码，避免 Windows 反斜杠导致的转义问题
+                const encodedPath = encodeURIComponent(img.path);
+                const encodedFilename = encodeURIComponent(img.filename);
+                return `
+                <div style="border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden; background: white;">
+                    <div style="position: relative; padding-top: 100%; background: #f5f5f5; cursor: pointer;" onclick="previewImage('${encodedPath}', '${encodedFilename}')">
+                        <img src="${API_BASE}/api/images/serve?path=${encodedPath}" 
+                             style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;"
+                             onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22><text x=%2250%22 y=%2250%22 text-anchor=%22middle%22>无法加载</text></svg>'">
+                    </div>
+                    <div style="padding: 10px;">
+                        <div style="font-size: 12px; color: #666; margin-bottom: 5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${img.filename}">
+                            ${img.filename}
+                        </div>
+                        <div style="font-size: 11px; color: #999; margin-bottom: 10px;">
+                            ${formatFileSize(img.size)} · ${img.modified}
+                        </div>
+                        <div style="display: flex; gap: 5px;">
+                            <button class="btn-preview" data-path="${encodedPath}" data-filename="${encodedFilename}" style="flex: 1; padding: 6px; font-size: 12px; background: #667eea; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                                👁️ 预览
+                            </button>
+                            <button class="btn-delete" data-path="${encodedPath}" data-filename="${encodedFilename}" style="flex: 1; padding: 6px; font-size: 12px; background: #ff6b6b; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                                🗑️ 删除
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `}).join('');
+        }
+        
+        // 预览图片
+        function previewImage(encodedPath, encodedFilename) {
+            // 解码参数
+            const path = decodeURIComponent(encodedPath);
+            const filename = decodeURIComponent(encodedFilename);
+            document.getElementById('preview-image').src = `${API_BASE}/api/images/serve?path=${encodeURIComponent(path)}`;
+            document.getElementById('preview-filename').textContent = filename;
+            document.getElementById('preview-modal').classList.add('active');
+        }
+        
+        // 关闭预览
+        function closePreviewModal() {
+            document.getElementById('preview-modal').classList.remove('active');
+            document.getElementById('preview-image').src = '';
+        }
+        
+        // 通用确认对话框
+        function showConfirm(title, message, onConfirm) {
+            const modal = document.getElementById('confirm-modal');
+            const yesBtn = document.getElementById('confirm-yes');
+            
+            document.getElementById('confirm-title').textContent = title;
+            document.getElementById('confirm-message').textContent = message;
+            
+            // 显示对话框
+            modal.style.display = 'flex';
+            modal.classList.add('active');
+            
+            // 移除旧的事件监听器（如果有）
+            const newYesBtn = yesBtn.cloneNode(true);
+            yesBtn.parentNode.replaceChild(newYesBtn, yesBtn);
+            
+            // 绑定新的事件监听器
+            newYesBtn.addEventListener('click', function() {
+                closeConfirmModal();
+                if (onConfirm) onConfirm();
+            });
+        }
+        
+        // 关闭确认对话框
+        function closeConfirmModal() {
+            const modal = document.getElementById('confirm-modal');
+            modal.classList.remove('active');
+            modal.style.display = 'none';
+        }
+        
+        // 确认删除图片（带二次确认）
+        function confirmDeleteImage(encodedPath, encodedFilename) {
+            // 解码参数用于显示
+            const filename = decodeURIComponent(encodedFilename);
+            
+            // 使用自定义确认对话框
+            showConfirm(
+                '⚠️ 确认删除图片',
+                `确定要删除图片 "${filename}" 吗？\n删除后可以在回收站找回。`,
+                () => deleteImage(encodedPath, encodedFilename)
+            );
+        }
+        
+        // 删除图片
+        async function deleteImage(encodedPath, encodedFilename) {
+            try {
+                // 解码路径
+                const imagePath = decodeURIComponent(encodedPath);
+                const filename = decodeURIComponent(encodedFilename);
+                // 从路径中提取相对路径（处理 Windows 反斜杠）
+                const relativePath = imagePath.split(/[\\/]/).pop();
+                
+                console.log('删除图片调试:');
+                console.log('  imagePath:', imagePath);
+                console.log('  relativePath:', relativePath);
+                console.log('  model:', currentImagesModel);
+                
+                const url = `${API_BASE}/api/materials/products/${encodeURIComponent(currentImagesModel)}/images/${encodeURIComponent(relativePath)}`;
+                console.log('  request URL:', url);
+                
+                const response = await fetch(url, {
+                    method: 'DELETE'
+                });
+                
+                console.log('  response status:', response.status);
+                
+                const result = await response.json();
+                console.log('  response:', result);
+                
+                if (result.success) {
+                    showToast('✅ 图片已删除！', 'success');
+                    // 从当前列表中移除
+                    currentImages = currentImages.filter(img => img.path !== imagePath);
+                    renderImagesList();
+                    // 刷新产品列表
+                    loadProducts();
+                } else {
+                    showToast('❌ 删除失败: ' + result.error, 'error');
+                }
+            } catch (error) {
+                console.error('删除错误:', error);
+                showToast('❌ 网络错误: ' + error.message, 'error');
+            }
+        }
+        
+        // 从图片管理打开上传
+        function openUploadModalFromImages() {
+            const model = currentImagesModel; // 先保存型号
+            closeImagesModal();
+            openUploadModal(model);
+        }
+        
+        // 事件委托：预览和删除按钮
+        document.getElementById('images-list').addEventListener('click', function(e) {
+            const btn = e.target.closest('button');
+            if (!btn) return;
+            
+            if (btn.classList.contains('btn-preview')) {
+                const path = btn.getAttribute('data-path');
+                const filename = btn.getAttribute('data-filename');
+                previewImage(path, filename);
+            } else if (btn.classList.contains('btn-delete')) {
+                const path = btn.getAttribute('data-path');
+                const filename = btn.getAttribute('data-filename');
+                confirmDeleteImage(path, filename);
+            }
+        });
+        
+        // 点击预览模态框外部关闭
+        document.getElementById('preview-modal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closePreviewModal();
+            }
+        });
+        
+        // 点击确认模态框外部不关闭（防止误操作）
+        document.getElementById('confirm-modal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                // 不自动关闭，必须点击按钮
+            }
+        });
+        
+        // ═══════════════════════════════════════════════════════
+        // 知识库管理功能
+        // ═══════════════════════════════════════════════════════
+        
+        let knowledgeFiles = [];
+        let currentEditingFile = null;
+        
+        // 加载知识库文件列表
+        async function loadKnowledgeFiles() {
+            const container = document.getElementById('knowledge-list');
+            container.innerHTML = '<div class="loading">加载知识库文件...</div>';
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/materials/knowledge/files`);
+                const result = await response.json();
+                
+                if (result.success) {
+                    knowledgeFiles = result.data.files;
+                    renderKnowledgeFiles();
+                } else {
+                    container.innerHTML = `<div class="empty">加载失败: ${result.error}</div>`;
+                }
+            } catch (error) {
+                container.innerHTML = `<div class="empty">网络错误: ${error.message}</div>`;
+            }
+        }
+        
+        // 渲染知识库文件列表
+        function renderKnowledgeFiles() {
+            const container = document.getElementById('knowledge-list');
+            const searchTerm = document.getElementById('knowledge-search').value.toLowerCase();
+            
+            let filtered = knowledgeFiles.filter(f => 
+                f.filename.toLowerCase().includes(searchTerm)
+            );
+            
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    <div class="empty" style="grid-column: 1 / -1;">
+                        <div class="empty-icon">📭</div>
+                        <p>暂无知识库文件</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = `
+                <div class="product-grid">
+                    ${filtered.map(f => `
+                        <div class="product-card ${f.is_main ? 'complete' : ''}">
+                            <div class="product-header">
+                                <span class="product-model">${f.filename}</span>
+                                <span class="product-status ${f.is_main ? 'status-complete' : 'status-needs-more'}">
+                                    ${f.is_main ? '主知识库' : formatFileSize(f.size)}
+                                </span>
+                            </div>
+                            <div style="color: #666; font-size: 12px; margin-bottom: 10px;">
+                                修改时间: ${f.modified}
+                            </div>
+                            <div style="display: flex; gap: 10px;">
+                                <button class="upload-btn" onclick="editKnowledgeFile('${f.filename}')" style="flex: 1;">
+                                    ✏️ 编辑
+                                </button>
+                                ${!f.is_main ? `
+                                    <button class="upload-btn" onclick="deleteKnowledgeFile('${f.filename}')" style="flex: 1; background: #ff6b6b;">
+                                        🗑️ 删除
+                                    </button>
+                                ` : ''}
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+        
+        // 格式化文件大小
+        function formatFileSize(bytes) {
+            if (bytes < 1024) return bytes + ' B';
+            if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+            return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+        }
+        
+        // 过滤知识库文件
+        function filterKnowledgeFiles() {
+            renderKnowledgeFiles();
+        }
+        
+        // 编辑知识库文件
+        async function editKnowledgeFile(filename) {
+            currentEditingFile = filename;
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/materials/knowledge/files/${encodeURIComponent(filename)}`);
+                const result = await response.json();
+                
+                if (result.success) {
+                    document.getElementById('knowledge-filename').value = result.data.filename;
+                    document.getElementById('knowledge-content-text').value = result.data.content;
+                    document.getElementById('knowledge-modal').classList.add('active');
+                } else {
+                    showToast('加载失败: ' + result.error, 'error');
+                }
+            } catch (error) {
+                showToast('网络错误: ' + error.message, 'error');
+            }
+        }
+        
+        // 保存知识库文件
+        async function saveKnowledgeFile() {
+            const filename = document.getElementById('knowledge-filename').value;
+            const content = document.getElementById('knowledge-content-text').value;
+            
+            if (!filename) {
+                showToast('文件名不能为空', 'error');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/materials/knowledge/files/${encodeURIComponent(filename)}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ content })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showToast('保存成功！', 'success');
+                    closeKnowledgeModal();
+                    loadKnowledgeFiles();
+                } else {
+                    showToast('保存失败: ' + result.error, 'error');
+                }
+            } catch (error) {
+                showToast('网络错误: ' + error.message, 'error');
+            }
+        }
+        
+        // 删除知识库文件（带二次确认）
+        function deleteKnowledgeFile(filename) {
+            showConfirm(
+                '⚠️ 确认删除文件',
+                `确定要删除知识库文件 "${filename}" 吗？\n删除后可以在回收站找回。`,
+                async () => {
+                    try {
+                        const response = await fetch(`${API_BASE}/api/materials/knowledge/files/${encodeURIComponent(filename)}`, {
+                            method: 'DELETE'
+                        });
+                        
+                        const result = await response.json();
+                        
+                        if (result.success) {
+                            showToast('✅ 删除成功！', 'success');
+                            loadKnowledgeFiles();
+                        } else {
+                            showToast('❌ 删除失败: ' + result.error, 'error');
+                        }
+                    } catch (error) {
+                        showToast('❌ 网络错误: ' + error.message, 'error');
+                    }
+                }
+            );
+        }
+        
+        // 打开新建文件模态框
+        function openCreateKnowledgeModal() {
+            currentEditingFile = null;
+            document.getElementById('knowledge-filename').value = '';
+            document.getElementById('knowledge-content-text').value = '';
+            document.getElementById('knowledge-modal').classList.add('active');
+        }
+        
+        // 关闭知识库编辑模态框
+        function closeKnowledgeModal() {
+            document.getElementById('knowledge-modal').classList.remove('active');
+        }
+        
+        // 创建新文件
+        async function createKnowledgeFile() {
+            const filename = document.getElementById('knowledge-filename').value;
+            const content = document.getElementById('knowledge-content-text').value;
+            
+            if (!filename) {
+                showToast('文件名不能为空', 'error');
+                return;
+            }
+            
+            if (!filename.endsWith('.md')) {
+                showToast('文件名必须以 .md 结尾', 'error');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/materials/knowledge/files`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ filename, content })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showToast('创建成功！', 'success');
+                    closeKnowledgeModal();
+                    loadKnowledgeFiles();
+                } else {
+                    showToast('创建失败: ' + result.error, 'error');
+                }
+            } catch (error) {
+                showToast('网络错误: ' + error.message, 'error');
+            }
+        }
+    </script>
+</body>
+</html>

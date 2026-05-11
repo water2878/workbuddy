@@ -1,0 +1,70 @@
+{
+  "customer_id": "wxid_bg285156vg5a22",
+  "nickname": "A智能升降桌李生15015790609",
+  "first_contact": "2026-04-30",
+  "last_contact": "2026-05-04",
+  "profile": {
+    "customer_type": {
+      "value": "B端（同行/工厂）",
+      "source": "对话分析",
+      "confidence": 0.7
+    },
+    "industry": {
+      "value": "",
+      "source": "未知",
+      "confidence": 0
+    },
+    "business": {
+      "value": "",
+      "source": "未知",
+      "confidence": 0
+    },
+    "demand_type": {
+      "value": "定制",
+      "source": "对话分析",
+      "confidence": 0.7
+    },
+    "quantity": {
+      "value": "",
+      "source": "未知",
+      "confidence": 0
+    },
+    "pain_points": {
+      "value": "",
+      "source": "未知",
+      "confidence": 0
+    },
+    "usage_scenario": {
+      "value": "佛山",
+      "source": "对话分析",
+      "confidence": 0.7
+    },
+    "budget": {
+      "value": "",
+      "source": "未知",
+      "confidence": 0
+    }
+  },
+  "interactions": [
+    {
+      "date": "2026-04-30",
+      "type": "定制需求",
+      "content": "地址: 佛山 | 意向度: 低 | 客户类型: B端（同行/工厂）\ncustomer: 我做电动升降桌，佛山工厂，单电机双电机三电机都有，可以配套升降桌腿。有量可以谈工程价。...; customer: 你这是屏风办公位，我们畅腾是做电动升降桌的，就是这种可以站着办公的桌子。需要升降桌的话可以找我。...; assistant: 刚是系统测试。你有客户需要报价？要什么型号、多少台？...; customer: 可以做。升降桌吗？要多少量？...; customer: 图片没加载出来，麻烦再发一次？或者直接说是什么产品，要多少数量，我好报个实价。...; customer: 可以做。什么产品？要多少量？升降桌的话我们畅腾是源头工厂。...",
+      "products_mentioned": [],
+      "intention": "低",
+      "next_action": ""
+    },
+    {
+      "date": "2026-05-04",
+      "type": "定制需求",
+      "content": "地址: 佛山 | 意向度: 低 | 客户类型: B端（同行/工厂）\ncustomer: 我做电动升降桌，佛山工厂，单电机双电机三电机都有，可以配套升降桌腿。有量可以谈工程价。...; customer: 你这是屏风办公位，我们畅腾是做电动升降桌的，就是这种可以站着办公的桌子。需要升降桌的话可以找我。...; assistant: 刚是系统测试。你有客户需要报价？要什么型号、多少台？...; customer: 可以做。升降桌吗？要多少量？...; customer: 图片没加载出来，麻烦再发一次？或者直接说是什么产品，要多少数量，我好报个实价。...; customer: 可以做。什么产品？要多少量？升降桌的话我们畅腾是源头工厂。...",
+      "products_mentioned": [],
+      "intention": "低",
+      "next_action": ""
+    }
+  ],
+  "orders": [],
+  "tags": [],
+  "notes": "2026-04-30: 地址: 佛山 | 意向度: 低 | 客户类型: B端（同行/工厂）\n2026-05-04: 地址: 佛山 | 意向度: 低 | 客户类型: B端（同行/工厂）",
+  "priority": "低"
+}

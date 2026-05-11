@@ -1,0 +1,62 @@
+{
+  "customer_id": "qqwanggou001",
+  "nickname": "京东购物",
+  "first_contact": "2026-04-30",
+  "last_contact": "2026-05-04",
+  "profile": {
+    "customer_type": {
+      "value": "C端（个人用户）",
+      "source": "对话分析",
+      "confidence": 0.7
+    },
+    "industry": {
+      "value": "",
+      "source": "未知",
+      "confidence": 0
+    },
+    "business": {
+      "value": "",
+      "source": "未知",
+      "confidence": 0
+    },
+    "demand_type": {
+      "value": "未知",
+      "source": "未知",
+      "confidence": 0
+    },
+    "quantity": {
+      "value": "",
+      "source": "未知",
+      "confidence": 0
+    },
+    "pain_points": {
+      "value": "",
+      "source": "未知",
+      "confidence": 0
+    },
+    "usage_scenario": {
+      "value": "国补立省",
+      "source": "对话分析",
+      "confidence": 0.7
+    },
+    "budget": {
+      "value": "",
+      "source": "未知",
+      "confidence": 0
+    }
+  },
+  "interactions": [
+    {
+      "date": "2026-04-30",
+      "type": "一般咨询",
+      "content": "地址: 国补立省 | 意向度: 超高 | 客户类型: C端（个人用户）\ncustomer: [视频号] <a class=\"weapp_text_link\" data-miniprogram-...; customer: [视频号] AI点外卖，奶茶低至1分钱！...; customer: [视频号] <a class=\"weapp_text_link\" data-miniprogram-...; customer: [视频号] <a class=\"weapp_text_link\" data-miniprogram-...; customer: [视频号] <a class=\"weapp_text_link\" data-miniprogram-...; customer: [视频号] <a class=\"weapp_text_link\" data-miniprogram-...",
+      "products_mentioned": [],
+      "intention": "超高",
+      "next_action": ""
+    }
+  ],
+  "orders": [],
+  "tags": [],
+  "notes": "微信号: JD\n2026-04-30: 地址: 国补立省 | 意向度: 超高 | 客户类型: C端（个人用户）",
+  "priority": "超高"
+}

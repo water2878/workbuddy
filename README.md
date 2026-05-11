@@ -1,195 +1,84 @@
-# 微信自动化发送工具
+# Claw — AI 驱动的微信客服工具集
 
-一个简单易用的微信消息自动化发送工具，支持文字消息（分段发送）和图片发送。
+## 架构
 
-## 功能特性
+```
+客户消息 → WeFlow SSE → PowerShell桥接 → WorkBuddy(AI大脑)
+                                              ↓ 决策
+API调用 → Python工具服务(手脚) → WeChat UI → 客户
+```
 
-- ✅ **文字消息发送** - 支持单条和分段发送
-- ✅ **图片发送** - 支持图片+文字说明
-- ✅ **图片生成** - 自动生成格式化的消息图片
-- ✅ **稳定可靠** - 点击任务栏图标激活微信
+**核心理念**：AI 做大脑决策，Python 只做手脚执行。
 
-## 安装
+## 模块说明
 
-### 1. 克隆或下载本项目
+| 模块 | 职责 | 端口 |
+|------|------|------|
+| `core/app.py` | Flask API 服务器（AI 调用入口） | 5032 |
+| `core/config.py` | 统一配置 | - |
+| `core/weflow_client.py` | WeFlow API 客户端 | - |
+| `core/product_service.py` | 产品图片查找、选图、发图记录 | - |
+| `core/customer_service.py` | 客户记忆 CRUD | - |
+| `sender/wechat_sender.py` | WeChat UI 自动化发送 | - |
+| `sender/image_generator.py` | 长文转图片 | - |
+| `contract/` | 合同生成系统（从旧项目迁移） | - |
+| `weflow-wb-bridge.ps1` | WeFlow → WorkBuddy 消息桥接 | - |
+
+## API 接口
+
+### 消息发送
+- `POST /api/send/text` — 发送文字 `{"contact":"名字","message":"内容"}`
+- `POST /api/send/image` — 发送图片 `{"contact":"名字","image_path":"路径"}` 或 `{"model":"型号"}`
+- `POST /api/send/file` — 发送文件
+- `POST /api/send-product-image` — 一键发产品图 `{"contact":"名字","model":"型号"}`
+
+### 产品
+- `GET /api/products` — 列出所有产品
+- `GET /api/products/search?q=T523` — 搜索产品
+- `GET /api/products/{model}/images` — 获取产品图片
+- `GET /api/products/{model}/pick-image` — 选最佳图片
+- `GET /api/products/knowledge` — 产品知识库文本
+
+### 聊天记录
+- `GET /api/chat-history/{session_id}` — 获取聊天记录
+- `GET /api/contacts` — 联系人列表
+- `GET /api/sessions` — 会话列表
+
+### 客户记忆
+- `GET /api/customers` — 列出客户
+- `GET /api/customers/{id}` — 获取客户信息
+- `POST /api/customers/{id}` — 保存客户信息
+- `POST /api/customers/{id}/notes` — 更新备注
+- `POST /api/customers/{id}/order` — 添加订单
+
+### 合同
+- `POST /api/contracts/generate` — 生成合同
+- `GET /api/contracts` — 列出合同
+
+### 图片
+- `POST /api/text-to-image` — 文字转图片
+- `GET /api/images/serve?path=xxx` — 提供图片文件
+
+## 启动
 
 ```bash
-git clone <项目地址>
-cd wechat-automation
+# 1. 启动工具 API 服务器
+python core/app.py
+
+# 2. 启动 WeFlow 桥接（已独立运行）
+# start-wb-bridge.bat
 ```
 
-### 2. 安装依赖
+## 与旧项目的区别
 
-```bash
-pip install -r requirements.txt
-```
-
-### 3. 配置坐标
-
-根据你的屏幕分辨率，编辑 `config.py` 中的坐标：
-
-```python
-# 微信任务栏图标位置（右下角）
-WECHAT_ICON = (1850, 1050)
-
-# 聊天输入框位置
-INPUT_BOX = (1437, 963)
-```
-
-**如何获取坐标？**
-- 运行 `python get_coord.py`
-- 将鼠标移到微信任务栏图标位置，记录坐标
-- 将鼠标移到聊天输入框位置，记录坐标
-
-## 快速开始
-
-### 发送文字消息
-
-```python
-from wechat_sender import send_text, send_text_segments
-
-# 发送单条消息
-send_text("李昊", "你好，这是测试消息")
-
-# 分段发送（推荐用于长消息）
-messages = [
-    "【项目汇报】",
-    "",
-    "一、今日完成",
-    "• 功能A开发完成",
-    "• 功能B测试通过",
-    "",
-    "二、明日计划",
-    "• 继续优化性能"
-]
-send_text_segments("尹国锋", messages)
-```
-
-### 发送图片
-
-```python
-from wechat_sender import send_image
-
-# 发送图片（带文字说明）
-send_image("李昊", "screenshot.png", "这是截图说明")
-
-# 仅发送图片
-send_image("李昊", "screenshot.png")
-```
-
-### 生成并发送图片消息
-
-```python
-from image_generator import create_schedule_image
-from wechat_sender import send_image
-
-# 创建项目安排图片
-days = [
-    ("周一", ["任务1", "任务2"]),
-    ("周二", ["任务3", "任务4"])
-]
-milestones = ["周三完成", "周四交付"]
-
-image_path = create_schedule_image(
-    title="项目时间安排",
-    period="周一到周四",
-    goal="完成项目开发",
-    days=days,
-    milestones=milestones
-)
-
-# 发送图片
-send_image("尹国锋", image_path, "请查看项目安排")
-```
-
-## 完整示例
-
-见 `examples/` 目录：
-- `send_text_example.py` - 文字消息示例
-- `send_image_example.py` - 图片消息示例
-- `generate_schedule_example.py` - 生成项目安排图片示例
-
-## 注意事项
-
-1. **微信必须登录** - 确保微信PC版已登录
-2. **微信窗口可见** - 微信可以最小化，但必须在任务栏
-3. **坐标配置** - 首次使用需要根据屏幕分辨率配置坐标
-4. **发送延迟** - 为避免被检测为机器人，发送有适当延迟
-
-## 文件结构
-
-```
-wechat-automation/
-├── README.md              # 本文件
-├── requirements.txt       # 依赖列表
-├── config.py             # 坐标配置
-├── wechat_sender.py      # 消息发送模块
-├── image_generator.py    # 图片生成模块
-├── get_coord.py          # 坐标获取工具
-├── examples/             # 示例代码
-│   ├── send_text_example.py
-│   ├── send_image_example.py
-│   └── generate_schedule_example.py
-└── SKILL.md              # 技能文档（内部使用）
-```
-
-## 依赖
-
-- Python 3.8+
-- pyautogui
-- pyperclip
-- pywinauto
-- Pillow
-- rapidocr_onnxruntime（可选，用于OCR）
-
-## ⚠️ 重要说明
-
-### 激活方式差异（关键！）
-
-**单条消息发送**（如 `send_text("李昊", "消息")`）
-- 每次都会点击任务栏图标激活微信
-- 适合独立操作，确保微信窗口正确激活
-
-**批量发送不同消息**（连续给不同人发不同内容）
-- 第一次：点击任务栏激活
-- 后续：使用Ctrl+F搜索新联系人（保持窗口激活）
-- 避免重复点击任务栏打断当前聊天
-
-```python
-# 批量发送示例
-from wechat_sender import activate_wechat, send_text
-
-# 第一次：激活微信
-activate_wechat()
-
-# 给A发送（保持激活状态）
-send_text("李昊", "消息A")
-
-# 给B发送（直接搜索，不重新激活）
-send_text("尹国锋", "消息B")
-```
-
-### 鲁棒性说明
-
-⚠️ **当前版本的限制**：
-
-1. **坐标依赖**：需要根据屏幕分辨率配置坐标
-2. **微信位置**：微信必须在任务栏固定位置
-3. **单显示器**：暂不支持多显示器环境
-4. **分辨率**：推荐1920x1080分辨率
-
-**换设备后需要**：
-1. 重新运行 `python get_coord.py` 获取坐标
-2. 更新 `config.py` 中的坐标配置
-3. 测试发送功能是否正常
-
-### 使用建议
-
-- 首次使用前务必配置坐标
-- 建议先给测试对象发消息验证
-- 批量发送时建议添加适当延迟
-- 遇到问题检查微信窗口是否被其他窗口遮挡
-
-## 许可证
-
-MIT License
+| 功能 | 旧架构 | 新架构 |
+|------|--------|--------|
+| LLM 调用 | Python 调 Moonshot | ❌ AI 直接处理 |
+| 自动回复决策 | Python 代码判断 | ❌ AI 决策 |
+| 上下文管理 | context_manager.py | ❌ AI 管理 |
+| Vision 索引 | 自动建索引 | ❌ AI 自己看图 |
+| 语音识别 | sherpa 批量转写 | ❌ AI 处理 |
+| 消息发送 | ✅ 保留 | ✅ 保留 |
+| 产品图片 | ✅ 保留 | ✅ 保留 |
+| 合同生成 | ✅ 保留 | ✅ 保留 |
+| 客户记忆 | 向量数据库 | ✅ JSON 简化版 |

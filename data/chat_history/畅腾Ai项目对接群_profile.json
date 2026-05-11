@@ -1,0 +1,62 @@
+{
+  "customer_id": "",
+  "nickname": "畅腾Ai项目对接群",
+  "first_contact": "2026-05-04",
+  "last_contact": "2026-05-04",
+  "profile": {
+    "customer_type": {
+      "value": "未知",
+      "source": "未知",
+      "confidence": 0
+    },
+    "industry": {
+      "value": "",
+      "source": "未知",
+      "confidence": 0
+    },
+    "business": {
+      "value": "",
+      "source": "未知",
+      "confidence": 0
+    },
+    "demand_type": {
+      "value": "未知",
+      "source": "未知",
+      "confidence": 0
+    },
+    "quantity": {
+      "value": "",
+      "source": "未知",
+      "confidence": 0
+    },
+    "pain_points": {
+      "value": "",
+      "source": "未知",
+      "confidence": 0
+    },
+    "usage_scenario": {
+      "value": "",
+      "source": "未知",
+      "confidence": 0
+    },
+    "budget": {
+      "value": "",
+      "source": "未知",
+      "confidence": 0
+    }
+  },
+  "interactions": [
+    {
+      "date": "2026-05-04",
+      "type": "客服回复",
+      "content": "@淡定哥-畅腾商用升降桌黎建定 初步评估：\n\n向量数据库：50-100GB（存对话记忆、客户画像）\n文件存储：100-200GB（合同PDF、产品图、日志）\n系统/备份：50GB\n\n建议起步 300G...",
+      "products_mentioned": [],
+      "intention": "已回复客户",
+      "next_action": "等待客户回复"
+    }
+  ],
+  "orders": [],
+  "tags": [],
+  "notes": "",
+  "priority": "中"
+}

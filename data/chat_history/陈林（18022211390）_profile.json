@@ -1,0 +1,70 @@
+{
+  "customer_id": "chenlin2055",
+  "nickname": "陈林（18022211390）",
+  "first_contact": "2026-04-30",
+  "last_contact": "2026-05-04",
+  "profile": {
+    "customer_type": {
+      "value": "未知",
+      "source": "未知",
+      "confidence": 0
+    },
+    "industry": {
+      "value": "",
+      "source": "未知",
+      "confidence": 0
+    },
+    "business": {
+      "value": "",
+      "source": "未知",
+      "confidence": 0
+    },
+    "demand_type": {
+      "value": "未知",
+      "source": "未知",
+      "confidence": 0
+    },
+    "quantity": {
+      "value": "",
+      "source": "未知",
+      "confidence": 0
+    },
+    "pain_points": {
+      "value": "",
+      "source": "未知",
+      "confidence": 0
+    },
+    "usage_scenario": {
+      "value": "能否帮助品牌在存量市",
+      "source": "对话分析",
+      "confidence": 0.7
+    },
+    "budget": {
+      "value": "",
+      "source": "未知",
+      "confidence": 0
+    }
+  },
+  "interactions": [
+    {
+      "date": "2026-04-30",
+      "type": "一般咨询",
+      "content": "意向度: 低\ncustomer: [图片]...; customer: 好...; assistant: 这种...; assistant: [图片]...; customer: 你撤回了一条消息...; customer: [语音消息]...",
+      "products_mentioned": [],
+      "intention": "低",
+      "next_action": ""
+    },
+    {
+      "date": "2026-05-04",
+      "type": "一般咨询",
+      "content": "地址: 能否帮助品牌在存量市 | 意向度: 低\nassistant: OK...; customer: 取快递...; customer: [图片]...; assistant: 刚刚在路上...; assistant: 回来了...; customer: 回来了没？...",
+      "products_mentioned": [],
+      "intention": "低",
+      "next_action": ""
+    }
+  ],
+  "orders": [],
+  "tags": [],
+  "notes": "微信号: Mumu11390\n2026-04-30: 意向度: 低\n2026-05-04: 地址: 能否帮助品牌在存量市 | 意向度: 低",
+  "priority": "低"
+}

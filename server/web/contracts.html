@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>合同审批</title>
+<script src="https://cdn.bootcdn.net/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script>if(typeof pdfjsLib==='undefined'){document.write('<script src="https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.min.js"><\/script>')}</script>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f5f5f5; color: #333; }
+.header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; text-align: center; }
+.header h1 { font-size: 24px; margin-bottom: 10px; }
+.header-bar { display: flex; align-items: center; justify-content: center; gap: 12px; }
+.header-bar select, .header-bar input[type="date"] { padding: 6px 12px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.15); color: white; font-size: 14px; cursor: pointer; outline: none; }
+.header-bar select option { color: #333; background: white; }
+.header-bar input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); }
+.header-bar span { font-size: 14px; opacity: 0.9; }
+
+/* Tab切换 */
+.tabs { display: flex; justify-content: center; gap: 0; background: white; border-bottom: 2px solid #eee; }
+.tab-btn { padding: 12px 30px; border: none; background: none; font-size: 15px; font-weight: 600; color: #7f8c8d; cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.2s; }
+.tab-btn.active { color: #667eea; border-bottom-color: #667eea; }
+.tab-btn:hover { color: #667eea; }
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+.container { max-width: 900px; margin: 20px auto; padding: 0 15px; }
+.empty { text-align: center; padding: 60px 20px; color: #666; }
+.empty-icon { font-size: 64px; margin-bottom: 15px; }
+.card { background: white; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); margin-bottom: 20px; overflow: hidden; }
+.card.highlight { border: 3px solid #3498db; box-shadow: 0 4px 20px rgba(52,152,219,0.3); }
+.card-header { background: #f8f9fa; padding: 15px 20px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; }
+.card-header .customer { font-size: 18px; font-weight: 600; color: #2c3e50; }
+.card-header .order-no { font-size: 13px; color: #7f8c8d; background: #ecf0f1; padding: 3px 10px; border-radius: 12px; }
+.status-badge { font-size: 12px; padding: 3px 10px; border-radius: 12px; font-weight: 500; }
+.status-badge.warning { background: #fff3cd; color: #856404; }
+.status-badge.success { background: #d4edda; color: #155724; }
+.status-badge.danger { background: #f8d7da; color: #721c24; }
+.status-badge.info { background: #d1ecf1; color: #0c5460; }
+.reject-reason { background: #fff5f5; padding: 8px 12px; border-radius: 6px; border-left: 3px solid #e74c3c; }
+.reject-reason span { color: #c0392b; font-size: 13px; }
+.card-body { padding: 20px; }
+.info-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 15px; }
+.info-item label { display: block; font-size: 12px; color: #95a5a6; margin-bottom: 3px; }
+.info-item span { font-size: 14px; color: #2c3e50; }
+.products { background: #f8f9fa; border-radius: 8px; padding: 15px; margin-bottom: 15px; }
+.products h4 { font-size: 13px; color: #7f8c8d; margin-bottom: 10px; }
+.product-item { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #eee; }
+.product-item:last-child { border-bottom: none; }
+.total { display: flex; justify-content: space-between; align-items: center; padding: 15px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 8px; }
+.total-label { font-size: 14px; }
+.total-amount { font-size: 28px; font-weight: 700; }
+.card-footer { padding: 15px 20px; border-top: 1px solid #eee; display: flex; gap: 10px; flex-wrap: wrap; }
+.btn { flex: 1; padding: 12px 20px; border: none; border-radius: 8px; font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.3s; min-width: 80px; }
+.btn-approve { background: #27ae60; color: white; }
+.btn-approve:hover { background: #219a52; }
+.btn-reject { background: #e74c3c; color: white; }
+.btn-reject:hover { background: #c0392b; }
+.btn-preview { background: #3498db; color: white; }
+.btn-preview:hover { background: #2980b9; }
+.btn-edit { background: #f39c12; color: white; }
+.btn-edit:hover { background: #e67e22; }
+.btn:disabled { opacity: 0.6; cursor: not-allowed; }
+.status { text-align: center; padding: 15px; font-size: 14px; }
+.status.success { color: #27ae60; }
+.status.error { color: #e74c3c; }
+.status.warning { color: #f39c12; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.card { animation: fadeIn 0.4s ease-out; }
+
+/* 修订记录 */
+.revision-tag { display: inline-block; background: #fff3cd; color: #856404; font-size: 11px; padding: 2px 8px; border-radius: 10px; margin-left: 6px; }
+.revisions { background: #fef9e7; border-radius: 6px; padding: 10px 15px; margin-bottom: 15px; border-left: 3px solid #f39c12; }
+.revisions h5 { font-size: 12px; color: #856404; margin-bottom: 6px; }
+.revision-item { font-size: 12px; color: #6c5b00; margin-bottom: 4px; }
+
+/* PDF预览 */
+.pdf-viewer { display: none; margin: 15px 0; border: 1px solid #ddd; border-radius: 8px; overflow: hidden; background: #525659; }
+.pdf-viewer.active { display: block; }
+.pdf-toolbar { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 8px 12px; background: #3c3f41; color: #ccc; font-size: 13px; user-select: none; }
+.pdf-toolbar button { background: #555; color: #fff; border: none; border-radius: 4px; padding: 4px 10px; cursor: pointer; font-size: 13px; }
+.pdf-toolbar button:hover { background: #777; }
+.pdf-toolbar button:disabled { opacity: 0.4; cursor: default; }
+.pdf-toolbar .zoom-info { min-width: 50px; text-align: center; color: #aaa; }
+.pdf-canvas-wrap { overflow: auto; height: 80vh; cursor: grab; background: #525659; padding: 10px; }
+.pdf-canvas-wrap:active { cursor: grabbing; }
+.pdf-canvas-wrap canvas { display: block; margin: 0 auto; box-shadow: 0 2px 12px rgba(0,0,0,0.5); }
+
+/* 编辑弹窗 */
+.modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: flex-start; padding: 30px 15px; overflow-y: auto; }
+.modal-overlay.active { display: flex; }
+.modal { background: white; border-radius: 12px; width: 100%; max-width: 700px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); overflow: hidden; }
+.modal-header { background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%); color: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; }
+.modal-header h3 { font-size: 18px; }
+.modal-close { background: none; border: none; color: white; font-size: 24px; cursor: pointer; padding: 0 5px; }
+.modal-body { padding: 20px; max-height: 60vh; overflow-y: auto; }
+.modal-footer { padding: 15px 20px; border-top: 1px solid #eee; display: flex; gap: 10px; }
+.modal-footer .btn { flex: none; padding: 10px 30px; }
+.form-group { margin-bottom: 15px; }
+.form-group label { display: block; font-size: 13px; color: #555; margin-bottom: 5px; font-weight: 500; }
+.form-group input, .form-group select, .form-group textarea { width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; transition: border-color 0.3s; }
+.form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: #3498db; outline: none; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+.product-edit { background: #f8f9fa; border-radius: 8px; padding: 12px; margin-bottom: 10px; position: relative; }
+.product-edit .remove-product { position: absolute; top: 8px; right: 8px; background: #e74c3c; color: white; border: none; border-radius: 50%; width: 22px; height: 22px; cursor: pointer; font-size: 14px; line-height: 1; }
+.add-product-btn { display: block; width: 100%; padding: 10px; background: #ecf0f1; border: 2px dashed #bdc3c7; border-radius: 8px; cursor: pointer; color: #7f8c8d; font-size: 14px; text-align: center; }
+.add-product-btn:hover { background: #d5dbdb; }
+.img-row { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.img-thumb { width: 56px; height: 56px; border-radius: 6px; background-size: cover; background-position: center; position: relative; border: 1px solid #ddd; }
+.img-thumb button { position: absolute; top: -6px; right: -6px; background: #e74c3c; color: #fff; border: none; border-radius: 50%; width: 18px; height: 18px; font-size: 11px; cursor: pointer; line-height: 1; display: none; }
+.img-thumb:hover button { display: block; }
+.img-add { width: 56px; height: 56px; border-radius: 6px; border: 2px dashed #bbb; display: flex; align-items: center; justify-content: center; font-size: 22px; color: #aaa; cursor: pointer; transition: all 0.2s; }
+.img-add:hover { border-color: #3498db; color: #3498db; }
+.saving { opacity: 0.7; pointer-events: none; }
+
+/* ===== 汇总页面 ===== */
+.summary-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 25px; }
+.summary-card { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); text-align: center; }
+.summary-card .sc-value { font-size: 32px; font-weight: 700; margin: 5px 0; }
+.summary-card .sc-label { font-size: 13px; color: #7f8c8d; }
+.summary-card .sc-sub { font-size: 12px; color: #95a5a6; margin-top: 4px; }
+.sc-blue .sc-value { color: #3498db; }
+.sc-green .sc-value { color: #27ae60; }
+.sc-orange .sc-value { color: #f39c12; }
+.sc-red .sc-value { color: #e74c3c; }
+
+.summary-section { background: white; border-radius: 12px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); }
+.summary-section h3 { font-size: 16px; color: #2c3e50; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid #eee; }
+.summary-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.summary-table th { text-align: left; padding: 10px 8px; border-bottom: 2px solid #eee; color: #7f8c8d; font-weight: 600; font-size: 13px; }
+.summary-table td { padding: 10px 8px; border-bottom: 1px solid #f0f0f0; }
+.summary-table tr:hover { background: #f8f9fa; }
+.amount { color: #27ae60; font-weight: 600; }
+.count-badge { display: inline-block; background: #eef2ff; color: #667eea; padding: 2px 8px; border-radius: 10px; font-size: 12px; font-weight: 600; }
+
+/* 月度趋势柱状图（纯CSS） */
+.chart-bar-row { display: flex; align-items: flex-end; gap: 8px; height: 160px; padding: 10px 0; border-bottom: 1px solid #eee; }
+.chart-bar { flex: 1; min-width: 40px; background: linear-gradient(180deg, #667eea, #764ba2); border-radius: 4px 4px 0 0; position: relative; transition: height 0.5s ease; cursor: pointer; }
+.chart-bar:hover { opacity: 0.8; }
+.chart-bar-label { text-align: center; font-size: 11px; color: #7f8c8d; margin-top: 4px; }
+.chart-bar-val { position: absolute; top: -20px; left: 50%; transform: translateX(-50%); font-size: 11px; color: #667eea; font-weight: 600; white-space: nowrap; }
+
+/* 确认修改提示 */
+.modify-warning { background: #fff3cd; border: 1px solid #ffc107; border-radius: 8px; padding: 12px 15px; margin-bottom: 15px; font-size: 14px; color: #856404; display: flex; align-items: center; gap: 8px; }
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>📋 合同审批系统</h1>
+  <div class="header-bar">
+    <select id="statusFilter" onchange="loadContracts()">
+      <option value="pending">待审批</option>
+      <option value="approved">已通过</option>
+      <option value="sent">已发送</option>
+      <option value="rejected">已拒绝</option>
+      <option value="all">全部</option>
+    </select>
+    <input type="date" id="dateFrom" onchange="loadContracts()" title="起始日期">
+    <span>~</span>
+    <input type="date" id="dateTo" onchange="loadContracts()" title="截止日期">
+    <span>共 <span id="count">0</span> 份</span>
+  </div>
+</div>
+
+<!-- Tab切换 -->
+<div class="tabs">
+  <button class="tab-btn active" onclick="switchTab('list')">合同列表</button>
+  <button class="tab-btn" onclick="switchTab('summary')">汇总统计</button>
+</div>
+
+<!-- 合同列表 Tab -->
+<div class="tab-content active" id="tab-list">
+  <div class="container" id="container">
+    <div class="empty"><div class="empty-icon">📭</div><p>暂无待审批合同</p></div>
+  </div>
+</div>
+
+<!-- 汇总统计 Tab -->
+<div class="tab-content" id="tab-summary">
+  <div class="container" id="summaryContainer">
+    <div class="empty"><div class="empty-icon">📊</div><p>加载中...</p></div>
+  </div>
+</div>
+
+<!-- 编辑弹窗 -->
+<div class="modal-overlay" id="editModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>编辑合同</h3>
+      <button class="modal-close" onclick="closeEdit()">&times;</button>
+    </div>
+    <div class="modal-body" id="editBody"></div>
+    <div class="modal-footer">
+      <button class="btn btn-reject" onclick="closeEdit()" style="background:#95a5a6">取消</button>
+      <button class="btn btn-approve" onclick="saveEdit()" id="saveBtn">保存并重新生成</button>
+    </div>
+  </div>
+</div>
+
+<!-- 通用弹窗 -->
+<div class="modal-overlay" id="dialogOverlay">
+  <div class="modal" style="max-width:420px">
+    <div class="modal-header" id="dialogHeader" style="background:linear-gradient(135deg,#667eea,#764ba2)">
+      <h3 id="dialogTitle">提示</h3>
+      <button class="modal-close" onclick="closeDialog(false)">&times;</button>
+    </div>
+    <div class="modal-body" style="padding:20px">
+      <p id="dialogMsg" style="font-size:15px;line-height:1.6;color:#2c3e50"></p>
+      <div id="dialogInputWrap" style="display:none;margin-top:12px">
+        <input id="dialogInput" style="width:100%;padding:8px 12px;border:1px solid #ddd;border-radius:6px;font-size:14px" placeholder="">
+      </div>
+    </div>
+    <div class="modal-footer" id="dialogFooter">
+      <button class="btn" id="dialogCancel" style="background:#95a5a6;color:#fff" onclick="closeDialog(false)">取消</button>
+      <button class="btn btn-approve" id="dialogOk" onclick="closeDialog(true)">确定</button>
+    </div>
+  </div>
+</div>
+
+<script src="/contracts.js"></script>
+<script>
+// 诊断：检查JS是否加载成功
+window.addEventListener('error', function(e) {
+  console.error('[DIAG] JS Error:', e.message, 'at', e.filename, 'line', e.lineno);
+  document.title = '❌ ' + e.message;
+});
+console.log('[DIAG] HTML loaded, loadContracts:', typeof loadContracts);
+if (typeof loadContracts === 'function') {
+  console.log('[DIAG] Calling loadContracts...');
+  loadContracts();
+} else {
+  console.warn('[DIAG] loadContracts NOT defined! PDFjsLib:', typeof pdfjsLib);
+  document.getElementById('container').innerHTML = '<div class="empty"><p style="color:red;font-size:18px">⚠️ 页面脚本加载失败，请按 Ctrl+Shift+R 强制刷新</p></div>';
+}
+</script>
+</body>
+</html>

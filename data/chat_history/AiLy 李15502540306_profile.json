@@ -1,0 +1,70 @@
+{
+  "customer_id": "wxid_r12zm1nen0se22",
+  "nickname": "AiLy 李15502540306",
+  "first_contact": "2026-04-30",
+  "last_contact": "2026-05-04",
+  "profile": {
+    "customer_type": {
+      "value": "B端（同行/工厂）",
+      "source": "对话分析",
+      "confidence": 0.7
+    },
+    "industry": {
+      "value": "",
+      "source": "未知",
+      "confidence": 0
+    },
+    "business": {
+      "value": "",
+      "source": "未知",
+      "confidence": 0
+    },
+    "demand_type": {
+      "value": "未知",
+      "source": "未知",
+      "confidence": 0
+    },
+    "quantity": {
+      "value": "",
+      "source": "未知",
+      "confidence": 0
+    },
+    "pain_points": {
+      "value": "",
+      "source": "未知",
+      "confidence": 0
+    },
+    "usage_scenario": {
+      "value": "有什么区",
+      "source": "对话分析",
+      "confidence": 0.7
+    },
+    "budget": {
+      "value": "",
+      "source": "未知",
+      "confidence": 0
+    }
+  },
+  "interactions": [
+    {
+      "date": "2026-04-30",
+      "type": "一般咨询",
+      "content": "地址: 有什么区 | 意向度: 低 | 客户类型: B端（同行/工厂）\nassistant: 双电机更稳更快，承重更好。单电机性价比高。预算多少？...; customer: 有什么区别...; assistant: 你好。要什么尺寸？单电机还是双电机？...; customer: 你好 我想买桌子。...; customer: 你好...; assistant: 就是白嫖的限制  代码段没有问题...",
+      "products_mentioned": [],
+      "intention": "低",
+      "next_action": ""
+    },
+    {
+      "date": "2026-05-04",
+      "type": "一般咨询",
+      "content": "地址: 有什么区 | 意向度: 低 | 客户类型: B端（同行/工厂）\nassistant: 双电机更稳更快，承重更好。单电机性价比高。预算多少？...; customer: 有什么区别...; assistant: 你好。要什么尺寸？单电机还是双电机？...; customer: 你好 我想买桌子。...; customer: 你好...; assistant: 就是白嫖的限制  代码段没有问题...",
+      "products_mentioned": [],
+      "intention": "低",
+      "next_action": ""
+    }
+  ],
+  "orders": [],
+  "tags": [],
+  "notes": "2026-04-30: 地址: 有什么区 | 意向度: 低 | 客户类型: B端（同行/工厂）\n2026-05-04: 地址: 有什么区 | 意向度: 低 | 客户类型: B端（同行/工厂）",
+  "priority": "低"
+}

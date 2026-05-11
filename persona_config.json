@@ -1,0 +1,15 @@
+{
+  "active_persona": "lisheng",
+  "personas": {
+    "lisheng": {
+      "name": "李生",
+      "role": "佛山畅腾智能家居 业务经理",
+      "file": "personas/lisheng.md"
+    },
+    "claw": {
+      "name": "CLAW",
+      "role": "畅腾升降桌智能客服",
+      "file": "personas/claw.md"
+    }
+  }
+}

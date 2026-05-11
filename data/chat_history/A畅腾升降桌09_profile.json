@@ -1,0 +1,78 @@
+{
+  "customer_id": "",
+  "nickname": "A畅腾升降桌09",
+  "first_contact": "2026-04-30",
+  "last_contact": "2026-04-30",
+  "profile": {
+    "customer_type": {
+      "value": "未知",
+      "source": "未知",
+      "confidence": 0
+    },
+    "industry": {
+      "value": "",
+      "source": "未知",
+      "confidence": 0
+    },
+    "business": {
+      "value": "",
+      "source": "未知",
+      "confidence": 0
+    },
+    "demand_type": {
+      "value": "未知",
+      "source": "未知",
+      "confidence": 0
+    },
+    "quantity": {
+      "value": "",
+      "source": "未知",
+      "confidence": 0
+    },
+    "pain_points": {
+      "value": "",
+      "source": "未知",
+      "confidence": 0
+    },
+    "usage_scenario": {
+      "value": "",
+      "source": "未知",
+      "confidence": 0
+    },
+    "budget": {
+      "value": "",
+      "source": "未知",
+      "confidence": 0
+    }
+  },
+  "interactions": [
+    {
+      "date": "2026-04-30",
+      "type": "客服回复",
+      "content": "滕成，有新合同待审批：CT20260430142558，健康办公研究社1000台F5S定制款，105万。请审批。",
+      "products_mentioned": [],
+      "intention": "已回复客户",
+      "next_action": "等待客户回复"
+    },
+    {
+      "date": "2026-04-30",
+      "type": "客服回复",
+      "content": "滕成，刚发给客户的合同CT20260430142558客户说是空白的。我先收集完整信息，重新生成后再发给你审批。",
+      "products_mentioned": [],
+      "intention": "已回复客户",
+      "next_action": "等待客户回复"
+    },
+    {
+      "date": "2026-04-30",
+      "type": "客服回复",
+      "content": "📋 新合同待审批\n━━━━━━━━━━━━━━━━━━━━\n合同号: CT20260430144734\n客户: 健康办公研究社（张山 13108261132）\n产品: F5S×1000台\n金额: ¥1...",
+      "products_mentioned": [],
+      "intention": "已回复客户",
+      "next_action": "等待客户回复"
+    }
+  ],
+  "orders": [],
+  "tags": [],
+  "notes": "",
+  "priority": "中"
+}

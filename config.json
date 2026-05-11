@@ -1,0 +1,34 @@
+{
+  "moonshot_api_key": "sk-gdiqWNF2GWvEZP0o6jK62l14v31z8dq5uxOECEWyAoZGoOxr",
+  "weflow": {
+    "base_url": "http://127.0.0.1:5031",
+    "access_token": "eaf98e9bc0c13ea0c8e7cf0b29586669",
+    "sse_endpoint": "/api/v1/push/messages"
+  },
+  "ai_assistant": {
+    "directory": "C:\\Users\\Lenovo\\Desktop\\AI助手",
+    "openclaw": {
+      "gateway_url": "http://127.0.0.1:18789",
+      "hook_token": "weflow-hook-secret-2026",
+      "hook_endpoint": "/hooks/agent"
+    }
+  },
+  "communication": {
+    "wb_comm_dir": "wb_comm",
+    "sessions_dir": "~/.openclaw/agents/main/sessions",
+    "logs_dir": "weclawbot/logs",
+    "messages_log_dir": "weclawbot/logs/messages"
+  },
+  "timeout": {
+    "reply_wait": 180,
+    "poll_interval": 1.5,
+    "sse_reconnect": 5
+  },
+  "wechat": {
+    "max_message_length": 4000
+  },
+  "performance": {
+    "max_processed_messages": 5000,
+    "session_history_limit": 20
+  }
+}

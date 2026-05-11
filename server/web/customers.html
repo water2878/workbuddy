@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>客户无忧信息推送审批系统 - 畅腾升降桌</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        
+        .header-actions {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .btn-refresh {
+            background: #52c41a;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .btn-refresh:hover {
+            background: #73d13d;
+        }
+        
+        .btn-refresh:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 10px;
+        }
+        
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 4px;
+            background: #fff;
+            border: 1px solid #ddd;
+        }
+        
+        .tab.active {
+            background: #1890ff;
+            color: #fff;
+            border-color: #1890ff;
+        }
+        
+        .tab:hover:not(.active) {
+            background: #f0f0f0;
+        }
+        
+        .customer-list {
+            display: grid;
+            gap: 15px;
+        }
+        
+        .customer-card {
+            background: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .customer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .customer-id {
+            font-size: 12px;
+            color: #999;
+        }
+        
+        .customer-name {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .status-pending {
+            background: #fff7e6;
+            color: #fa8c16;
+        }
+        
+        .status-approved {
+            background: #f6ffed;
+            color: #52c41a;
+        }
+        
+        .status-sent {
+            background: #e6f7ff;
+            color: #1890ff;
+        }
+        
+        .status-rejected {
+            background: #fff1f0;
+            color: #f5222d;
+        }
+        
+        .customer-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .info-item {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .info-label {
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 4px;
+        }
+        
+        .info-value {
+            font-size: 14px;
+            color: #333;
+            word-break: break-all;
+        }
+        
+        .customer-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
+        
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: #1890ff;
+            color: #fff;
+        }
+        
+        .btn-primary:hover {
+            background: #40a9ff;
+        }
+        
+        .btn-success {
+            background: #52c41a;
+            color: #fff;
+        }
+        
+        .btn-success:hover {
+            background: #73d13d;
+        }
+        
+        .btn-danger {
+            background: #f5222d;
+            color: #fff;
+        }
+        
+        .btn-danger:hover {
+            background: #ff4d4f;
+        }
+        
+        .btn-default {
+            background: #fff;
+            color: #333;
+            border: 1px solid #d9d9d9;
+        }
+        
+        .btn-default:hover {
+            border-color: #1890ff;
+            color: #1890ff;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+        
+        .edit-form {
+            display: none;
+            margin-top: 15px;
+            padding: 15px;
+            background: #f5f5f5;
+            border-radius: 4px;
+        }
+        
+        .edit-form.active {
+            display: block;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .form-group label {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        
+        .form-group input,
+        .form-group textarea {
+            padding: 8px 12px;
+            border: 1px solid #d9d9d9;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #1890ff;
+        }
+        
+        .form-group textarea {
+            resize: vertical;
+            min-height: 60px;
+        }
+        
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 12px 20px;
+            border-radius: 4px;
+            color: #fff;
+            font-size: 14px;
+            z-index: 1000;
+            animation: slideIn 0.3s ease;
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        .toast-success {
+            background: #52c41a;
+        }
+        
+        .toast-error {
+            background: #f5222d;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .stat-card {
+            background: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #1890ff;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #999;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📋 客户无忧信息推送审批系统</h1>
+        
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-value" id="stat-pending">0</div>
+                <div class="stat-label">待审批</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="stat-approved">0</div>
+                <div class="stat-label">已审批</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="stat-sent">0</div>
+                <div class="stat-label">已推送</div>
+            </div>
+        </div>
+        
+        <div class="header-actions">
+            <button class="btn-refresh" id="btn-refresh" onclick="syncFromProfiles()">
+                🔄 从客户画像刷新
+            </button>
+        </div>
+        
+        <div class="tabs">
+            <div class="tab active" data-tab="pending">待审批</div>
+            <div class="tab" data-tab="approved">已审批</div>
+            <div class="tab" data-tab="sent">已推送</div>
+        </div>
+        
+        <div id="customer-list" class="customer-list">
+            <div class="loading">加载中...</div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = '/api/customers';
+        let currentTab = 'pending';
+        
+        // 初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            loadStats();
+            loadCustomers();
+            setupTabs();
+        });
+        
+        // 设置标签页
+        function setupTabs() {
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    currentTab = tab.dataset.tab;
+                    loadCustomers();
+                });
+            });
+        }
+        
+        // 加载统计
+        async function loadStats() {
+            try {
+                const [pendingRes, approvedRes, sentRes] = await Promise.all([
+                    fetch(`${API_BASE}/pending`),
+                    fetch(`${API_BASE}/approved`),
+                    fetch(`${API_BASE}/sent`)
+                ]);
+                
+                const pending = await pendingRes.json();
+                const approved = await approvedRes.json();
+                const sent = await sentRes.json();
+                
+                // 处理 API 返回格式
+                const getLength = (data) => {
+                    if (Array.isArray(data)) return data.length;
+                    if (data && data.data && Array.isArray(data.data)) return data.data.length;
+                    return 0;
+                };
+                
+                document.getElementById('stat-pending').textContent = getLength(pending);
+                document.getElementById('stat-approved').textContent = getLength(approved);
+                document.getElementById('stat-sent').textContent = getLength(sent);
+            } catch (err) {
+                console.error('加载统计失败:', err);
+            }
+        }
+        
+        // 加载客户列表
+        async function loadCustomers() {
+            const container = document.getElementById('customer-list');
+            container.innerHTML = '<div class="loading">加载中...</div>';
+            
+            try {
+                const response = await fetch(`${API_BASE}/${currentTab}`);
+                const result = await response.json();
+                
+                // 处理 API 返回格式 {success: true, data: [...]}
+                let customers = result;
+                if (result && result.data && Array.isArray(result.data)) {
+                    customers = result.data;
+                } else if (result && result.success && result.data && Array.isArray(result.data)) {
+                    customers = result.data;
+                }
+                
+                if (!Array.isArray(customers)) {
+                    container.innerHTML = '<div class="empty-state">数据格式错误</div>';
+                    return;
+                }
+                
+                if (customers.length === 0) {
+                    container.innerHTML = '<div class="empty-state">暂无数据</div>';
+                    return;
+                }
+                
+                container.innerHTML = customers.map(c => renderCustomerCard(c)).join('');
+            } catch (err) {
+                container.innerHTML = `<div class="empty-state">加载失败: ${err.message}</div>`;
+            }
+        }
+        
+        // 渲染客户卡片
+        function renderCustomerCard(customer) {
+            const statusClass = `status-${customer.status}`;
+            const statusText = {
+                'pending': '待审批',
+                'approved': '已审批',
+                'sent': '已推送',
+                'rejected': '已拒绝'
+            }[customer.status] || customer.status;
+            
+            const actions = renderActions(customer);
+            
+            return `
+                <div class="customer-card" data-id="${customer.id}">
+                    <div class="customer-header">
+                        <div>
+                            <div class="customer-name">${customer.cus_name || customer.customer_nickname || '未命名'}</div>
+                            <div class="customer-id">ID: ${customer.id}</div>
+                        </div>
+                        <span class="status-badge ${statusClass}">${statusText}</span>
+                    </div>
+                    
+                    <div class="customer-info">
+                        <div class="info-item">
+                            <span class="info-label">手机号</span>
+                            <span class="info-value">${customer.mobile_phone || '-'}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">联系人</span>
+                            <span class="info-value">${customer.work_name || '-'}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">公司地址</span>
+                            <span class="info-value">${customer.work_address || '-'}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">邮箱</span>
+                            <span class="info-value">${customer.email || '-'}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">行业</span>
+                            <span class="info-value">${customer.industry || '-'}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">来源</span>
+                            <span class="info-value">${customer.source || '-'}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="info-item" style="margin-bottom: 10px;">
+                        <span class="info-label">客户介绍</span>
+                        <span class="info-value">${customer.cus_intro || '-'}</span>
+                    </div>
+                    
+                    ${renderEditForm(customer)}
+                    
+                    <div class="customer-actions">
+                        ${actions}
+                    </div>
+                </div>
+            `;
+        }
+        
+        // 渲染操作按钮
+        function renderActions(customer) {
+            if (customer.status === 'pending') {
+                return `
+                    <button class="btn btn-primary" onclick="editCustomer('${customer.id}')">编辑</button>
+                    <button class="btn btn-success" onclick="approveCustomer('${customer.id}')">通过</button>
+                    <button class="btn btn-danger" onclick="rejectCustomer('${customer.id}')">拒绝</button>
+                    <button class="btn btn-default" onclick="deleteCustomer('${customer.id}')">删除</button>
+                `;
+            } else if (customer.status === 'approved') {
+                return `
+                    <button class="btn btn-success" onclick="pushCustomer('${customer.id}')">推送到客户无忧</button>
+                    <button class="btn btn-default" onclick="deleteCustomer('${customer.id}')">删除</button>
+                    <button class="btn btn-default" onclick="loadCustomers()">刷新</button>
+                `;
+            } else {
+                return `
+                    <button class="btn btn-default" onclick="loadCustomers()">刷新</button>
+                `;
+            }
+        }
+        
+        // 渲染编辑表单
+        function renderEditForm(customer) {
+            return `
+                <div class="edit-form" id="edit-form-${customer.id}">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>客户名称</label>
+                            <input type="text" id="edit-name-${customer.id}" value="${customer.cus_name || ''}">
+                        </div>
+                        <div class="form-group">
+                            <label>手机号</label>
+                            <input type="text" id="edit-phone-${customer.id}" value="${customer.mobile_phone || ''}">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>联系人</label>
+                            <input type="text" id="edit-work-${customer.id}" value="${customer.work_name || ''}">
+                        </div>
+                        <div class="form-group">
+                            <label>邮箱</label>
+                            <input type="text" id="edit-email-${customer.id}" value="${customer.email || ''}">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>公司地址</label>
+                            <input type="text" id="edit-address-${customer.id}" value="${customer.work_address || ''}">
+                        </div>
+                        <div class="form-group">
+                            <label>行业</label>
+                            <input type="text" id="edit-industry-${customer.id}" value="${customer.industry || ''}">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group" style="grid-column: 1 / -1;">
+                            <label>客户介绍</label>
+                            <textarea id="edit-intro-${customer.id}">${customer.cus_intro || ''}</textarea>
+                        </div>
+                    </div>
+                    <div class="customer-actions">
+                        <button class="btn btn-success" onclick="saveCustomer('${customer.id}')">保存</button>
+                        <button class="btn btn-default" onclick="cancelEdit('${customer.id}')">取消</button>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // 编辑客户
+        function editCustomer(id) {
+            document.querySelectorAll('.edit-form').forEach(f => f.classList.remove('active'));
+            document.getElementById(`edit-form-${id}`).classList.add('active');
+        }
+        
+        // 取消编辑
+        function cancelEdit(id) {
+            document.getElementById(`edit-form-${id}`).classList.remove('active');
+        }
+        
+        // 保存客户
+        async function saveCustomer(id) {
+            const updates = {
+                cus_name: document.getElementById(`edit-name-${id}`).value,
+                mobile_phone: document.getElementById(`edit-phone-${id}`).value,
+                work_name: document.getElementById(`edit-work-${id}`).value,
+                email: document.getElementById(`edit-email-${id}`).value,
+                work_address: document.getElementById(`edit-address-${id}`).value,
+                industry: document.getElementById(`edit-industry-${id}`).value,
+                cus_intro: document.getElementById(`edit-intro-${id}`).value
+            };
+            
+            try {
+                const response = await fetch(`${API_BASE}/update/${id}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(updates)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showToast('保存成功', 'success');
+                    loadCustomers();
+                    loadStats();
+                } else {
+                    showToast(result.error || '保存失败', 'error');
+                }
+            } catch (err) {
+                showToast('保存失败: ' + err.message, 'error');
+            }
+        }
+        
+        // 审批通过
+        async function approveCustomer(id) {
+            try {
+                const response = await fetch(`${API_BASE}/approve/${id}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({})
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showToast('审批通过', 'success');
+                    loadCustomers();
+                    loadStats();
+                } else {
+                    showToast(result.error || '审批失败', 'error');
+                }
+            } catch (err) {
+                showToast('审批失败: ' + err.message, 'error');
+            }
+        }
+        
+        // 拒绝
+        async function rejectCustomer(id) {
+            const reason = prompt('请输入拒绝原因（可选）：');
+            if (reason === null) return;
+            
+            try {
+                const response = await fetch(`${API_BASE}/reject/${id}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ reason })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showToast('已拒绝', 'success');
+                    loadCustomers();
+                    loadStats();
+                } else {
+                    showToast(result.error || '操作失败', 'error');
+                }
+            } catch (err) {
+                showToast('操作失败: ' + err.message, 'error');
+            }
+        }
+        
+        // 推送到客户无忧
+        async function pushCustomer(id) {
+            if (!confirm('确定要推送到客户无忧系统吗？')) return;
+            
+            try {
+                const response = await fetch(`${API_BASE}/push/${id}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showToast('推送成功', 'success');
+                    loadCustomers();
+                    loadStats();
+                } else {
+                    showToast(result.error || '推送失败', 'error');
+                }
+            } catch (err) {
+                showToast('推送失败: ' + err.message, 'error');
+            }
+        }
+        
+        // 删除记录
+        async function deleteCustomer(id) {
+            if (!confirm('确定要删除吗？删除后可从客户画像重新推送。')) return;
+            
+            try {
+                const response = await fetch(`${API_BASE}/delete/${id}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showToast('已删除，可从客户画像重新推送', 'success');
+                    loadCustomers();
+                    loadStats();
+                } else {
+                    showToast(result.error || '删除失败', 'error');
+                }
+            } catch (err) {
+                showToast('删除失败: ' + err.message, 'error');
+            }
+        }
+        
+        // 从客户画像刷新
+        async function syncFromProfiles() {
+            const btn = document.getElementById('btn-refresh');
+            btn.disabled = true;
+            btn.innerHTML = '🔄 刷新中...';
+            
+            try {
+                const response = await fetch(`${API_BASE}/sync-from-profiles`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    const msg = `新增 ${result.synced_count} 个 | 已推送跳过 ${result.skipped_synced} 个 | 队列中跳过 ${result.skipped_queue} 个 | 不完整跳过 ${result.skipped_incomplete} 个`;
+                    showToast(msg, 'success');
+                    loadCustomers();
+                    loadStats();
+                } else {
+                    showToast(result.error || '刷新失败', 'error');
+                }
+            } catch (err) {
+                showToast('刷新失败: ' + err.message, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '🔄 从客户画像刷新';
+            }
+        }
+        
+        // 显示提示
+        function showToast(message, type) {
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

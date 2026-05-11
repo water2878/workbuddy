@@ -1,6 +1,24 @@
+# Claw 畅腾升降桌智能客服系统依赖
+
+# Web框架
+flask>=2.3.0
+flask-cors>=4.0.0
+
+# 微信自动化
 pyautogui>=0.9.54
 pyperclip>=1.8.2
 pywinauto>=0.6.8
-Pillow>=9.0.0
-rapidocr_onnxruntime>=1.2.0
-pynput>=1.7.6
+pywin32>=306
+psutil>=5.9.0
+
+# 图片处理
+Pillow>=10.0.0
+
+# 向量记忆系统
+lancedb>=0.5.0
+sentence-transformers>=2.2.0
+numpy>=1.24.0
+
+# 其他工具
+requests>=2.31.0
+python-dotenv>=1.0.0

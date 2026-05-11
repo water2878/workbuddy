@@ -1,0 +1,88 @@
+{
+  "customer_id": "wxid_pq884jc1z0ri22",
+  "nickname": "Timotion standing desk factory",
+  "first_contact": "2026-04-29",
+  "last_contact": "2026-05-04",
+  "profile": {
+    "customer_type": {
+      "value": "B端（同行/工厂）",
+      "source": "昵称推断",
+      "confidence": 0.9
+    },
+    "industry": {
+      "value": "办公家具/升降桌行业",
+      "source": "昵称推断",
+      "confidence": 0.9
+    },
+    "business": {
+      "value": "升降桌工厂/贸易",
+      "source": "昵称推断",
+      "confidence": 0.8
+    },
+    "demand_type": {
+      "value": "批发/代工",
+      "source": "昵称推断",
+      "confidence": 0.7
+    },
+    "quantity": {
+      "value": "待确认",
+      "source": "未知",
+      "confidence": 0
+    },
+    "pain_points": {
+      "value": "寻找合适的产品型号和报价",
+      "source": "对话推断",
+      "confidence": 0.7
+    },
+    "usage_scenario": {
+      "value": "可能用于转售或代工生产",
+      "source": "推断",
+      "confidence": 0.6
+    },
+    "budget": {
+      "value": "待确认",
+      "source": "未知",
+      "confidence": 0
+    }
+  },
+  "interactions": [
+    {
+      "date": "2026-04-29",
+      "type": "咨询",
+      "content": "发送升降桌图片询问型号，了解T412/T423区别，询问是否有对应图片",
+      "products_mentioned": [
+        "T412",
+        "T423",
+        "F4200",
+        "F4404"
+      ],
+      "intention": "中意向，正在选型和比价",
+      "next_action": "等待客户确认型号和数量"
+    },
+    {
+      "date": "2026-04-30",
+      "type": "一般咨询",
+      "content": "意向度: 低\ncustomer: 这是方管啊...; assistant: 抱歉看错了。这是单电机款，T621圆管单电机，880元。需要吗？...; customer: 但是这个是单电机啊...; assistant: 有。F4200标准款680元，含桌板1080元。要多少套？...; assistant: F4200方管双电机正装款。黑色，304不锈钢脚。需要报价吗？...; customer: 你好。有吗...",
+      "products_mentioned": [],
+      "intention": "低",
+      "next_action": ""
+    },
+    {
+      "date": "2026-05-04",
+      "type": "一般咨询",
+      "content": "意向度: 低\ncustomer: 这是方管啊...; assistant: 抱歉看错了。这是单电机款，T621圆管单电机，880元。需要吗？...; customer: 但是这个是单电机啊...; assistant: 有。F4200标准款680元，含桌板1080元。要多少套？...; assistant: F4200方管双电机正装款。黑色，304不锈钢脚。需要报价吗？...; customer: 你好。有吗...",
+      "products_mentioned": [],
+      "intention": "低",
+      "next_action": ""
+    }
+  ],
+  "orders": [],
+  "tags": [
+    "B端客户",
+    "同行",
+    "待跟进",
+    "批量潜在"
+  ],
+  "notes": "客户昵称显示为升降桌工厂，可能是同行询价或寻找代工。对产品细节比较关注，询问电机类型和型号区别。需要进一步确认采购数量和真实意图。\n微信号: TMXCN888\n2026-04-30: 意向度: 低\n2026-05-04: 意向度: 低",
+  "priority": "低"
+}

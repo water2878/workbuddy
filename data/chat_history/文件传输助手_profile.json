@@ -1,0 +1,62 @@
+{
+  "customer_id": "filehelper",
+  "nickname": "文件传输助手",
+  "first_contact": "2026-04-30",
+  "last_contact": "2026-04-30",
+  "profile": {
+    "customer_type": {
+      "value": "未知",
+      "source": "未知",
+      "confidence": 0
+    },
+    "industry": {
+      "value": "",
+      "source": "未知",
+      "confidence": 0
+    },
+    "business": {
+      "value": "",
+      "source": "未知",
+      "confidence": 0
+    },
+    "demand_type": {
+      "value": "未知",
+      "source": "未知",
+      "confidence": 0
+    },
+    "quantity": {
+      "value": "",
+      "source": "未知",
+      "confidence": 0
+    },
+    "pain_points": {
+      "value": "",
+      "source": "未知",
+      "confidence": 0
+    },
+    "usage_scenario": {
+      "value": "",
+      "source": "未知",
+      "confidence": 0
+    },
+    "budget": {
+      "value": "",
+      "source": "未知",
+      "confidence": 0
+    }
+  },
+  "interactions": [
+    {
+      "date": "2026-04-30",
+      "type": "一般咨询",
+      "content": "意向度: 低\nassistant: [音乐] V2RayN_1775187056.txt...; assistant: https://github.com/Pawdroid/shadowrocket_for_andro...; assistant: 📋 2026-04-21 工作总结\n\n🆕 新功能（3个）\n1. 消息合并窗口 — 同一客户连发消息合...; assistant: 今日总结 — 2026-04-20\n\n上午 — 合同审批页面 + 云端服务器收尾\n\n修复 contr...; assistant: [音乐] tmp_contract_CT20260420171903.pdf...; assistant: 您好，您的合同已审批通过，合同附件如下：...",
+      "products_mentioned": [],
+      "intention": "低",
+      "next_action": ""
+    }
+  ],
+  "orders": [],
+  "tags": [],
+  "notes": "2026-04-30: 意向度: 低",
+  "priority": "低"
+}

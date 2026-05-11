@@ -1,0 +1,173 @@
+{
+  "customer_id": "wxid_nqf5aa9a07mv19",
+  "nickname": "健康办公研究社",
+  "first_contact": "2026-04-29",
+  "last_contact": "2026-05-11",
+  "profile": {
+    "customer_type": {
+      "value": "B端（公司采购）",
+      "source": "对话分析",
+      "confidence": 0.7
+    },
+    "customer_name": {
+      "value": "张山/李菲儿",
+      "source": "合同信息",
+      "confidence": 1.0
+    },
+    "phone": {
+      "value": "13108261132/18088009689",
+      "source": "合同信息",
+      "confidence": 1.0
+    },
+    "address": {
+      "value": "新疆伊犁河源头工厂",
+      "source": "客户自述",
+      "confidence": 0.9
+    },
+    "industry": {
+      "value": "个人办公/健康办公",
+      "source": "昵称推断",
+      "confidence": 0.7
+    },
+    "business": {
+      "value": "华瑞怡宝公司员工办公使用",
+      "source": "客户自述",
+      "confidence": 0.9
+    },
+    "demand_type": {
+      "value": "批发",
+      "source": "对话分析",
+      "confidence": 0.7
+    },
+    "quantity": {
+      "value": "200套",
+      "source": "客户自述(2026-05-09)",
+      "confidence": 0.95
+    },
+    "pain_points": {
+      "value": "预算600元/套带面板，T412双电机超预算，选择T524单电机+E0面板方案617元/套",
+      "source": "客户自述(2026-05-09)",
+      "confidence": 0.9
+    },
+    "interested_models": {
+      "value": "T524黑色+E0黑色面板1400*700*25mm，整桌650元/套含运费",
+      "source": "2026-05-11测试人员确认",
+      "confidence": 0.95
+    },
+    "usage_scenario": {
+      "value": "华瑞怡宝公司员工办公使用",
+      "source": "客户自述(2026-05-08)",
+      "confidence": 0.95
+    },
+    "budget": {
+      "value": "130,000元（200套含运费）",
+      "source": "客户自述(2026-05-11)",
+      "confidence": 0.9
+    },
+    "color": {
+      "value": "黑色",
+      "source": "2026-05-11客户确认",
+      "confidence": 1.0
+    }
+  },
+  "interactions": [
+    {
+      "date": "2026-05-11",
+      "type": "客服回复",
+      "content": "合同已生成，合同号CT20260511112325，总金额130,000元（200套整桌含运费）。已提交审批，通过后发给您。",
+      "products_mentioned": [
+        "T524",
+        "E0面板"
+      ],
+      "intention": "已回复客户",
+      "next_action": "等待客户回复"
+    },
+    {
+      "date": "2026-05-11",
+      "type": "客服回复",
+      "content": "合同号CT20260511112325，总金额130,000元（200套整桌含运费）。已提交审批，通过后发给您。",
+      "products_mentioned": [],
+      "intention": "已回复客户",
+      "next_action": "等待客户回复"
+    },
+    {
+      "date": "2026-05-11",
+      "type": "客服回复",
+      "content": "合同CT20260511112325已更新，联系人李菲儿，总金额130,000元不变。PDF已重新生成。",
+      "products_mentioned": [],
+      "intention": "已回复客户",
+      "next_action": "等待客户回复"
+    },
+    {
+      "date": "2026-05-11",
+      "type": "客服回复",
+      "content": "新合同已生成，合同号CT20260511124619，总金额130,000元（200套整桌含运费）。已提交审批，通过后发给您。",
+      "products_mentioned": [],
+      "intention": "已回复客户",
+      "next_action": "等待客户回复"
+    },
+    {
+      "date": "2026-05-11",
+      "type": "客服回复",
+      "content": "新合同已生成，合同号CT20260511125137，总金额130,000元（200套整桌含运费）。已提交审批，通过后发给您。",
+      "products_mentioned": [],
+      "intention": "已回复客户",
+      "next_action": "等待客户回复"
+    },
+    {
+      "date": "2026-05-11",
+      "type": "客服回复",
+      "content": "新合同已生成，合同号CT20260511133707，总金额130,000元。已提交审批，通过后发给您。",
+      "products_mentioned": [],
+      "intention": "已回复客户",
+      "next_action": "等待客户回复"
+    },
+    {
+      "date": "2026-05-11",
+      "type": "客服回复",
+      "content": "新合同已生成，合同号CT20260511134321，总金额130,000元。已提交审批。",
+      "products_mentioned": [],
+      "intention": "已回复客户",
+      "next_action": "等待客户回复"
+    },
+    {
+      "date": "2026-05-11",
+      "type": "客服回复",
+      "content": "新合同已生成，合同号CT20260511134901，总金额130,000元。已提交审批，通过后发给您。",
+      "products_mentioned": [],
+      "intention": "已回复客户",
+      "next_action": "等待客户回复"
+    }
+  ],
+  "orders": [
+    {
+      "order_no": "CT20260511134901",
+      "date": "2026-05-11",
+      "products": [
+        {
+          "model": "T524",
+          "quantity": 200,
+          "price": 432
+        },
+        {
+          "model": "E0面板",
+          "quantity": 200,
+          "price": 218
+        }
+      ],
+      "total": 130000,
+      "status": "待审批"
+    }
+  ],
+  "tags": [
+    "定制客户",
+    "超高意向",
+    "大单客户",
+    "价格敏感",
+    "新疆客户",
+    "测试人员"
+  ],
+  "notes": "2026-05-11：新合同CT20260511134901已生成并推送云端。",
+  "status": "合同已生成待审批",
+  "priority": "高"
+}

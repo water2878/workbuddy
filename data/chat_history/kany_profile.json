@@ -1,0 +1,70 @@
+{
+  "customer_id": "wxid_1236712366912",
+  "nickname": "kany",
+  "first_contact": "2026-04-30",
+  "last_contact": "2026-05-04",
+  "profile": {
+    "customer_type": {
+      "value": "未知",
+      "source": "未知",
+      "confidence": 0
+    },
+    "industry": {
+      "value": "",
+      "source": "未知",
+      "confidence": 0
+    },
+    "business": {
+      "value": "",
+      "source": "未知",
+      "confidence": 0
+    },
+    "demand_type": {
+      "value": "未知",
+      "source": "未知",
+      "confidence": 0
+    },
+    "quantity": {
+      "value": "",
+      "source": "未知",
+      "confidence": 0
+    },
+    "pain_points": {
+      "value": "",
+      "source": "未知",
+      "confidence": 0
+    },
+    "usage_scenario": {
+      "value": "广东 佛山",
+      "source": "微信信息",
+      "confidence": 0.5
+    },
+    "budget": {
+      "value": "",
+      "source": "未知",
+      "confidence": 0
+    }
+  },
+  "interactions": [
+    {
+      "date": "2026-04-30",
+      "type": "一般咨询",
+      "content": "意向度: 低\nassistant: 这些除了360的  我都用过了基本上没有配置SKILL之前 基本上那个就是一个对话工具 只不过是个人...; assistant: 原版的OPENCLAW好用一些 就是安全性不好 要自己配置  其他的几个限制性很多...; customer: 你撤回了一条消息...; customer: 你撤回了一条消息...; customer: [图片]...; customer: [图片]...",
+      "products_mentioned": [],
+      "intention": "低",
+      "next_action": ""
+    },
+    {
+      "date": "2026-05-04",
+      "type": "一般咨询",
+      "content": "意向度: 低\nassistant: 煲一只还是半只...; assistant: 我就知道你们买了 ...; customer: [捂脸]...; customer: 我们买了鸡...; assistant: [图片]...; assistant: [图片]...",
+      "products_mentioned": [],
+      "intention": "低",
+      "next_action": ""
+    }
+  ],
+  "orders": [],
+  "tags": [],
+  "notes": "微信号: YY370651069\n2026-04-30: 意向度: 低\n2026-05-04: 意向度: 低",
+  "priority": "低"
+}
