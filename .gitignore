@@ -21,14 +21,12 @@ contract-server-package/__pycache__/
 contract-server-package/data/
 contract-server-package/.env
 
-assets/images/.trash/
-
-.sync/
-
-.workbuddy/
-
-nul
+assets/images/
+assets/products/
 
 *.bak
 *.backup.*
 *.deleted.*
+*.mp4
+*.exe
+*.zip

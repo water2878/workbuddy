@@ -1,0 +1,70 @@
+{
+  "customer_id": "",
+  "nickname": "健康办公研究社",
+  "first_contact": "2026-05-06",
+  "last_contact": "2026-05-06",
+  "profile": {
+    "customer_type": {
+      "value": "未知",
+      "source": "未知",
+      "confidence": 0
+    },
+    "industry": {
+      "value": "",
+      "source": "未知",
+      "confidence": 0
+    },
+    "business": {
+      "value": "",
+      "source": "未知",
+      "confidence": 0
+    },
+    "demand_type": {
+      "value": "未知",
+      "source": "未知",
+      "confidence": 0
+    },
+    "quantity": {
+      "value": "",
+      "source": "未知",
+      "confidence": 0
+    },
+    "pain_points": {
+      "value": "",
+      "source": "未知",
+      "confidence": 0
+    },
+    "usage_scenario": {
+      "value": "",
+      "source": "未知",
+      "confidence": 0
+    },
+    "budget": {
+      "value": "",
+      "source": "未知",
+      "confidence": 0
+    },
+    "address": {
+      "value": "佛山市浦东新区",
+      "source": "对话分析",
+      "confidence": 0.8
+    }
+  },
+  "interactions": [
+    {
+      "date": "2026-05-06",
+      "type": "客服回复",
+      "content": "你好\n？\n乱码了\n[图片]\n你好\n你好\n[图片]\n生成合同\n生成合同\n华瑞怡宝公司   藤菜 13108261132  佛山市浦东新区  f4200x5\n华瑞怡宝公司   藤菜 13108261132  佛山市浦东新区  f4200x5\n[图片]\n[图片]\n[语音]\n[语音]\n你好\n你好\n你好",
+      "products_mentioned": [
+        "F4200",
+        "F4200"
+      ],
+      "intention": "高意向，已确认订单",
+      "next_action": "等待客户回复"
+    }
+  ],
+  "orders": [],
+  "tags": [],
+  "notes": "",
+  "priority": "高"
+}
