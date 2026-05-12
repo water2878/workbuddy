@@ -2,7 +2,7 @@
   "customer_id": "wxid_nqf5aa9a07mv19",
   "nickname": "健康办公研究社",
   "first_contact": "2026-04-29",
-  "last_contact": "2026-05-11",
+  "last_contact": "2026-05-12",
   "profile": {
     "customer_type": {
       "value": "B端（公司采购）",
@@ -10,12 +10,12 @@
       "confidence": 0.7
     },
     "customer_name": {
-      "value": "张山/李菲儿",
+      "value": "李菲儿",
       "source": "合同信息",
       "confidence": 1.0
     },
     "phone": {
-      "value": "13108261132/18088009689",
+      "value": "18088009689",
       "source": "合同信息",
       "confidence": 1.0
     },
@@ -32,6 +32,11 @@
     "business": {
       "value": "华瑞怡宝公司员工办公使用",
       "source": "客户自述",
+      "confidence": 0.9
+    },
+    "company": {
+      "value": "华瑞怡宝",
+      "source": "从business字段自动提取",
       "confidence": 0.9
     },
     "demand_type": {
@@ -169,6 +174,30 @@
       "products_mentioned": [],
       "intention": "已回复客户",
       "next_action": "等待客户回复"
+    },
+    {
+      "date": "2026-05-12",
+      "type": "客服回复",
+      "content": "您好！收到您的图片，但我这边无法直接查看图片内容呢。麻烦您描述一下图片内容，或者文字告诉我需要什么帮助？",
+      "products_mentioned": [],
+      "intention": "已回复客户",
+      "next_action": "等待客户回复"
+    },
+    {
+      "date": "2026-05-12",
+      "type": "客服回复",
+      "content": "又收到一张图片呢，但我这边还是看不到图片内容哦。麻烦您用文字描述一下图片是什么，或者您想咨询什么产品/问题？",
+      "products_mentioned": [],
+      "intention": "已回复客户",
+      "next_action": "等待客户回复"
+    },
+    {
+      "date": "2026-05-12",
+      "type": "客服回复",
+      "content": "看到您发的图片了！这是一款白色椭圆管双电机升降桌，看起来是T621或T6201型号。白色桌架配白色桌面，双电机驱动，椭圆管立柱，正装结构。请问您是要咨询这款的价格吗？需要几套呢？",
+      "products_mentioned": [],
+      "intention": "已回复客户",
+      "next_action": "等待客户回复"
     }
   ],
   "orders": [
@@ -199,7 +228,7 @@
     "新疆客户",
     "测试人员"
   ],
-  "notes": "2026-05-11：新合同CT20260511162525已生成并推送云端（详细日志已启用）。",
-  "status": "合同已生成待审批",
+  "notes": "2026-05-12：客户连续发送2张图片，等待客户描述图片内容。2026-05-11：新合同CT20260511162525已生成并推送云端。",
+  "status": "等待客户回复",
   "priority": "高"
 }

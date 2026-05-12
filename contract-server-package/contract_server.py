@@ -533,8 +533,11 @@ def _generate_from_xlsx_fill(contract: Contract, template_path: str) -> tuple:
         # 优先使用公司名称(company_name)，如果没有则使用微信昵称(customer_nickname)
         company_display = order.company_name.strip() if order.company_name and order.company_name.strip() else (contract.customer_nickname or '')
         _safe_set("F3", f"  乙方：{company_display}")
-        _safe_set("F4", f"  联系人：{order.customer_contact or ''}")
-        _safe_set("F5", f"  电话：{order.customer_phone or ''}")
+        # 联系人和电话只取最后一个（最新的）
+        contact_display = order.customer_contact.split('/')[-1].strip() if order.customer_contact and '/' in order.customer_contact else (order.customer_contact or '')
+        phone_display = order.customer_phone.split('/')[-1].strip() if order.customer_phone and '/' in order.customer_phone else (order.customer_phone or '')
+        _safe_set("F4", f"  联系人：{contact_display}")
+        _safe_set("F5", f"  电话：{phone_display}")
         _safe_set("F6", f"  地址：{order.customer_address or ''}")
         _safe_set("A8", f"  下单日期：{date_str}")
         _safe_set("F8", f"单号：{order.order_no}")
