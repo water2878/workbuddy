@@ -2689,6 +2689,8 @@ def _fetch_contract_from_cloud(contract_id: str) -> Optional['Contract']:
         Contract: 合同对象，获取失败返回 None
     """
     try:
+        import requests as req
+        
         if not CLOUD_SERVER:
             log(f"[云端同步] 未配置云端服务器")
             return None
@@ -2699,7 +2701,7 @@ def _fetch_contract_from_cloud(contract_id: str) -> Optional['Contract']:
             headers["Authorization"] = f"Bearer {CLOUD_TOKEN}"
         
         log(f"[云端同步] 获取合同数据: {url}")
-        resp = requests.get(url, headers=headers, timeout=10)
+        resp = req.get(url, headers=headers, timeout=10)
         
         if resp.status_code != 200:
             log(f"[云端同步] 获取合同失败: {resp.status_code}")
@@ -2737,7 +2739,6 @@ def _fetch_contract_from_cloud(contract_id: str) -> Optional['Contract']:
             session_id=contract_data.get("session_id", ""),
             customer_wxid=contract_data.get("customer_wxid", ""),
             customer_nickname=contract_data.get("customer_nickname", ""),
-            agent_id=contract_data.get("agent_id", ""),
             order=order,
             status=ContractStatus.APPROVED,  # 云端已审批
             created_at=contract_data.get("created_at", ""),
@@ -3032,18 +3033,18 @@ def _handle_contract_event(event: dict):
     if agent_id and agent_id != SALES_ID:
         return
     
-    # 防重检查：同一个合同同一个动作只处理一次
-    event_key = f"{contract_id}:{action}"
-    if event_key in _processed_contract_events:
-        log(f"[合同SSE] 跳过重复事件: {contract_id} -> {action}")
-        return
-    
-    # 记录已处理的事件（保留最近100条）
-    _processed_contract_events.add(event_key)
-    if len(_processed_contract_events) > 100:
-        # 清理旧记录
-        _processed_contract_events.clear()
-        _processed_contract_events.add(event_key)
+    # 防重检查：同一个合同同一个动作只处理一次（已禁用，允许重复发送）
+    # event_key = f"{contract_id}:{action}"
+    # if event_key in _processed_contract_events:
+    #     log(f"[合同SSE] 跳过重复事件: {contract_id} -> {action}")
+    #     return
+    # 
+    # # 记录已处理的事件（保留最近100条）
+    # _processed_contract_events.add(event_key)
+    # if len(_processed_contract_events) > 100:
+    #     # 清理旧记录
+    #     _processed_contract_events.clear()
+    #     _processed_contract_events.add(event_key)
 
     log(f"[合同SSE] 处理: {contract_id} -> {action}")
 

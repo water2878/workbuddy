@@ -1711,11 +1711,14 @@ def send_contract(contract_id: str, contracts: Dict[str, 'Contract'] = None) -> 
     # 通过 wechat_sender 发送
     try:
         from wechat_sender import send_file
+        log(f"开始发送文件给 {target}: {contract.pdf_path}", "合同")
         sent = send_file(target, contract.pdf_path)
         method = "wechat_sender"
-        # 详细日志由调用方记录，此处仅保留错误日志
+        log(f"send_file 返回: {sent}", "合同")
     except Exception as e:
         log(f"wechat_sender发送失败: {e}", "合同")
+        import traceback
+        log(f"发送异常堆栈: {traceback.format_exc()}", "合同")
 
     if sent:
         contract.status = ContractStatus.SENT
