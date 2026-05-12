@@ -2682,6 +2682,79 @@ def cloud_contract_callback():
     return contract_callback()
 
 
+def _fetch_contract_from_cloud(contract_id: str) -> Optional['Contract']:
+    """从云端获取合同数据并创建本地合同对象
+    
+    返回:
+        Contract: 合同对象，获取失败返回 None
+    """
+    try:
+        if not CLOUD_SERVER:
+            log(f"[云端同步] 未配置云端服务器")
+            return None
+        
+        url = f"{CLOUD_SERVER.rstrip('/')}/api/contracts/detail/{contract_id}"
+        headers = {}
+        if CLOUD_TOKEN:
+            headers["Authorization"] = f"Bearer {CLOUD_TOKEN}"
+        
+        log(f"[云端同步] 获取合同数据: {url}")
+        resp = requests.get(url, headers=headers, timeout=10)
+        
+        if resp.status_code != 200:
+            log(f"[云端同步] 获取合同失败: {resp.status_code}")
+            return None
+        
+        data = resp.json()
+        contract_data = data.get("contract", {})
+        
+        if not contract_data:
+            log(f"[云端同步] 合同数据为空")
+            return None
+        
+        # 创建本地合同对象
+        from contract.contract_generator import Contract, OrderInfo, ContractStatus
+        
+        order_data = contract_data.get("order", {})
+        order = OrderInfo(
+            customer_name=order_data.get("customer_name", ""),
+            customer_contact=order_data.get("customer_contact", ""),
+            customer_phone=order_data.get("customer_phone", ""),
+            customer_address=order_data.get("customer_address", ""),
+            products=order_data.get("products", []),
+            order_no=order_data.get("order_no", contract_id),
+            order_date=order_data.get("order_date", ""),
+            delivery_date=order_data.get("delivery_date", ""),
+            payment_terms=order_data.get("payment_terms", ""),
+            voltage=order_data.get("voltage", "220V/50Hz"),
+            plug_type=order_data.get("plug_type", "国标/欧规/美规"),
+            shipping_country=order_data.get("shipping_country", ""),
+            notes=order_data.get("notes", ""),
+        )
+        
+        contract = Contract(
+            id=contract_id,
+            session_id=contract_data.get("session_id", ""),
+            customer_wxid=contract_data.get("customer_wxid", ""),
+            customer_nickname=contract_data.get("customer_nickname", ""),
+            agent_id=contract_data.get("agent_id", ""),
+            order=order,
+            status=ContractStatus.APPROVED,  # 云端已审批
+            created_at=contract_data.get("created_at", ""),
+            approved_at=contract_data.get("approved_at", ""),
+            approved_by=contract_data.get("approved_by", "云端审批"),
+            pdf_path="",  # 稍后下载
+            xlsx_path="",
+        )
+        
+        log(f"[云端同步] 成功获取合同: {contract_id}, 客户: {contract.customer_nickname}")
+        return contract
+        
+    except Exception as e:
+        log(f"[云端同步] 获取合同异常: {e}")
+        return None
+
+
 def _download_cloud_pdf(contract_id: str, pdf_url: str, max_retries: int = 15) -> str:
     """从云端下载PDF合同文件（带重试，应对云端异步生成）
     
@@ -3019,10 +3092,18 @@ def _send_approved_contract(contract_id: str, pdf_url: str, customer_wxid: str, 
     try:
         contracts = load_contracts()
         if contract_id not in contracts:
-            log(f"[合同发送] 合同 {contract_id} 不存在")
-            return
-
-        contract = contracts[contract_id]
+            log(f"[合同发送] 本地合同 {contract_id} 不存在，尝试从云端获取...")
+            # 从云端获取合同数据
+            contract = _fetch_contract_from_cloud(contract_id)
+            if not contract:
+                log(f"[合同发送] 云端合同 {contract_id} 也不存在，跳过")
+                return
+            # 保存到本地
+            contracts[contract_id] = contract
+            save_contracts(contracts)
+            log(f"[合同发送] 已从云端同步合同 {contract_id} 到本地")
+        else:
+            contract = contracts[contract_id]
         target = customer_nickname or contract.customer_nickname or contract.order.company_name
 
         # 检查是否已经发送过（通过状态判断）- 暂时禁用，允许重复发送
