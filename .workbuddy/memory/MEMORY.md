@@ -220,7 +220,35 @@ URL: http://127.0.0.1:5031/api/v1/media/{wxid}/images/{filename}.jpg
   - 不确定时直接说"我问一下"，不编造、不估算
   - 必须以实际政策为准，不能只看文件
 
-***
+### 2026-05-12 合同API接口记录
+
+**生成合同API**：
+- **接口**: `POST http://120.26.84.224:5032/api/contracts/sync`
+- **Content-Type**: `application/json`
+- **Python调用**:
+```python
+import requests
+url = "http://120.26.84.224:5032/api/contracts/sync"
+payload = {
+    "customer_name": "公司全称（不是微信昵称）",
+    "customer_contact": "联系人",
+    "customer_phone": "电话",
+    "customer_address": "地址",
+    "products": [{"model": "型号", "quantity": 数量, "unit_price": 成交价, "subtotal": 小计, "frame_color": "颜色"}],
+    "customer_nickname": "微信昵称",
+    "delivery_date": "交货期",
+    "payment_terms": "付款方式",
+    "notes": "备注",
+    "agent_id": "lisheng"
+}
+response = requests.post(url, json=payload)
+```
+- **返回**: `{"status": "ok", "contract_id": "CT...", "created": true}`
+
+**⚠️ 重要规则**：
+1. `customer_name` 必须是**公司全称**（如"华瑞怡宝"），不是微信昵称
+2. `unit_price` 必须是**成交价**（和客户谈好的最终价格），不是基准价，不是对外报价
+3. 旧的 `generate_contract.py` 脚本是写死的测试数据，不能直接用！
 
 ### 2026-05-09 文件结构整理
 
