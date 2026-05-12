@@ -294,9 +294,12 @@ def read_conversations_from_log(log_file: str, hours: int = 1) -> List[Dict]:
         # 使用正则表达式提取对话
         # 格式1: [日期 时间] New msg [昵称]: 内容 type=text
         # 格式2: [日期 时间] New msg [昵称]: 昵称: 内容 type=text (消息内容重复了昵称)
+        # 格式3: [时间] [WBBridge] [MSG] 昵称 : 内容 (claw_YYYYMMDD.log格式)
         patterns = [
             r'\[(\d{4}-\d{2}-\d{2})\s+(\d{2}:\d{2}:\d{2})\]\s+New msg\s+\[([^\]]+)\]:\s+[^\:]+:\s+(.+?)\s+type=',
-            r'\[(\d{4}-\d{2}-\d{2})\s+(\d{2}:\d{2}:\d{2})\]\s+New msg\s+\[([^\]]+)\]:\s+(.+?)\s+type='
+            r'\[(\d{4}-\d{2}-\d{2})\s+(\d{2}:\d{2}:\d{2})\]\s+New msg\s+\[([^\]]+)\]:\s+(.+?)\s+type=',
+            # claw_YYYYMMDD.log 格式: [2026-05-12 09:10:27] [WBBridge] [MSG] 健康办公研究社 : 内容
+            r'\[(\d{4}-\d{2}-\d{2})\s+(\d{2}:\d{2}:\d{2})\]\s+\[WBBridge\]\s+\[MSG\]\s+([^:]+)\s*:\s*(.+)',
         ]
         
         matches = []
@@ -305,17 +308,19 @@ def read_conversations_from_log(log_file: str, hours: int = 1) -> List[Dict]:
             if matches:
                 break
         
-        for date_str, time_str, nickname, message in matches:
-            # 解析时间
-            msg_time = datetime.strptime(f"{date_str} {time_str}", "%Y-%m-%d %H:%M:%S")
-            
-            # 检查是否在时间范围内
-            if msg_time >= cutoff_time:
-                conversations.append({
-                    "nickname": nickname,
-                    "message": message,
-                    "time": msg_time
-                })
+        for match in matches:
+            if len(match) == 4:
+                date_str, time_str, nickname, message = match
+                # 解析时间
+                msg_time = datetime.strptime(f"{date_str} {time_str}", "%Y-%m-%d %H:%M:%S")
+                
+                # 检查是否在时间范围内
+                if msg_time >= cutoff_time:
+                    conversations.append({
+                        "nickname": nickname.strip(),
+                        "message": message.strip(),
+                        "time": msg_time
+                    })
         
         log(f"从日志中提取了 {len(conversations)} 条对话记录")
         
@@ -362,6 +367,7 @@ def main():
         # 尝试默认日志文件
         today = datetime.now().strftime("%Y%m%d")
         possible_logs = [
+            os.path.join(LOGS_DIR, f"claw_{today}.log"),  # claw_20260512.log
             os.path.join(LOGS_DIR, "weflow-wb-bridge.log"),
             os.path.join(DATA_LOGS_DIR, f"toolserver_{today}.log"),
         ]
