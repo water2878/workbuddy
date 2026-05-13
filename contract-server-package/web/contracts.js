@@ -221,7 +221,7 @@ async function loadContracts() {
         </div>
         <div class="card-body">
           <div class="info-row">
-            <div class="info-item"><label>公司名称</label><span>${c.customer_name || "未提供"}</span></div>
+            <div class="info-item"><label>公司名称</label><span>${c.company_name || c.customer_name || "未提供"}</span></div>
             <div class="info-item"><label>联系人</label><span>${c.customer_contact || "未提供"}</span></div>
             <div class="info-item"><label>联系电话</label><span>${c.customer_phone || "未提供"}</span></div>
             <div class="info-item"><label>收货地址</label><span>${c.customer_address || "未提供"}</span></div>
@@ -524,7 +524,7 @@ async function openEdit(contractId) {
     document.getElementById("editBody").innerHTML = `
       ${warningHtml}
       <div class="form-row">
-        <div class="form-group"><label>客户/公司名</label><input id="e-customer-name" value="${o.customer_name || ''}"></div>
+        <div class="form-group"><label>客户/公司名</label><input id="e-customer-name" value="${o.company_name || o.customer_name || ''}"></div>
         <div class="form-group"><label>联系人</label><input id="e-customer-contact" value="${o.customer_contact || ''}"></div>
       </div>
       <div class="form-row">
@@ -752,7 +752,7 @@ async function saveEdit() {
   })).filter(p => p.model);
 
   const updates = {
-    customer_name: (document.getElementById("e-customer-name") || {}).value || "",
+    company_name: (document.getElementById("e-customer-name") || {}).value || "",
     customer_contact: (document.getElementById("e-customer-contact") || {}).value || "",
     customer_phone: (document.getElementById("e-customer-phone") || {}).value || "",
     customer_address: (document.getElementById("e-customer-address") || {}).value || "",

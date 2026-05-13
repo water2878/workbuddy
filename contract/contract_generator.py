@@ -92,7 +92,11 @@ class OrderInfo:
 
     @classmethod
     def from_dict(cls, data: Dict) -> "OrderInfo":
-        return cls(**{k: v for k, v in data.items() if k in cls.__dataclass_fields__})
+        # 兼容字段名：company_name -> customer_name
+        mapped_data = dict(data)
+        if "company_name" in mapped_data and "customer_name" not in mapped_data:
+            mapped_data["customer_name"] = mapped_data.pop("company_name")
+        return cls(**{k: v for k, v in mapped_data.items() if k in cls.__dataclass_fields__})
 
 
 @dataclass
@@ -723,8 +727,10 @@ def generate_contract(
 
     # 支持传入字典，自动转换为OrderInfo
     if isinstance(order, dict):
+        # 兼容字段名：company_name -> customer_name
+        customer_name = order.get("customer_name", "") or order.get("company_name", "")
         order_obj = OrderInfo(
-            customer_name=order.get("customer_name", ""),
+            customer_name=customer_name,
             customer_contact=order.get("customer_contact", ""),
             customer_phone=order.get("customer_phone", ""),
             customer_address=order.get("customer_address", ""),
@@ -935,6 +941,8 @@ def _notify_customer(contract: Contract) -> None:
         
         customer_wxid = contract.customer_wxid
         customer_nickname = contract.customer_nickname
+        
+        log(f"[合同] 通知客户: wxid={customer_wxid}, nickname={customer_nickname}", "合同")
         
         if not customer_wxid and not customer_nickname:
             log("[合同] 客户无微信ID和昵称，跳过通知客户")

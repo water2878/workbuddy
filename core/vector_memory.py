@@ -20,6 +20,10 @@ import lancedb
 # 向量嵌入模型（必须在 lancedb 之后导入）
 from sentence_transformers import SentenceTransformer
 
+# 设置 HuggingFace 镜像（国内加速）
+import os
+os.environ['HF_ENDPOINT'] = 'https://hf-mirror.com'
+
 
 class VectorMemory:
     """本地向量记忆系统 - 畅腾升降桌客服版"""
