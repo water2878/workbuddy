@@ -40,19 +40,44 @@
       "confidence": 0.8
     },
     "budget": {
-      "value": "待确认",
-      "source": "对话分析",
-      "confidence": 0.6
+      "value": "600元左右/套",
+      "source": "客户报价",
+      "confidence": 0.9
     },
     "interested_models": {
-      "value": "T621",
+      "value": "T621, T412, T524",
       "source": "对话分析",
       "confidence": 0.9
     },
     "panel_specs": {
-      "value": "白色，1400*700，25MM厚，E0级",
-      "source": "对话分析",
+      "value": "黑色，1400*700，E0级，25mm",
+      "source": "客户确认",
       "confidence": 0.9
+    },
+    "company_name": {
+      "value": "佛山东鹏特饮",
+      "source": "客户提供",
+      "confidence": 1.0
+    },
+    "delivery_address": {
+      "value": "佛山市禅城区绿岛湖",
+      "source": "客户提供",
+      "confidence": 1.0
+    },
+    "contact_person": {
+      "value": "李四",
+      "source": "客户提供",
+      "confidence": 1.0
+    },
+    "contact_phone": {
+      "value": "16800001132",
+      "source": "客户提供",
+      "confidence": 1.0
+    }
+    "frame_color": {
+      "value": "黑色",
+      "source": "客户确认",
+      "confidence": 1.0
     }
   },
   "interactions": [
@@ -104,6 +129,150 @@
       ],
       "intention": "高意向，已确认订单",
       "next_action": "等待客户回复"
+    },
+    {
+      "date": "2026-05-13",
+      "type": "客服回复",
+      "content": "你好！有什么可以帮您？",
+      "products_mentioned": [],
+      "intention": "已回复客户",
+      "next_action": "等待客户回复"
+    },
+    {
+      "date": "2026-05-13",
+      "type": "客服回复",
+      "content": "好的，需要多少套？预算什么范围？",
+      "products_mentioned": [],
+      "intention": "已回复客户",
+      "next_action": "等待客户回复"
+    },
+    {
+      "date": "2026-05-13",
+      "type": "客服回复",
+      "content": "之前确认的是T621双电机，E0面板。600左右的话，T412方管双电机更合适，689一套。要换吗？",
+      "products_mentioned": [],
+      "intention": "已回复客户",
+      "next_action": "等待客户回复"
+    },
+    {
+      "date": "2026-05-13",
+      "type": "客服回复",
+      "content": "T524单电机2节，415一套，100套399。预算上限多少？",
+      "products_mentioned": [],
+      "intention": "已回复客户",
+      "next_action": "等待客户回复"
+    },
+    {
+      "date": "2026-05-13",
+      "type": "客服回复",
+      "content": "[图片] T524_测试_20260509_170042.jpg",
+      "products_mentioned": [],
+      "intention": "已回复客户",
+      "next_action": "等待客户回复"
+    },
+    {
+      "date": "2026-05-13",
+      "type": "客服回复",
+      "content": "T524方管2节单电机，正装结构。100套399元/套。",
+      "products_mentioned": [],
+      "intention": "已回复客户",
+      "next_action": "等待客户回复"
+    },
+    {
+      "date": "2026-05-13",
+      "type": "客服回复",
+      "content": "T524有现货，100套3-5天发货。要下单吗？",
+      "products_mentioned": [],
+      "intention": "已回复客户",
+      "next_action": "等待客户回复"
+    },
+    {
+      "date": "2026-05-13",
+      "type": "客服回复",
+      "content": "多急？要几号到货？",
+      "products_mentioned": [],
+      "intention": "已回复客户",
+      "next_action": "等待客户回复"
+    },
+    {
+      "date": "2026-05-13",
+      "type": "客服回复",
+      "content": "钢架不含面板。面板要什么尺寸？1200*600还是1400*700？",
+      "products_mentioned": [],
+      "intention": "已回复客户",
+      "next_action": "等待客户回复"
+    },
+    {
+      "date": "2026-05-13",
+      "type": "客服回复",
+      "content": "收到。面板厚度18mm还是25mm？E0级还是E1级？",
+      "products_mentioned": [],
+      "intention": "已回复客户",
+      "next_action": "等待客户回复"
+    },
+    {
+      "date": "2026-05-13",
+      "type": "客服回复",
+      "content": "E1面板235元，E0面板237元。厚度18mm和25mm同价。要哪种？",
+      "products_mentioned": [],
+      "intention": "已回复客户",
+      "next_action": "等待客户回复"
+    },
+    {
+      "date": "2026-05-13",
+      "type": "客服回复",
+      "content": "E1面板可以，634元/套。100套给你600元/套吧。",
+      "products_mentioned": [],
+      "intention": "已回复客户",
+      "next_action": "等待客户回复"
+    },
+    {
+      "date": "2026-05-13",
+      "type": "客服回复",
+      "content": "E0面板237元，636元/套。给你602元/套吧。",
+      "products_mentioned": [],
+      "intention": "已回复客户",
+      "next_action": "等待客户回复"
+    },
+    {
+      "date": "2026-05-13",
+      "type": "客服回复",
+      "content": "行，600就600。什么时候要？",
+      "products_mentioned": [],
+      "intention": "已回复客户",
+      "next_action": "等待客户回复"
+    },
+    {
+      "date": "2026-05-13",
+      "type": "客服回复",
+      "content": "5月20号前到货可以。需要生成合同吗？",
+      "products_mentioned": [],
+      "intention": "已回复客户",
+      "next_action": "等待客户回复"
+    },
+    {
+      "date": "2026-05-13",
+      "type": "客服回复",
+      "content": "好的，需要以下信息生成合同：\n1. 公司全称\n2. 收货地址\n3. 联系人\n4. 联系电话\n5. 面板厚度（18mm还是25mm）",
+      "products_mentioned": [],
+      "intention": "已回复客户",
+      "next_action": "等待客户回复"
+    },
+    {
+      "date": "2026-05-13",
+      "type": "客服回复",
+      "content": "收到，马上生成合同。",
+      "products_mentioned": [],
+      "intention": "已回复客户",
+      "next_action": "等待客户回复"
+    },
+    {
+      "date": "2026-05-13",
+      "type": "客服回复",
+      "content": "合同已生成，合同号CT20260513161645，已提交审批。",
+      "products_mentioned": [],
+      "intention": "已回复客户",
+      "next_action": "等待客户回复"
     }
   ],
   "orders": [
@@ -114,16 +283,42 @@
       "panel": "E0级，白色，1400*700，25MM厚",
       "status": "待确认",
       "contract_id": "CT20260511162525"
+    },
+    {
+      "date": "2026-05-13",
+      "model": "T524",
+      "quantity": "100套",
+      "panel": "E0级，黑色，1400*700，25MM厚",
+      "status": "合同审批中",
+      "contract_id": "CT20260513161645",
+      "unit_price": "600元",
+      "total": "60000元"
     }
   ],
   "tags": [
     "高意向",
     "价格敏感",
     "B端客户",
-    "T621需求",
+    "T524需求",
     "E0面板",
-    "100套起订"
+    "100套起订",
+    "合同已生成"
   ],
-  "notes": "客户关注价格一致性，对专业度要求高。面板规格：白色，1400*700，25MM厚，E0级。需确认最终报价和运费。",
+  "notes": "客户关注价格一致性，对专业度要求高。已确认配置：T524黑色钢架+E0黑色面板1400*700*25mm。成交价600元/套（100套），交货期5月20日前。合同已生成CT20260513161645，已提交审批。",
+  "last_action": "合同已生成CT20260513161645，已提交审批",
+  "final_quote": {
+    "model": "T524",
+    "frame_color": "黑色",
+    "panel": "E0级黑色1400*700*25mm",
+    "quantity": "100套",
+    "unit_price": "600元/套",
+    "original_price": "636元/套",
+    "discount": "36元/套",
+    "total": "60000元",
+    "delivery_date": "2026-05-20前",
+    "contract_id": "CT20260513161645"
+  },
+  "alternative_model": "T412, T524",
+  "budget_negotiation": "客户认为T412(689元)仍贵，推荐T524(399元/100套)",
   "priority": "高"
 }
