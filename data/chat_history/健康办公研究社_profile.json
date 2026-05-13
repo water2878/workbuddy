@@ -2,7 +2,7 @@
   "customer_id": "",
   "nickname": "健康办公研究社",
   "first_contact": "2026-04-28",
-  "last_contact": "2026-05-12",
+  "last_contact": "2026-05-13",
   "profile": {
     "customer_type": {
       "value": "B端（公司/工程）",
@@ -68,7 +68,10 @@
       "date": "2026-05-04",
       "type": "询价",
       "content": "咨询T412/T524价格，关注经济款",
-      "products_mentioned": ["T412", "T524"],
+      "products_mentioned": [
+        "T412",
+        "T524"
+      ],
       "intention": "中意向，价格敏感",
       "next_action": "等待客户回复"
     },
@@ -76,7 +79,9 @@
       "date": "2026-05-11",
       "type": "询价",
       "content": "发送图片询价，发送合同",
-      "products_mentioned": ["T621"],
+      "products_mentioned": [
+        "T621"
+      ],
       "intention": "高意向，已确认订单",
       "next_action": "等待客户确认合同"
     },
@@ -84,9 +89,21 @@
       "date": "2026-05-12",
       "type": "下单",
       "content": "确认100套T621，E0面板1400*700*25MM白色，谈判价格，关注运费",
-      "products_mentioned": ["T621"],
+      "products_mentioned": [
+        "T621"
+      ],
       "intention": "高意向，已确认订单",
       "next_action": "确认最终价格和运费，等待付款"
+    },
+    {
+      "date": "2026-05-13",
+      "type": "下单",
+      "content": "咨询产品: T621；意向: 高意向，已确认订单",
+      "products_mentioned": [
+        "T621"
+      ],
+      "intention": "高意向，已确认订单",
+      "next_action": "等待客户回复"
     }
   ],
   "orders": [
