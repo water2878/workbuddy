@@ -138,7 +138,11 @@ class OrderInfo:
 
     @classmethod
     def from_dict(cls, data: Dict) -> "OrderInfo":
-        return cls(**{k: v for k, v in data.items() if k in cls.__dataclass_fields__})
+        # 兼容字段名：customer_name -> company_name
+        mapped_data = dict(data)
+        if "customer_name" in mapped_data and "company_name" not in mapped_data:
+            mapped_data["company_name"] = mapped_data.pop("customer_name")
+        return cls(**{k: v for k, v in mapped_data.items() if k in cls.__dataclass_fields__})
 
 
 @dataclass

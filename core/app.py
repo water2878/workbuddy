@@ -2316,40 +2316,27 @@ def api_contracts_generate():
         log("[合同生成] 失败: 缺少产品信息")
         return jsonify({"success": False, "error": "缺少产品信息（products不能为空）"}), 400
 
-    if not CLOUD_SERVER:
-        log("[合同生成] 失败: 未配置云端服务器")
-        return jsonify({"success": False, "error": "未配置云端服务器（CLOUD_SERVER）"}), 503
-
     try:
-        import requests as req
+        from contract.contract_generator import generate_contract
 
-        payload = {**data, "agent_id": SALES_ID or "claw"}
-        headers = {
-            "Content-Type": "application/json",
-            "Authorization": f"Bearer {CLOUD_TOKEN}",
-        }
-
-        cloud_url = f"{CLOUD_SERVER.rstrip('/')}/api/contracts/sync"
-        log(f"[合同生成] 推送数据到云端: {cloud_url}")
-
-        resp = req.post(
-            cloud_url, json=payload, headers=headers, timeout=30,
-            proxies={"http": None, "https": None},
+        contract = generate_contract(
+            order=data,
+            session_id=data.get("session_id", ""),
+            customer_wxid=data.get("customer_wxid", ""),
+            customer_nickname=data.get("customer_nickname", ""),
         )
 
-        if resp.status_code == 200:
-            result = resp.json()
-            contract_id = result.get("contract_id", "")
-            log(f"[合同生成] 云端生成成功: 合同号={contract_id}")
+        if contract:
+            log(f"[合同生成] 本地生成成功: 合同号={contract.id}")
             _notify_contract_sse()
             return jsonify(success_response({
-                "contract_id": contract_id,
+                "contract_id": contract.id,
                 "status": "pending",
-                "created": result.get("created", True),
-            }, message="合同已推送云端生成并进入审批流程"))
+                "created": True,
+            }, message="合同已生成并进入审批流程"))
         else:
-            log(f"[合同生成] 云端返回错误: HTTP {resp.status_code} - {resp.text[:200]}")
-            return jsonify({"success": False, "error": f"云端返回 HTTP {resp.status_code}: {resp.text[:200]}"}), 502
+            log("[合同生成] 失败: generate_contract 返回空")
+            return jsonify({"success": False, "error": "合同生成失败"}), 500
 
     except Exception as e:
         log(f"[合同生成] 异常: {e}")

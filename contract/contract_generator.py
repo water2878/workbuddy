@@ -769,11 +769,14 @@ def generate_contract(
     contracts[contract.id] = contract
     save_contracts(contracts)
 
+    # 通知审批人（在推送云端之前，确保审批人能收到通知）
+    _notify_approver(contract)
+    
+    # 通知客户合同已生成，正在审批中
+    _notify_customer(contract)
+    
     # 推送到云端审批服务器
     _push_contract_to_cloud(contract)
-    
-    # 通知审批人
-    _notify_approver(contract)
 
     return contract
 
@@ -920,6 +923,48 @@ def _notify_approver(contract: Contract) -> None:
 
     except Exception as e:
         log(f"通知审批人异常: {e}", "合同")
+
+
+def _notify_customer(contract: Contract) -> None:
+    """通知客户合同已生成，正在审批中"""
+    try:
+        import sys
+        sys.path.insert(0, 'sender')
+        sys.path.insert(0, 'core')
+        from wechat_sender import send_text_safe
+        
+        customer_wxid = contract.customer_wxid
+        customer_nickname = contract.customer_nickname
+        
+        if not customer_wxid and not customer_nickname:
+            log("[合同] 客户无微信ID和昵称，跳过通知客户")
+            return
+        
+        target = customer_wxid or customer_nickname
+        
+        order = contract.order
+        products_info = []
+        for p in order.products:
+            model = p.get('model', '')
+            qty = p.get('quantity', 0)
+            products_info.append(f"{model} x{qty}")
+        
+        message = f"""您好，您的合同已生成，正在审批中：
+
+合同号：{contract.id}
+产品：{', '.join(products_info)}
+交期：{order.delivery_date or '待确认'}
+
+审批通过后将第一时间发送给您，请稍候。"""
+        
+        result = send_text_safe(target, message)
+        if result.get('success'):
+            log(f"已通知客户 {customer_nickname or customer_wxid}", "合同")
+        else:
+            log(f"通知客户失败: {result.get('error')}", "合同")
+
+    except Exception as e:
+        log(f"通知客户异常: {e}", "合同")
 
 
 def _push_contract_to_cloud(contract: Contract) -> None:

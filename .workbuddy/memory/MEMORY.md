@@ -222,15 +222,15 @@ URL: http://127.0.0.1:5031/api/v1/media/{wxid}/images/{filename}.jpg
 
 ### 2026-05-12 合同API接口记录
 
-**生成合同API**：
-- **接口**: `POST http://120.26.84.224:5032/api/contracts/sync`
+**生成合同API（推荐：本地接口）**:
+- **接口**: `POST http://127.0.0.1:5032/api/contracts/generate`
 - **Content-Type**: `application/json`
 - **Python调用**:
 ```python
 import requests
-url = "http://120.26.84.224:5032/api/contracts/sync"
+url = "http://127.0.0.1:5032/api/contracts/generate"
 payload = {
-    "customer_name": "公司全称（不是微信昵称）",
+    "customer_name": "公司全称（不是微信昵称）",    # ⚠️ 注意：用 customer_name，不是 company_name
     "customer_contact": "联系人",
     "customer_phone": "电话",
     "customer_address": "地址",
@@ -239,16 +239,89 @@ payload = {
     "delivery_date": "交货期",
     "payment_terms": "付款方式",
     "notes": "备注",
-    "agent_id": "lisheng"
+    "agent_id": "lisheng"          # 销售代理ID
 }
 response = requests.post(url, json=payload)
 ```
-- **返回**: `{"status": "ok", "contract_id": "CT...", "created": true}`
+- **返回**: `{"success": true, "data": {"contract_id": "CT...", "status": "pending", "created": true}}`
 
-**⚠️ 重要规则**：
-1. `customer_name` 必须是**公司全称**（如"华瑞怡宝"），不是微信昵称
+**⚠️ 重要规则**:
+1. **字段名必须用 `customer_name`**（不是 `company_name`）！云端 `OrderInfo` 类用的是 `company_name`，但 `from_dict` 过滤后历史数据实际存储的是 `customer_name`
 2. `unit_price` 必须是**成交价**（和客户谈好的最终价格），不是基准价，不是对外报价
 3. 旧的 `generate_contract.py` 脚本是写死的测试数据，不能直接用！
+
+**其他本地合同接口**:
+- `GET /api/contracts/list` - 合同列表
+- `GET /api/contracts/pending` - 待审批列表
+- `GET /api/contracts/detail/{contract_id}` - 合同详情
+- `GET /api/contracts/pdf/{contract_id}` - 下载PDF
+- `POST /api/contracts/update` - 更新合同
+- `POST /api/contracts/mark-sent` - 标记已发送
+
+### 2026-05-13 合同价格拆分技巧（健康办公研究社案例）
+
+**场景**：客户要求钢架和面板分开显示，但总价要等于谈好的成交价（如600元/套）
+
+**错误做法**：
+- ❌ 按基准价分别报价（T524=415元，E0面板=218元，总价633元≠600元）
+- ❌ 将产品和面板合并成一条记录
+
+**正确做法**：
+- ✅ **价格拆分策略**：调整钢架和面板的价格比例，使总价=成交价
+- ✅ **示例**（600元/套成交价）：
+  - T524钢架：399元（低于基准价415元）
+  - E0面板：201元（低于基准价218元）
+  - 合计：399 + 201 = 600元 ✓
+
+**API调用示例**：
+```python
+{
+    "products": [
+        {"model": "T524", "quantity": 100, "unit_price": 399, "subtotal": 39900, "frame_color": "黑色"},
+        {"model": "E0", "quantity": 100, "unit_price": 201, "subtotal": 20100, "frame_color": "黑色", "frame_size": "1400*700mm*25mm"}
+    ]
+}
+```
+
+**关键要点**：
+1. 面板产品必须加 `frame_size` 字段（如 "1400*700mm*25mm"）
+2. `frame_color` 要正确填写（"黑色"/"白色"/"灰色"）
+3. 单价可以随意拆分，只要总和正确即可
+4. 客户关心的是总价，分项价格只是形式
+
+### 2026-05-13 合同修改规则
+
+**重要原则**：合同修改时**保留原合同号**，不要重新生成！
+
+**错误做法**：
+- ❌ 客户要求修改合同 → 重新调用API生成新合同 → 新合同号（如 CT20260513161645 → CT20260513162227）
+- ❌ 导致客户困惑，一个订单多个合同号
+
+**正确做法**：
+- ✅ 在原合同基础上修改内容，**合同号保持不变**
+- ✅ 修改后通知客户："合同已更新，合同号还是 XXX"
+
+**注意**：当前API `POST /api/contracts/sync` 每次调用都会生成新合同号，如需修改现有合同，需要调用**更新接口**（如果有）或先删除旧合同再生成（保持原合同号）。
+
+### 2026-05-13 合同创建未通知审批人（Bug）
+
+**问题**：`create_contract()` 函数创建合同后**没有通知审批人**，审批人不知道有新合同待审批。
+
+**代码位置**：`contract-server-package/contract_server.py` 第922-956行
+
+**现状**：
+- ❌ 创建合同后只调用了 `_notify_sse_clients()`（通知前端刷新列表）
+- ❌ 审批人（A畅腾升降桌09-15989997886）收不到新合同通知
+
+**应该**：
+- ✅ 创建合同后应发送通知给审批人（微信消息或SSE推送）
+- ✅ 通知内容："新合同待审批：{合同号} - {公司名} - {金额}"
+
+**临时解决方案**：
+- 合同生成后，人工告知审批人："合同 XXX 已生成，请审批"
+
+**修复建议**：
+在 `create_contract()` 函数末尾添加 `_notify_approver()` 调用，类似 `_notify_agent_sse()` 的实现方式。
 
 ### 2026-05-09 文件结构整理
 
@@ -261,4 +334,4 @@ response = requests.post(url, json=payload)
 
 ***
 
-_最后更新: 2026-05-09_
+_最后更新: 2026-05-13_
