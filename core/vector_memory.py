@@ -22,7 +22,7 @@ from sentence_transformers import SentenceTransformer
 
 # 设置 HuggingFace 镜像（国内加速）
 import os
-os.environ['HF_ENDPOINT'] = 'https://hf-mirror.com'
+os.environ['HF_ENDPOINT'] = os.environ.get('HF_ENDPOINT', 'https://hf-mirror.com')
 
 
 class VectorMemory:
