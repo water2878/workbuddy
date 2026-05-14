@@ -9,6 +9,26 @@
       "source": "对话分析",
       "confidence": 0.9
     },
+    "customer_name": {
+      "value": "李四",
+      "source": "客户提供",
+      "confidence": 1.0
+    },
+    "company": {
+      "value": "佛山东鹏特饮",
+      "source": "客户提供",
+      "confidence": 1.0
+    },
+    "phone": {
+      "value": "16800001132",
+      "source": "客户提供",
+      "confidence": 1.0
+    },
+    "address": {
+      "value": "佛山市禅城区绿岛湖",
+      "source": "客户提供",
+      "confidence": 1.0
+    },
     "industry": {
       "value": "健康办公",
       "source": "昵称",
@@ -21,16 +41,16 @@
     },
     "demand_type": {
       "value": "批发/工程",
-      "source": "对话分析（100套）",
-      "confidence": 0.9
-    },
-    "quantity": {
-      "value": "100套",
       "source": "对话分析",
       "confidence": 0.9
     },
+    "quantity": {
+      "value": "30套（新询价），100套（已签合同）",
+      "source": "客户提供",
+      "confidence": 0.9
+    },
     "pain_points": {
-      "value": "关注价格一致性，多次询价确认",
+      "value": "价格敏感，预算有限",
       "source": "对话分析",
       "confidence": 0.8
     },
@@ -40,301 +60,279 @@
       "confidence": 0.8
     },
     "budget": {
-      "value": "600元左右/套",
-      "source": "客户报价",
+      "value": "500元/套",
+      "source": "客户提供",
       "confidence": 0.9
-    },
-    "interested_models": {
-      "value": "T621, T412, T524",
-      "source": "对话分析",
-      "confidence": 0.9
-    },
-    "panel_specs": {
-      "value": "黑色，1400*700，E0级，25mm",
-      "source": "客户确认",
-      "confidence": 0.9
-    },
-    "frame_color": {
-      "value": "黑色",
-      "source": "客户确认",
-      "confidence": 1.0
-    },
-    "company_name": {
-      "value": "佛山东鹏特饮",
-      "source": "客户提供",
-      "confidence": 1.0
-    },
-    "delivery_address": {
-      "value": "佛山市禅城区绿岛湖",
-      "source": "客户提供",
-      "confidence": 1.0
-    },
-    "contact_person": {
-      "value": "李四",
-      "source": "客户提供",
-      "confidence": 1.0
-    },
-    "contact_phone": {
-      "value": "16800001132",
-      "source": "客户提供",
-      "confidence": 1.0
-    },
-    "address": {
-      "value": "佛山市禅城区绿岛湖",
-      "source": "对话分析",
-      "confidence": 0.8
     }
   },
   "interactions": [
     {
-      "date": "2026-04-28",
-      "type": "咨询",
-      "content": "初次咨询产品",
-      "products_mentioned": [],
-      "intention": "低意向，咨询阶段",
-      "next_action": "等待客户回复"
-    },
-    {
-      "date": "2026-05-04",
-      "type": "询价",
-      "content": "咨询T412/T524价格，关注经济款",
+      "date": "2026-05-13",
+      "type": "下单",
+      "content": "100套T524黑色+E0面板1400*700*25mm，成交价600元/套，合同CT20260513172616",
       "products_mentioned": [
-        "T412",
         "T524"
       ],
-      "intention": "中意向，价格敏感",
-      "next_action": "等待客户回复"
+      "intention": "合同已生成，审批中",
+      "next_action": "等待客户确认"
     },
     {
-      "date": "2026-05-11",
+      "date": "2026-05-14",
       "type": "询价",
-      "content": "发送图片询价，发送合同",
+      "content": "新询价：500元预算，30套，推荐升降桌",
+      "products_mentioned": [],
+      "intention": "中意向，找经济款",
+      "next_action": "等待客户回复"
+    },
+    {
+      "date": "2026-05-14",
+      "type": "客服回复",
+      "content": "推荐T523倒装单电机4记忆约460元，T524方管2节单电机约450元，30套可优惠",
       "products_mentioned": [
-        "T621"
+        "T523",
+        "T524"
       ],
-      "intention": "高意向，已确认订单",
-      "next_action": "等待客户确认合同"
-    },
-    {
-      "date": "2026-05-12",
-      "type": "下单",
-      "content": "确认100套T621，E0面板1400*700*25MM白色，谈判价格，关注运费",
-      "products_mentioned": [
-        "T621"
-      ],
-      "intention": "高意向，已确认订单",
-      "next_action": "确认最终价格和运费，等待付款"
-    },
-    {
-      "date": "2026-05-13",
-      "type": "下单",
-      "content": "咨询产品: T621；意向: 高意向，已确认订单",
-      "products_mentioned": [
-        "T621"
-      ],
-      "intention": "高意向，已确认订单",
-      "next_action": "等待客户回复"
-    },
-    {
-      "date": "2026-05-13",
-      "type": "客服回复",
-      "content": "收到，我检查一下重新生成。",
-      "products_mentioned": [],
       "intention": "已回复客户",
       "next_action": "等待客户回复"
     },
     {
-      "date": "2026-05-13",
-      "type": "客服回复",
-      "content": "合同已修正，新合同号CT20260513162227。整套装600元/套，面板黑色。已重新提交审批。",
-      "products_mentioned": [],
-      "intention": "已回复客户",
-      "next_action": "等待客户回复"
-    },
-    {
-      "date": "2026-05-13",
-      "type": "客服回复",
-      "content": "系统默认把面板拆分了。我联系技术调整，或者先按82100元合同走，实际收60000元，差价用优惠处理。",
-      "products_mentioned": [],
-      "intention": "已回复客户",
-      "next_action": "等待客户回复"
-    },
-    {
-      "date": "2026-05-13",
-      "type": "客服回复",
-      "content": "已调整，新合同号CT20260513162758。T524钢架399元+E0面板201元=600元/套。",
-      "products_mentioned": [],
-      "intention": "已回复客户",
-      "next_action": "等待客户回复"
-    },
-    {
-      "date": "2026-05-13",
+      "date": "2026-05-14",
       "type": "询价",
-      "content": "咨询产品: T524, E0；数量: 100套；意向: 中意向，价格谈判中",
+      "content": "询问T523/T524是否带面板",
       "products_mentioned": [
-        "T524",
-        "E0"
+        "T523",
+        "T524"
       ],
-      "intention": "中意向，价格谈判中",
-      "next_action": "等待客户回复"
-    },
-    {
-      "date": "2026-05-13",
-      "type": "客服回复",
-      "content": "合同已重新生成，合同号CT20260513172616，请查看。",
-      "products_mentioned": [],
-      "intention": "已回复客户",
-      "next_action": "等待客户回复"
-    },
-    {
-      "date": "2026-05-13",
-      "type": "下单",
-      "content": "意向: 高意向，已确认订单",
-      "products_mentioned": [],
-      "intention": "高意向，已确认订单",
+      "intention": "了解报价是否含面板",
       "next_action": "等待客户回复"
     },
     {
       "date": "2026-05-14",
-      "type": "下单",
-      "content": "咨询产品: T524, E0；数量: 100套；意向: 高意向，已确认订单",
+      "type": "客服回复",
+      "content": "钢架面板分开报价。T523钢架460元，T524钢架450元。面板E1级233元，E0级235元。整套装约680-700元",
       "products_mentioned": [
-        "T524",
-        "E0"
+        "T523",
+        "T524"
       ],
-      "intention": "高意向，已确认订单",
+      "intention": "已回复客户",
+      "next_action": "等待客户回复"
+    },
+    {
+      "date": "2026-05-14",
+      "type": "反馈",
+      "content": "对T523产品图片不满意，表示'图片内容不行'",
+      "products_mentioned": [
+        "T523"
+      ],
+      "intention": "需要更换产品图或看其他型号",
+      "next_action": "等待客户回复"
+    },
+    {
+      "date": "2026-05-14",
+      "type": "反馈",
+      "content": "表示'太贵了'，500预算无法承受680-700元整套装",
+      "products_mentioned": [],
+      "intention": "价格超出预算，需要更便宜方案",
       "next_action": "等待客户回复"
     },
     {
       "date": "2026-05-14",
       "type": "客服回复",
-      "content": "好的，我这就给您重新生成合同。请稍等。",
-      "products_mentioned": [],
+      "content": "提供两个方案：1）T523/T524裸架450元左右，自己配面板；2）T728手摇款钢架约440元，整套约650元",
+      "products_mentioned": [
+        "T523",
+        "T524",
+        "T728"
+      ],
+      "intention": "已回复客户",
+      "next_action": "等待客户回复"
+    },
+    {
+      "date": "2026-05-14",
+      "type": "反馈",
+      "content": "反馈图片问题：'而且图片也没有看到整体'，对之前发的T523局部图不满意",
+      "products_mentioned": [
+        "T523"
+      ],
+      "intention": "需要看产品整体效果图",
+      "next_action": "等待客户回复"
+    },
+    {
+      "date": "2026-05-14",
+      "type": "客服回复",
+      "content": "抱歉，刚才只发了局部图。询问想看T524整体效果图、T523全貌图，还是客户发参考图来匹配",
+      "products_mentioned": [
+        "T523",
+        "T524"
+      ],
+      "intention": "已回复客户",
+      "next_action": "等待客户回复"
+    },
+    {
+      "date": "2026-05-14",
+      "type": "询价",
+      "content": "要求发'全貌图'",
+      "products_mentioned": [
+        "T523"
+      ],
+      "intention": "需要看T523整体全貌",
+      "next_action": "等待客户回复"
+    },
+    {
+      "date": "2026-05-14",
+      "type": "客服回复",
+      "content": "[图片] 7.T523倒装单电机_03.jpg（全貌图）",
+      "products_mentioned": [
+        "T523"
+      ],
+      "intention": "已发送T523全貌图",
+      "next_action": "等待客户回复"
+    },
+    {
+      "date": "2026-05-14",
+      "type": "询价",
+      "content": "收到T523全貌图后询问'这是'，可能是确认型号或表示疑问",
+      "products_mentioned": [
+        "T523"
+      ],
+      "intention": "确认产品型号或询问详情",
+      "next_action": "等待客户回复"
+    },
+    {
+      "date": "2026-05-14",
+      "type": "客服回复",
+      "content": "介绍T523倒装单电机款，4记忆带儿童锁，方管倒装三节立柱，450元/套（30套价），询问是否合适【❌错误：T523是2节不是3节】",
+      "products_mentioned": [
+        "T523"
+      ],
       "intention": "已回复客户",
       "next_action": "等待客户回复"
     },
     {
       "date": "2026-05-14",
       "type": "客服回复",
-      "content": "合同已重新生成！合同号：CT20260429170445（与原合同号相同）总金额：1450元，已提交审批。",
-      "products_mentioned": [],
+      "content": "纠正错误并道歉：T523是2节立柱，不是3节。搞混了型号。T523：方管75*45mm，2节倒装，单电机，4记忆带儿童锁。",
+      "products_mentioned": [
+        "T523"
+      ],
+      "intention": "纠正错误并向客户道歉",
+      "next_action": "等待客户回复"
+    },
+    {
+      "date": "2026-05-14",
+      "type": "下单",
+      "content": "客户确认选择T523这款，说'那就这款了'",
+      "products_mentioned": [
+        "T523"
+      ],
+      "intention": "高意向，已确定型号，待确认配置",
+      "next_action": "等待客户回复配置信息"
+    },
+    {
+      "date": "2026-05-14",
+      "type": "客服回复",
+      "content": "确认T523定下来，询问颜色、面板尺寸、厚度、E0/E1级别、收货地址",
+      "products_mentioned": [
+        "T523"
+      ],
       "intention": "已回复客户",
       "next_action": "等待客户回复"
     },
     {
       "date": "2026-05-14",
-      "type": "客服回复",
-      "content": "这是系统里您最新的合同（4月29日）。是要重新生成这份，还是您有新的订单要生成新合同？",
+      "type": "反馈",
+      "content": "客户表示'配置不是这个'，对之前询问的配置方案不满意",
+      "products_mentioned": [
+        "T523"
+      ],
+      "intention": "配置需求有变化或误解",
+      "next_action": "等待客户说明具体配置"
+    },
+    {
+      "date": "2026-05-14",
+      "type": "反馈",
+      "content": "客户催回复：'你不回复我吗？'、'回复我'",
       "products_mentioned": [],
-      "intention": "已回复客户",
-      "next_action": "等待客户回复"
+      "intention": "等待回复，有些着急",
+      "next_action": "已回复"
     },
     {
       "date": "2026-05-14",
       "type": "客服回复",
-      "content": "您好！是需要我做什么吗？",
-      "products_mentioned": [],
-      "intention": "已回复客户",
-      "next_action": "等待客户回复"
-    },
-    {
-      "date": "2026-05-14",
-      "type": "客服回复",
-      "content": "数据从合同系统数据库查的，文件存在 C:\\contract-server-package\\data\\contracts\\contracts.json 里。刚才找错了，最新的应该是 CT20260430...",
-      "products_mentioned": [],
-      "intention": "已回复客户",
-      "next_action": "等待客户回复"
-    },
-    {
-      "date": "2026-05-14",
-      "type": "客服回复",
-      "content": "您说得对，本地数据是4月30日的，确实很久没更新了。您是要：1）查最新合同状态，2）还是有新的订单要生成合同？",
-      "products_mentioned": [],
-      "intention": "已回复客户",
-      "next_action": "等待客户回复"
-    },
-    {
-      "date": "2026-05-14",
-      "type": "客服回复",
-      "content": "抱歉！看到记录了，您5月13日已经有一份新合同 CT202605131726...（T524黑色100套，600元/套）。是要重新生成这份吗？",
-      "products_mentioned": [],
-      "intention": "已回复客户",
-      "next_action": "等待客户回复"
-    },
-    {
-      "date": "2026-05-14",
-      "type": "客服回复",
-      "content": "抱歉确实没有更新画像，已补上今天的交互记录。",
-      "products_mentioned": [],
-      "intention": "已回复客户",
-      "next_action": "等待客户确认要重新生成哪份合同"
-    },
-    {
-      "date": "2026-05-14",
-      "type": "客服回复",
-      "content": "画像已更新。请问您是要重新生成：1）5月13日的 CT20260513172616（佛山东鹏特饮，T524黑色100套600元），还是2）其他合同？",
-      "products_mentioned": [],
+      "content": "道歉并询问具体配置需求，参考之前100套T524的配置",
+      "products_mentioned": [
+        "T523",
+        "T524"
+      ],
       "intention": "已回复客户",
       "next_action": "等待客户回复"
     },
     {
       "date": "2026-05-14",
       "type": "下单",
-      "content": "意向: 高意向，已确认订单",
-      "products_mentioned": [],
-      "intention": "高意向，已确认订单",
+      "content": "客户确认配置：T523白色钢架，E0白色面板1600*800*18mm，30套",
+      "products_mentioned": [
+        "T523"
+      ],
+      "intention": "高意向，配置已确认，待协商价格",
+      "next_action": "等待客户确认价格或调整方案"
+    },
+    {
+      "date": "2026-05-14",
+      "type": "客服回复",
+      "content": "确认配置，报价765元（钢架500+面板265），指出超预算，询问是否调整尺寸或接受价格",
+      "products_mentioned": [
+        "T523"
+      ],
+      "intention": "已回复客户",
+      "next_action": "等待客户回复"
+    },
+    {
+      "date": "2026-05-14",
+      "type": "询价",
+      "content": "客户说'你便宜点'，要求降价",
+      "products_mentioned": ["T523"],
+      "intention": "砍价，希望价格优惠",
+      "next_action": "等待客户回复"
+    },
+    {
+      "date": "2026-05-14",
+      "type": "客服回复",
+      "content": "30套可以优惠。整套750元行吗？这已经是工程价了。或者您说个心理价位，我看看能不能申请。",
+      "products_mentioned": ["T523"],
+      "intention": "已回复客户",
       "next_action": "等待客户回复"
     }
   ],
   "orders": [
     {
-      "date": "2026-05-11",
-      "model": "T621",
-      "quantity": "100套",
-      "panel": "E0级，白色，1400*700，25MM厚",
-      "status": "待确认",
-      "contract_id": "CT20260511162525"
-    },
-    {
       "date": "2026-05-13",
       "model": "T524",
       "quantity": "100套",
-      "panel": "E0级，黑色，1400*700，25MM厚",
+      "panel": "E0级黑色1400*700*25mm",
       "status": "合同审批中",
       "contract_id": "CT20260513172616",
       "unit_price": "600元",
       "total": "60000元",
-      "price_breakdown": "T524钢架399元+E0面板201元",
+      "company_name": "佛山东鹏特饮"
+    },
+    {
+      "date": "2026-05-14",
+      "model": "T523",
+      "quantity": "30套（待确认）",
+      "panel": "E0级白色1600*800*18mm（已确认）",
+      "status": "价格协商中",
+      "unit_price": "750元（议价后，原价765元）",
       "company_name": "佛山东鹏特饮"
     }
   ],
   "tags": [
-    "高意向",
-    "价格敏感",
     "B端客户",
-    "T524需求",
-    "E0面板",
+    "价格敏感",
     "100套起订",
     "合同已生成",
     "经济款需求"
   ],
-  "notes": "客户关注价格一致性，对专业度要求高。已确认配置：T524黑色钢架+E0黑色面板1400*700*25mm。成交价600元/套（100套），交货期5月20日前。合同已重新生成CT20260513172616（佛山东鹏特饮，T524钢架399元+E0面板201元=600元），已提交审批。【2026-05-14】客户要求重新生成合同，我误查4月30日旧合同，未先查画像记录。客户提醒后才纠正。",
-  "last_action": "合同已重新生成CT20260513172616，佛山东鹏特饮，钢架399+面板201=600元，已提交审批",
-  "final_quote": {
-    "model": "T524",
-    "frame_color": "黑色",
-    "panel": "E0级黑色1400*700*25mm",
-    "quantity": "100套",
-    "unit_price": "600元/套",
-    "price_breakdown": "T524钢架399元+E0面板201元",
-    "original_price": "636元/套",
-    "discount": "36元/套",
-    "total": "60000元",
-    "delivery_date": "2026-05-20前",
-    "contract_id": "CT20260513172616",
-    "company_name": "佛山东鹏特饮"
-  },
-  "alternative_model": "T412, T524",
-  "budget_negotiation": "客户认为T412(689元)仍贵，推荐T524(399元/100套)",
-  "priority": "低"
+  "notes": "【2026-05-13】100套T524合同CT20260513172616，佛山东鹏特饮，600元/套，审批中。【2026-05-14】新询价30套，预算500元。客户确认配置：T523白色钢架+E0白色面板1600*800*18mm，客户砍价后报价750元（原价765元），等待客户确认。",
+  "priority": "中"
 }
