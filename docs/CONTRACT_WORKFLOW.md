@@ -71,19 +71,9 @@
 }
 ```
 
-**命令行调用**:
-```bash
-python generate_contract.py \
-  --customer "佛山挖掘机公司" \
-  --contact "王老板" \
-  --phone "15633668899" \
-  --address "佛山市西樵山旁边" \
-  --model "T523" \
-  --quantity 30 \
-  --price 660 \
-  --panel "E0白色1600*800*18mm" \
-  --color "白色"
-```
+**⚠️ 警告**: 请勿使用 `generate_contract.py` 脚本！该脚本含有硬编码测试数据（李飞/15088006879/T423），会导致生成错误合同。详见【十、历史事故记录】。
+
+**正确做法**: 通过 API 接口调用或系统自动化流程生成合同。
 
 ### 步骤3: 处理API响应
 
@@ -92,7 +82,7 @@ python generate_contract.py \
 {
   "code": 200,
   "data": {
-    "contract_id": "CT20260514144456",
+    "contract_id": "CT20260514145215",
     "created": true,
     "status": "pending"
   },
@@ -110,7 +100,7 @@ python generate_contract.py \
 
 **回复内容**:
 ```
-合同已生成！合同号：CT20260514144456。
+合同已生成！合同号：CT20260514145215。
 30套T523白色钢架+E0白色面板1600*800*18mm，660元/套，总价19800元。
 已提交审批，通过后发给您。
 ```
@@ -140,11 +130,11 @@ python generate_contract.py \
 data/contracts/
 ├── contracts.json          # 合同数据库
 ├── pending/                # 待审批合同
-│   └── CT20260514144456.pdf
+│   └── CT20260514145215.pdf
 ├── approved/               # 已审批合同
-│   └── CT20260514144456.pdf
+│   └── CT20260514145215.pdf
 └── sent/                   # 已发送合同
-    └── CT20260514144456.pdf
+    └── CT20260514145215.pdf
 ```
 
 ---
@@ -180,16 +170,73 @@ data/contracts/
 
 **客服**: [执行生成命令]
 
-**客服**: 合同已生成！合同号：CT20260514144456。30套T523白色钢架+E0白色面板1600*800*18mm，660元/套，总价19800元。已提交审批，通过后发给您。
+**客服**: 合同已生成！合同号：CT20260514145215。30套T523白色钢架+E0白色面板1600*800*18mm，660元/套，总价19800元。已提交审批，通过后发给您。
 
 ---
 
 ## 八、相关文件
 
-- `generate_contract.py` - 命令行生成工具
 - `core/app.py` - API接口（/api/contracts/generate）
 - `contract/contract_generator.py` - 合同生成逻辑
+- `contract/contract_handler.py` - 合同处理器
 - `data/contracts/contracts.json` - 合同数据库
+
+---
+
+## 九、API 调用示例
+
+**cURL 调用**:
+```bash
+curl -X POST http://127.0.0.1:5032/api/contracts/generate \
+  -H "Content-Type: application/json" \
+  -d '{
+    "customer_name": "佛山挖掘机公司",
+    "customer_contact": "王老板",
+    "customer_phone": "15633668899",
+    "customer_address": "佛山市西樵山旁边",
+    "products": [
+      {
+        "model": "T523",
+        "quantity": 30,
+        "unit_price": 660,
+        "subtotal": 19800,
+        "frame_color": "白色"
+      }
+    ],
+    "customer_nickname": "健康办公研究社",
+    "delivery_date": "",
+    "payment_terms": "",
+    "notes": "面板：E0级白色1600*800*18mm"
+  }'
+```
+
+---
+
+## 十、历史事故记录
+
+### 2026-05-14 合同数据错误事故
+
+**问题**: 生成的合同 CT20260514144456 数据完全错误
+
+| 字段 | 正确数据 | 错误数据 |
+|------|----------|----------|
+| 客户 | 佛山挖掘机公司 | 健康办公研究社 |
+| 联系人 | 王老板 | 李飞 |
+| 电话 | 15633668899 | 15088006879 |
+| 产品 | T523 | T423 |
+| 数量 | 30套 | 100套 |
+
+**根本原因**: `generate_contract.py` 脚本含有硬编码测试数据，忽略传入参数
+
+**处理结果**:
+- 错误合同 CT20260514144456 作废
+- 重新生成正确合同 CT20260514145215
+- `generate_contract.py` 已重命名为 `.HARDENED_TEST_DATA.bak`
+
+**教训**:
+- 禁止使用含硬编码数据的测试脚本生成生产合同
+- 生成合同前必须核对数据与客户档案一致
+- 优先使用系统自动化流程，避免手动调用脚本
 
 ---
 
