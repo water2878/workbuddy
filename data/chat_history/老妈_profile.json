@@ -2,7 +2,7 @@
   "customer_id": "",
   "nickname": "老妈",
   "first_contact": "2026-05-09",
-  "last_contact": "2026-05-09",
+  "last_contact": "2026-05-14",
   "profile": {
     "customer_type": {
       "value": "未知",
@@ -58,5 +58,5 @@
   "orders": [],
   "tags": [],
   "notes": "",
-  "priority": "中"
+  "priority": "低"
 }
