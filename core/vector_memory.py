@@ -52,7 +52,8 @@ class VectorMemory:
         
         # 初始化嵌入模型（首次会自动下载，约2GB）
         print(f"[初始化] 加载嵌入模型: {model_name}")
-        self.model = SentenceTransformer(model_name)
+        # 使用本地缓存，避免网络请求
+        self.model = SentenceTransformer(model_name, cache_folder=os.path.expanduser("~/.cache/huggingface/hub"))
         self.embedding_dim = self.model.get_sentence_embedding_dimension()
         print(f"[初始化] 模型维度: {self.embedding_dim}")
         
@@ -79,6 +80,7 @@ class VectorMemory:
                 "text": "示例记忆",
                 "vector": [0.0] * self.embedding_dim,
                 "source": "system",
+                "customer": "",
                 "people": json.dumps([]),
                 "type": "sample",
                 "created_at": datetime.now().isoformat()

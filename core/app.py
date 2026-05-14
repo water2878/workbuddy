@@ -1735,6 +1735,31 @@ def chat_reply():
     # 生成回复
     reply = generate_ai_reply(contact, message, is_image, image_path)
     
+    # 存储对话到向量记忆（异步，不阻塞回复）
+    def store_conversation():
+        try:
+            memory = get_vector_memory()
+            if memory and message and reply:
+                # 存储客户消息
+                memory.store(
+                    text=f"客户: {message}",
+                    source=f"微信-{contact}",
+                    memory_type="chat",
+                    customer=contact
+                )
+                # 存储我的回复
+                memory.store(
+                    text=f"李生: {reply}",
+                    source=f"微信-{contact}",
+                    memory_type="chat",
+                    customer=contact
+                )
+                log(f"[向量记忆] 已存储对话: {contact}")
+        except Exception as e:
+            log(f"[向量记忆] 存储失败: {e}")
+    
+    threading.Thread(target=store_conversation, daemon=True).start()
+    
     return success_response({
         "contact": contact,
         "message": message,
@@ -1744,69 +1769,128 @@ def chat_reply():
 
 
 def generate_ai_reply(contact: str, message: str, is_image: bool = False, image_path: str = "") -> str:
-    """生成 AI 回复（集成 Vision 图片识别）"""
+    """生成 AI 回复（集成 Vision 图片识别 + 向量记忆）"""
+    import re
     
-    # 简单的规则回复
+    # 搜索相关历史记忆
+    memories = []
+    try:
+        memory = get_vector_memory()
+        if memory:
+            results = memory.search(message, top_k=3, filter_customer=contact)
+            if results:
+                memories = results
+                log(f"[向量记忆] 找到 {len(results)} 条相关记忆")
+    except Exception as e:
+        log(f"[向量记忆] 搜索失败: {e}")
+    
+    # 基于记忆生成回复（CLAW自己决定，不调用LLM）
     msg_lower = message.lower()
+    memory_text = "\n".join([m['text'] for m in memories])
     
-    # 问候语
+    # --- 基于记忆的智能回复 ---
+    
+    # 1. 记忆中有报价，客户问数量/颜色
+    if memories and ("套" in message or "颜色" in msg_lower):
+        # 从记忆中找型号，然后计算对外报价
+        model_match = re.search(r'(T\d{3,4})', memory_text)
+        if model_match:
+            model = model_match.group(1)
+            # 基准价 × 1.08 = 对外报价
+            base_prices = {"T412": 689, "T621": 835, "T423": 775, "T524": 415, "T728": 411, "T523": 460, "T727": 388, "T724": 335}
+            price = int(base_prices.get(model, 0) * 1.08)
+            qty_match = re.search(r'(\d+)\s*套', message)
+            if qty_match:
+                return f"{model} {price}元一套，{qty_match.group(1)}套可以优惠点。黑色白色灰色可选。"
+            return f"{model} {price}元一套。要几套？颜色有黑白灰。"
+    
+    # 2. 记忆中有型号，客户继续问
+    if memories:
+        for model in ["T412", "T621", "T423", "T524", "T728"]:
+            if model.lower() in memory_text.lower() and model.lower() in msg_lower:
+                if any(kw in msg_lower for kw in ["颜色", "有什么色"]):
+                    return f"{model} 黑色白色灰色都有现货。要哪个颜色？"
+                if any(kw in msg_lower for kw in ["多少", "价格"]):
+                    # 基准价 × 1.08 = 对外报价（8%利润）
+                    base_prices = {"T412": 689, "T621": 835, "T423": 775, "T524": 415, "T728": 411}
+                    price = int(base_prices.get(model, 0) * 1.08)
+                    return f"{model} {price}元一套出厂价。要几套？"
+    
+    # 3. 记忆中有预算询问，客户回复数量
+    if memories and ("多少套" in memory_text or "预算" in memory_text):
+        qty_match = re.search(r'(\d+)\s*套', message)
+        if qty_match:
+            qty = int(qty_match.group(1))
+            if qty >= 100:
+                return f"{qty}套是工程单，可以走工程价。具体型号确定了吗？"
+            elif qty >= 10:
+                return f"{qty}套可以有优惠。要什么型号？"
+    
+    # 4. 记忆中有合同相关
+    if memories and "合同" in memory_text:
+        if any(kw in msg_lower for kw in ["公司", "地址", "电话"]):
+            return "好的，您把公司全称、收货地址、联系人电话发给我，我这就给您做合同。"
+    
+    # --- 基础规则回复 ---
     if any(kw in msg_lower for kw in ["你好", "您好", "在吗", "在?", "在？", "hi", "hello"]):
         return "您好！我是客服李胜，有什么可以帮您？"
     
-    # 图片消息
     if is_image or "[图片]" in message:
-        return "收到您的图片！请问您想了解哪款产品？可以提供具体型号或描述一下配置需求。"
+        return "收到您的图片！请问您想了解哪款产品？"
     
-    # 语音消息
     if "[语音]" in message:
-        # 提取语音内容（如果有）
         voice_content = message.replace("[语音]", "").replace("Path:", "").strip()
         if voice_content and len(voice_content) > 5:
             return f"收到您的语音：「{voice_content}」。请问您想了解哪款产品？"
-        return "收到您的语音，但我这边听不太清楚，您方便打字吗？或者说说您想要什么配置的升降桌？"
+        return "收到您的语音，但我这边听不太清楚，您方便打字吗？"
     
-    # 合同相关
     if "合同" in msg_lower:
         return "您好！请提供客户名称、联系人、电话、地址、产品型号数量和价格，我会为您生成合同。"
     
-    # 价格相关
     if any(kw in msg_lower for kw in ["价格", "多少钱", "报价", "怎么卖"]):
-        return """我们的升降桌价格如下：
+        return """我们的升降桌价格如下（出厂价）：
 
-📋 **单电机款**：680元起
-   - T523/T524 系列，方管结构，性价比高
+手摇款：360-510元
+- T724/T727/T728 系列，无需电源
 
-📋 **双电机款**：750元起  
-   - F4200 倒腿款 / F4404 正装款，稳定性好
+单电机款：450-590元
+- T524（方管2节，450元）/ T523（倒装4记忆，500元）
 
-📋 **手摇款**：380元起
-   - 经济实用，无需电源
+双电机款：740-900元
+- T412（方管2节，740元）/ T423（方管3节，840元）
+- T621（椭圆管3节，900元）
 
 批量采购有优惠！您需要什么型号？"""
-    
-    # 型号相关
+
     if any(kw in msg_lower for kw in ["型号", "有哪些", "有什么"]):
         return """我们有以下主要型号：
 
-🔹 **单电机系列**
-   - T523/T524（方管，680元）
-   - T621（椭圆管，720元）
+手摇系列
+- T724（360元）/ T727（420元）/ T728（440元）
 
-🔹 **双电机系列**
-   - F4200（倒腿款，750元）
-   - F4404（正装款，780元）
-   - T728（椭圆管，800元）
+单电机系列
+- T524（方管，450元）/ T523（倒装，500元）/ T526（590元）
+
+双电机系列
+- T412（方管2节，740元）
+- T423（方管3节，840元）
+- T621（椭圆管3节，900元）
+- T4404（对向座，1730元）
 
 您需要哪种配置？可以发图片给我，我帮您识别型号。"""
-    
-    # 特定型号询问
+
+    # 特定型号询问（对外报价 = 基准价 × 1.08）
     model_keywords = {
-        "t523": "T523 是单电机方管款，价格680元。性价比较高，适合家用和轻度办公。",
-        "t524": "T524 和 T523 类似，也是单电机方管款，价格680元。",
-        "f4200": "F4200 是双电机倒腿款，价格750元。双电机驱动更稳定，倒腿设计美观。",
-        "f4404": "F4404 是双电机正装款，价格780元。正装结构承重力更强。",
-        "t621": "T621 是单电机椭圆管款，价格720元。椭圆管外观更简洁现代。",
-        "t728": "T728 是双电机椭圆管款，价格800元。高端配置，大气稳重。",
+        "t724": "T724 是手摇方管款，约360元。经济实用，无需电源。",
+        "t727": "T727 是手摇矮款，约420元。升降行程520-820mm。",
+        "t728": "T728 是手摇升降款，约440元。升降行程720-1200mm。",
+        "t524": "T524 是单电机方管2节款，约450元。100套起有优惠。",
+        "t523": "T523 是单电机倒装款，约500元。4个记忆，带儿童锁。",
+        "t526": "T526 是单电机正装款，约590元。",
+        "t412": "T412 是双电机方管2节款，约740元。含线槽，4记忆，USB，儿童锁。",
+        "t423": "T423 是双电机方管3节款，约840元。负载120Kg，高度610-1260mm。",
+        "t621": "T621 是双电机椭圆管3节款，约900元。椭圆形立柱，含线槽。",
+        "t4404": "T4404 是对向座双电机3节桌架，约1730元。",
     }
     
     for model_key, model_reply in model_keywords.items():

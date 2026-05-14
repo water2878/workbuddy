@@ -2,7 +2,7 @@
   "customer_id": "",
   "nickname": "健康办公研究社",
   "first_contact": "2026-04-28",
-  "last_contact": "2026-05-13",
+  "last_contact": "2026-05-14",
   "profile": {
     "customer_type": {
       "value": "B端（公司/工程）",
@@ -192,6 +192,73 @@
       "content": "意向: 高意向，已确认订单",
       "products_mentioned": [],
       "intention": "高意向，已确认订单",
+      "next_action": "等待客户回复"
+    },
+    {
+      "date": "2026-05-14",
+      "type": "下单",
+      "content": "咨询产品: T524, E0；数量: 100套；意向: 高意向，已确认订单",
+      "products_mentioned": [
+        "T524",
+        "E0"
+      ],
+      "intention": "高意向，已确认订单",
+      "next_action": "等待客户回复"
+    },
+    {
+      "date": "2026-05-14",
+      "type": "客服回复",
+      "content": "好的，我这就给您重新生成合同。请稍等。",
+      "products_mentioned": [],
+      "intention": "已回复客户",
+      "next_action": "等待客户回复"
+    },
+    {
+      "date": "2026-05-14",
+      "type": "客服回复",
+      "content": "合同已重新生成！合同号：CT20260429170445（与原合同号相同）总金额：1450元，已提交审批。",
+      "products_mentioned": [],
+      "intention": "已回复客户",
+      "next_action": "等待客户回复"
+    },
+    {
+      "date": "2026-05-14",
+      "type": "客服回复",
+      "content": "这是系统里您最新的合同（4月29日）。是要重新生成这份，还是您有新的订单要生成新合同？",
+      "products_mentioned": [],
+      "intention": "已回复客户",
+      "next_action": "等待客户回复"
+    },
+    {
+      "date": "2026-05-14",
+      "type": "客服回复",
+      "content": "您好！是需要我做什么吗？",
+      "products_mentioned": [],
+      "intention": "已回复客户",
+      "next_action": "等待客户回复"
+    },
+    {
+      "date": "2026-05-14",
+      "type": "客服回复",
+      "content": "数据从合同系统数据库查的，文件存在 C:\\contract-server-package\\data\\contracts\\contracts.json 里。刚才找错了，最新的应该是 CT20260430...",
+      "products_mentioned": [],
+      "intention": "已回复客户",
+      "next_action": "等待客户回复"
+    },
+    {
+      "date": "2026-05-14",
+      "type": "客服回复",
+      "content": "您说得对，本地数据是4月30日的，确实很久没更新了。您是要：1）查最新合同状态，2）还是有新的订单要生成合同？",
+      "products_mentioned": [],
+      "intention": "已回复客户",
+      "next_action": "等待客户回复"
+    },
+    {
+      "date": "2026-05-14",
+      "type": "客服回复",
+      "content": "抱歉！看到记录了，您5月13日已经有一份新合同 CT202605131726...（T524黑色100套，600元/套）。是要重新生成这份吗？",
+      "products_mentioned": [],
+      "intention": "已回复客户",
       "next_action": "等待客户回复"
     }
   ],
