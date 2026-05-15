@@ -548,6 +548,78 @@
       "products_mentioned": [],
       "intention": "已回复客户",
       "next_action": "等待客户回复"
+    },
+    {
+      "date": "2026-05-15",
+      "type": "客服回复",
+      "content": "我目前没有直接处理语音消息的能力。我无法播放或转录语音内容。",
+      "products_mentioned": [],
+      "intention": "已回复客户",
+      "next_action": "等待客户回复"
+    },
+    {
+      "date": "2026-05-15",
+      "type": "客服回复",
+      "content": "你好！我看到你发送了一条语音消息，但我目前无法直接转换语音为文字。",
+      "products_mentioned": [],
+      "intention": "已回复客户",
+      "next_action": "等待客户回复"
+    },
+    {
+      "date": "2026-05-15",
+      "type": "客服回复",
+      "content": "我是 **NMauto**，一个AI助手。有什么我可以帮助你的吗？😊",
+      "products_mentioned": [],
+      "intention": "已回复客户",
+      "next_action": "等待客户回复"
+    },
+    {
+      "date": "2026-05-15",
+      "type": "客服回复",
+      "content": "我在呢！👋",
+      "products_mentioned": [],
+      "intention": "已回复客户",
+      "next_action": "等待客户回复"
+    },
+    {
+      "date": "2026-05-15",
+      "type": "客服回复",
+      "content": "我可以帮助你做很多事情：",
+      "products_mentioned": [],
+      "intention": "已回复客户",
+      "next_action": "等待客户回复"
+    },
+    {
+      "date": "2026-05-15",
+      "type": "客服回复",
+      "content": "抱歉，处理时间较长，请稍后再试。",
+      "products_mentioned": [],
+      "intention": "已回复客户",
+      "next_action": "等待客户回复"
+    },
+    {
+      "date": "2026-05-15",
+      "type": "客服回复",
+      "content": "你好！有什么我可以帮你的吗？",
+      "products_mentioned": [],
+      "intention": "已回复客户",
+      "next_action": "等待客户回复"
+    },
+    {
+      "date": "2026-05-15",
+      "type": "客服回复",
+      "content": "我是 **Hermes Agent**，由 **Nous Research** 创建的智能助手。",
+      "products_mentioned": [],
+      "intention": "已回复客户",
+      "next_action": "等待客户回复"
+    },
+    {
+      "date": "2026-05-15",
+      "type": "客服回复",
+      "content": "是的，我记得一些关于你的信息！根据我的记忆：",
+      "products_mentioned": [],
+      "intention": "已回复客户",
+      "next_action": "等待客户回复"
     }
   ],
   "orders": [
