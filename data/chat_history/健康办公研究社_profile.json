@@ -460,6 +460,94 @@
       "products_mentioned": [],
       "intention": "已回复客户",
       "next_action": "等待客户回复"
+    },
+    {
+      "date": "2026-05-15",
+      "type": "客服回复",
+      "content": "你好！有什么我可以帮你的吗？",
+      "products_mentioned": [],
+      "intention": "已回复客户",
+      "next_action": "等待客户回复"
+    },
+    {
+      "date": "2026-05-15",
+      "type": "客服回复",
+      "content": "你好！有什么我可以帮助你的吗？",
+      "products_mentioned": [],
+      "intention": "已回复客户",
+      "next_action": "等待客户回复"
+    },
+    {
+      "date": "2026-05-15",
+      "type": "客服回复",
+      "content": "收到！我是 Hermes Agent，正在线。",
+      "products_mentioned": [],
+      "intention": "已回复客户",
+      "next_action": "等待客户回复"
+    },
+    {
+      "date": "2026-05-15",
+      "type": "客服回复",
+      "content": "你好！有什么我可以帮你的吗？",
+      "products_mentioned": [],
+      "intention": "已回复客户",
+      "next_action": "等待客户回复"
+    },
+    {
+      "date": "2026-05-15",
+      "type": "客服回复",
+      "content": "收到！系统正常运行 👋",
+      "products_mentioned": [],
+      "intention": "已回复客户",
+      "next_action": "等待客户回复"
+    },
+    {
+      "date": "2026-05-15",
+      "type": "客服回复",
+      "content": "你好！我是 Hermes Agent，很高兴为你服务。有什么我可以帮助你的吗？",
+      "products_mentioned": [],
+      "intention": "已回复客户",
+      "next_action": "等待客户回复"
+    },
+    {
+      "date": "2026-05-15",
+      "type": "客服回复",
+      "content": "你好！我在这里正常工作。有什么我可以帮助你的吗？",
+      "products_mentioned": [],
+      "intention": "已回复客户",
+      "next_action": "等待客户回复"
+    },
+    {
+      "date": "2026-05-15",
+      "type": "客服回复",
+      "content": "系统正常，可以开始对话了！有什么我可以帮助您的吗？",
+      "products_mentioned": [],
+      "intention": "已回复客户",
+      "next_action": "等待客户回复"
+    },
+    {
+      "date": "2026-05-15",
+      "type": "客服回复",
+      "content": "你好！有什么我可以帮你的吗？",
+      "products_mentioned": [],
+      "intention": "已回复客户",
+      "next_action": "等待客户回复"
+    },
+    {
+      "date": "2026-05-15",
+      "type": "客服回复",
+      "content": "我叫 **Hermes Agent**，是由 Nous Research 开发的智能 AI 助手。我可以帮你完成各种任务，比如回答问题、写代码、分析信息、搜索文件、操作终端等等。",
+      "products_mentioned": [],
+      "intention": "已回复客户",
+      "next_action": "等待客户回复"
+    },
+    {
+      "date": "2026-05-15",
+      "type": "客服回复",
+      "content": "我注意到您发送了\"[语音]\"标记，但我没有看到实际的音频文件或音频内容。",
+      "products_mentioned": [],
+      "intention": "已回复客户",
+      "next_action": "等待客户回复"
     }
   ],
   "orders": [
