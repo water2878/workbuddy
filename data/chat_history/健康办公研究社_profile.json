@@ -2,7 +2,7 @@
   "customer_id": "",
   "nickname": "健康办公研究社",
   "first_contact": "2026-04-28",
-  "last_contact": "2026-05-14",
+  "last_contact": "2026-05-15",
   "profile": {
     "customer_type": {
       "value": "B端（公司/工程）",
@@ -443,6 +443,22 @@
       "content": "意向: 高意向，已确认订单",
       "products_mentioned": [],
       "intention": "高意向，已确认订单",
+      "next_action": "等待客户回复"
+    },
+    {
+      "date": "2026-05-15",
+      "type": "客服回复",
+      "content": "我是NMauto",
+      "products_mentioned": [],
+      "intention": "已回复客户",
+      "next_action": "等待客户回复"
+    },
+    {
+      "date": "2026-05-15",
+      "type": "客服回复",
+      "content": "你好！我是Hermes Agent，由Nous Research创建的AI助手。",
+      "products_mentioned": [],
+      "intention": "已回复客户",
       "next_action": "等待客户回复"
     }
   ],
