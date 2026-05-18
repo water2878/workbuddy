@@ -33,9 +33,18 @@ import pyautogui
 import pyperclip
 from pywinauto import keyboard
 
-# Config
-WEFLOW_SSE_URL = "http://127.0.0.1:5031/api/v1/push/messages?access_token=eaf98e9bc0c13ea0c8e7cf0b29586669"
-WEFLOW_API_BASE = "http://127.0.0.1:5031"
+# Load .env file
+from dotenv import load_dotenv
+load_dotenv()
+
+# Config from .env
+WEFLOW_BASE = os.getenv("WEFLOW_BASE", "http://127.0.0.1:5031")
+WEFLOW_TOKEN = os.getenv("WEFLOW_TOKEN", "")
+SALES_ID = os.getenv("SALES_ID", "lisheng")
+
+# Build SSE URL
+WEFLOW_SSE_URL = f"{WEFLOW_BASE}/api/v1/push/messages?access_token={WEFLOW_TOKEN}"
+WEFLOW_API_BASE = WEFLOW_BASE
 
 # WorkBuddy input box position (relative to window)
 INPUT_X_RATIO = 0.625
@@ -411,7 +420,7 @@ def enrich_message_media(msg: dict) -> bool:
             "talker": session_id,
             "limit": 10,
             "media": "1",  # Include media info
-            "access_token": "eaf98e9bc0c13ea0c8e7cf0b29586669"
+            "access_token": WEFLOW_TOKEN
         }
         
         log(f"[ENRICH] Getting media info from API for {session_id}")
@@ -514,7 +523,7 @@ def download_image_from_message(msg: dict) -> Optional[str]:
             if message_key:
                 from urllib.parse import quote
                 encoded_key = quote(message_key, safe='')
-                media_url = f"{WEFLOW_API_BASE}/api/v1/message/media?messageKey={encoded_key}&access_token=eaf98e9bc0c13ea0c8e7cf0b29586669"
+                media_url = f"{WEFLOW_API_BASE}/api/v1/message/media?messageKey={encoded_key}&access_token={WEFLOW_TOKEN}"
             else:
                 return None
         
@@ -546,7 +555,7 @@ def get_media_download_url(msg: dict) -> str:
     if msg_key:
         from urllib.parse import quote
         encoded_key = quote(msg_key, safe='')
-        return f"{WEFLOW_API_BASE}/api/v1/message/media?messageKey={encoded_key}&access_token=eaf98e9bc0c13ea0c8e7cf0b29586669"
+        return f"{WEFLOW_API_BASE}/api/v1/message/media?messageKey={encoded_key}&access_token={WEFLOW_TOKEN}"
     
     return ""
 

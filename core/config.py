@@ -44,7 +44,7 @@ if sys.platform == "win32":
 # ═══════════════════════════════════════════════════════
 # WeFlow（微信数据库读取 + SSE推送）
 WEFLOW_BASE = os.environ.get("WEFLOW_BASE", "http://127.0.0.1:5031")
-WEFLOW_TOKEN = os.environ.get("WEFLOW_TOKEN", "eaf98e9bc0c13ea0c8e7cf0b29586669")
+WEFLOW_TOKEN = os.environ.get("WEFLOW_TOKEN", "")
 
 # 工具 API 服务
 API_HOST = os.environ.get("API_HOST", "127.0.0.1")
