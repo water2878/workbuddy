@@ -17,6 +17,60 @@ PROJECT_ROOT = Path(__file__).parent.parent.parent.parent
 LOGS_DIR = PROJECT_ROOT / "logs"
 CHAT_HISTORY_DIR = PROJECT_ROOT / "data" / "chat_history"
 
+# 昵称黑名单：系统日志中的常见标签，不是真实客户昵称
+NICKNAME_BLACKLIST = {
+    # 日期时间前缀（timestamp in brackets）
+    "2026-05-18", "2026-05-17", "2026-05-16", "2026-05-15",
+    "2026-05-14", "2026-05-13", "2026-05-12", "2026-05-11",
+    # 常见系统标签
+    "INFO", "WARN", "ERROR", "DEBUG", "合同", "生成合同",
+    "产品", "同步", "推送", "通知", "发送", "接收",
+    "微信", "消息", "客户", "用户", "系统", "自动",
+}
+
+# 日志行前缀黑名单正则：系统日志行开头的常见标签（用于过滤整行）
+SYSTEM_LOG_PREFIXES = (
+    r'\[INFO\]', r'\[WARN\]', r'\[ERROR\]', r'\[DEBUG\]',
+    r'\[合同\]', r'\[产品\]', r'\[微信\]', r'\[同步\]',
+    r'\[推送\]', r'\[通知\]', r'\[生成合同\]',
+    r'\[[\d]{4}-[\d]{2}-[\d]{2}\s+[\d]{2}:[\d]{2}:[\d]{2}\]',  # 日期时间前缀
+)
+
+# 昵称过滤正则：非客户昵称的模式
+INVALID_NICKNAME_PATTERNS = [
+    re.compile(r'^[\d]{4}-[\d]{2}-[\d]{2}$'),           # 日期: 2026-05-18
+    re.compile(r'^[0-9a-fA-F]{8,}$'),                   # 十六进制ID
+    re.compile(r'^(INFO|WARN|ERROR|DEBUG)$'),           # 系统标签
+    re.compile(r'^[\u4e00-\u9fff]{1,4}$'),               # 纯短汉字(1-4字)，通常是系统词
+]
+
+
+def is_valid_customer_nickname(nickname):
+    """判断昵称是否为有效客户昵称（而非系统标签）"""
+    if not nickname or not nickname.strip():
+        return False
+    nickname = nickname.strip()
+    # 黑名单直接排除
+    if nickname in NICKNAME_BLACKLIST:
+        return False
+    # 排除常见系统词
+    for pattern in INVALID_NICKNAME_PATTERNS:
+        if pattern.match(nickname):
+            return False
+    # 昵称不能太短（至少2个可见字符）
+    visible_chars = re.sub(r'\s', '', nickname)
+    if len(visible_chars) < 2:
+        return False
+    return True
+
+
+def is_system_log_line(line):
+    """判断日志行是否为系统日志（而非客户对话）"""
+    for prefix in SYSTEM_LOG_PREFIXES:
+        if re.match(prefix, line.strip()):
+            return True
+    return False
+
 def get_log_file_path(date_str=None):
     """获取指定日期的日志文件路径"""
     if date_str is None:
@@ -53,6 +107,10 @@ def read_recent_logs(hours=1):
         if not line:
             continue
 
+        # 跳过系统日志行（非客户对话）
+        if is_system_log_line(line):
+            continue
+
         # 尝试从日志行提取时间戳（格式：2026-05-15 14:30:25）
         time_match = re.match(r'(\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}:\d{2})', line)
         if time_match:
@@ -61,9 +119,10 @@ def read_recent_logs(hours=1):
                 if log_time >= time_threshold:
                     recent_logs.append(line)
             except ValueError:
-                continue
+                # 没有时间戳，假设是最近的日志
+                recent_logs.append(line)
         else:
-            # 如果没有时间戳，假设是最近的日志
+            # 没有时间戳，假设是最近的日志
             recent_logs.append(line)
 
     print(f"📋 找到 {len(recent_logs)} 条最近 {hours} 小时的日志记录")
@@ -77,8 +136,14 @@ def extract_customer_info(log_lines):
         # 匹配客户消息格式: [昵称] 内容
         match = re.search(r'\[([^\]]+)\]\s*(.*)', line)
         if match:
-            nickname = match.group(1)
+            raw_nickname = match.group(1)
             content = match.group(2)
+
+            # ⚠️ 过滤非客户昵称（系统标签、时间戳等）
+            if not is_valid_customer_nickname(raw_nickname):
+                continue
+
+            nickname = raw_nickname
 
             if nickname not in customers:
                 customers[nickname] = {
