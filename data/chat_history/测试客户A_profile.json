@@ -1,0 +1,73 @@
+{
+  "customer_id": "",
+  "nickname": "测试客户A",
+  "first_contact": "2026-05-18",
+  "last_contact": "2026-05-18",
+  "profile": {
+    "customer_type": {
+      "value": "未知",
+      "source": "未知",
+      "confidence": 0
+    },
+    "customer_name": {
+      "value": "",
+      "source": "未知",
+      "confidence": 0
+    },
+    "company": {
+      "value": "",
+      "source": "未知",
+      "confidence": 0
+    },
+    "phone": {
+      "value": "",
+      "source": "未知",
+      "confidence": 0
+    },
+    "address": {
+      "value": "",
+      "source": "未知",
+      "confidence": 0
+    },
+    "industry": {
+      "value": "",
+      "source": "未知",
+      "confidence": 0
+    },
+    "business": {
+      "value": "",
+      "source": "未知",
+      "confidence": 0
+    },
+    "demand_type": {
+      "value": "未知",
+      "source": "未知",
+      "confidence": 0
+    },
+    "quantity": {
+      "value": "",
+      "source": "未知",
+      "confidence": 0
+    },
+    "pain_points": {
+      "value": "",
+      "source": "未知",
+      "confidence": 0
+    },
+    "usage_scenario": {
+      "value": "",
+      "source": "已知",
+      "confidence": 0
+    },
+    "budget": {
+      "value": "",
+      "source": "未知",
+      "confidence": 0
+    }
+  },
+  "interactions": [],
+  "orders": [],
+  "tags": [],
+  "notes": "",
+  "priority": "中"
+}

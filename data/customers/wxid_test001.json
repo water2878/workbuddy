@@ -1,0 +1,10 @@
+{
+  "id": "wxid_test001",
+  "name": "测试客户A",
+  "notes": "意向客户，预算8000",
+  "preferences": {},
+  "orders": [],
+  "last_contact": null,
+  "created_at": "2026-05-18 14:13:44",
+  "updated_at": "2026-05-18 14:13:44"
+}
