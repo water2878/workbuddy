@@ -1,0 +1,35 @@
+{
+  "nickname": "2026-05-18 15:40:30",
+  "customer_name": "",
+  "company": "",
+  "contact": "",
+  "phone": "",
+  "email": "",
+  "address": "",
+  "profile": {
+    "type": "unknown",
+    "industry": "",
+    "needs": "",
+    "budget": null,
+    "quantity": null,
+    "pain_points": ""
+  },
+  "interactions": [
+    {
+      "date": "2026-05-18 15:56:27",
+      "type": "chat",
+      "content": "[合同] PDF导出成功: C:\\Users\\Lenovo\\WorkBuddy\\Claw\\data\\contracts\\pending\\合同_CT20260518151007_客户.pdf",
+      "products_mentioned": [],
+      "intention": "high",
+      "next_action": "follow_up"
+    }
+  ],
+  "tags": [
+    "高意向"
+  ],
+  "priority": "high",
+  "status": "negotiating",
+  "last_contact": "2026-05-18",
+  "created_at": "2026-05-18 15:56:27",
+  "updated_at": "2026-05-18 15:56:27"
+}
