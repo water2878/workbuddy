@@ -5,9 +5,9 @@
   "last_contact": "2026-05-18",
   "profile": {
     "customer_type": {
-      "value": "未知",
-      "source": "未知",
-      "confidence": 0
+      "value": "B端",
+      "source": "对话",
+      "confidence": 1
     },
     "customer_name": {
       "value": "",
@@ -45,9 +45,9 @@
       "confidence": 0
     },
     "quantity": {
-      "value": "",
-      "source": "未知",
-      "confidence": 0
+      "value": "100套",
+      "source": "对话",
+      "confidence": 1
     },
     "pain_points": {
       "value": "",
@@ -65,9 +65,22 @@
       "confidence": 0
     }
   },
-  "interactions": [],
+  "interactions": [
+    {
+      "type": "message",
+      "content": "我要10台T621升降桌",
+      "products_mentioned": [
+        "T621"
+      ],
+      "intention": "询价",
+      "next_action": "报价",
+      "timestamp": "2026-05-18T17:58:47.392785"
+    }
+  ],
   "orders": [],
-  "tags": [],
+  "tags": [
+    "意向客户"
+  ],
   "notes": "",
   "priority": "中"
 }
