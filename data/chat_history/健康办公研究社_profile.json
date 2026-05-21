@@ -2,7 +2,7 @@
   "customer_id": "",
   "nickname": "健康办公研究社",
   "first_contact": "2026-04-28",
-  "last_contact": "2026-05-15",
+  "last_contact": "2026-05-21",
   "profile": {
     "customer_type": {
       "value": "B端（公司/工程）",
@@ -617,6 +617,14 @@
       "date": "2026-05-15",
       "type": "客服回复",
       "content": "是的，我记得一些关于你的信息！根据我的记忆：",
+      "products_mentioned": [],
+      "intention": "已回复客户",
+      "next_action": "等待客户回复"
+    },
+    {
+      "date": "2026-05-21",
+      "type": "客服回复",
+      "content": "好的，您这边需要多少套？预算什么范围？我帮您推荐合适的型号。",
       "products_mentioned": [],
       "intention": "已回复客户",
       "next_action": "等待客户回复"
