@@ -644,6 +644,14 @@
       "products_mentioned": [],
       "intention": "已回复客户",
       "next_action": "等待客户回复"
+    },
+    {
+      "date": "2026-05-21",
+      "type": "客服回复",
+      "content": "好的，面板价格给您：1200*600：97元(18mm厚)/122元(25mm厚)，1400*700：225元(18mm)/222元(25mm)，1600*800：237元(18mm)/257元(25...",
+      "products_mentioned": [],
+      "intention": "已回复客户",
+      "next_action": "等待客户回复"
     }
   ],
   "orders": [

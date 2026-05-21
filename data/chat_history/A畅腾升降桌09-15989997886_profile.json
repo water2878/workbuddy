@@ -2,7 +2,7 @@
   "customer_id": "wxid_w9c0bfuj8nw212",
   "nickname": "A畅腾升降桌09-15989997886",
   "first_contact": "2026-04-30",
-  "last_contact": "2026-05-04",
+  "last_contact": "2026-05-21",
   "profile": {
     "customer_type": {
       "value": "未知",
@@ -60,6 +60,14 @@
       "content": "意向度: 中\ncustomer: 你好...; customer: 你好...; assistant: 抱歉！上一条语音文件路径有问题没识别出来。刚这条识别成功了：你不是可以转录吗？没识别出来吗？  请问...; customer: [语音消息]...; assistant: 您好！收到您的语音消息了。\n\n由于技术原因，我这边无法直接播放语音。请问您方便用文字再发一遍吗？或者...; customer: [语音消息]...",
       "products_mentioned": [],
       "intention": "中",
+      "next_action": "等待客户回复"
+    },
+    {
+      "date": "2026-05-21",
+      "type": "客服回复",
+      "content": "你好！请问有什么可以帮您？升降桌还是桌架呢？需要多少套？",
+      "products_mentioned": [],
+      "intention": "已回复客户",
       "next_action": "等待客户回复"
     }
   ],
