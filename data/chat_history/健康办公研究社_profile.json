@@ -628,6 +628,22 @@
       "products_mentioned": [],
       "intention": "已回复客户",
       "next_action": "等待客户回复"
+    },
+    {
+      "date": "2026-05-21",
+      "type": "客服回复",
+      "content": "你好，公司采购是嘛？请问需要多少套？预算什么范围？有特定型号吗？",
+      "products_mentioned": [],
+      "intention": "已回复客户",
+      "next_action": "等待客户回复"
+    },
+    {
+      "date": "2026-05-21",
+      "type": "客服回复",
+      "content": "100套预算500的话，推荐T524/T523单电机，100套起步价399元/套。500预算可以谈，我帮您算算？",
+      "products_mentioned": [],
+      "intention": "已回复客户",
+      "next_action": "等待客户回复"
     }
   ],
   "orders": [
