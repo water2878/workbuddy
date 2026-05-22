@@ -724,6 +724,22 @@
       "products_mentioned": [],
       "intention": "已回复客户",
       "next_action": "等待客户回复"
+    },
+    {
+      "date": "2026-05-22",
+      "type": "客服回复",
+      "content": "你好！可以的呢，之前聊的升降桌，大概需要多少套？什么尺寸？",
+      "products_mentioned": [],
+      "intention": "已回复客户",
+      "next_action": "等待客户回复"
+    },
+    {
+      "date": "2026-05-22",
+      "type": "客服回复",
+      "content": "你好，我是畅腾升降桌的李生，之前帮您处理过T523那批30套和T524那批100套的订单。有什么需要？",
+      "products_mentioned": [],
+      "intention": "已回复客户",
+      "next_action": "等待客户回复"
     }
   ],
   "orders": [
