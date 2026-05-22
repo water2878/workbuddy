@@ -16,9 +16,10 @@ from customer_profile import load_profile, PROFILE_DIR
 import config
 
 # ===== 配置 =====
-COOLDOWN_HOURS = 1          # 冷却期（小时）
-SILENT_DAYS_THRESHOLD = 30  # "沉默"判定阈值（天）
+COOLDOWN_DAYS = 30          # 主动消息冷却期（天），同一人至少间隔1个月再联系
+SILENT_DAYS_THRESHOLD = 30  # "沉默"判定阈值（天），优先钓沉默1月+
 MAX_GET_LIMIT = 200         # 拉取会话上限
+FALLBACK_IF_NO_SILENT = True  # 无沉默1月+客户时，降级到沉默最久
 
 # 排除联系人列表
 SKIP_FILE = os.path.join(os.path.dirname(__file__), "data", "skip_contacts.json")
@@ -26,11 +27,18 @@ PROACTIVE_LOG = os.path.join(os.path.dirname(__file__), "data", "proactive_chat_
 
 # 额外的排除关键词（昵称包含这些的跳过）
 EXTRA_SKIP_KEYWORDS = [
-    "招聘", "猎头", "快递", "超市", "网咖", "麻将",
+    "招聘", "猎头", "快递", "超市", "网咖", "麻将", "hr",
     "畅腾", "智能升降桌李生", "畅腾商用升降桌",
     "文件传输助手", "微信", "腾讯", "京东",
     "客服", "测试", "test",
+    # 家庭成员
+    "妈", "姐", "舅",
+    # 劳务中介
+    "劳务", "中介", "企业汇总", "电子厂", "汽车厂",
 ]
+
+# 公众号/系统号前缀
+SKIP_PUBLIC_ACCOUNT_PREFIXES = ["gh_", "wxid_test"]
 
 # ===== 工具函数 =====
 def load_json(path, default=None):
@@ -46,14 +54,25 @@ def save_json(path, data):
         json.dump(data, f, ensure_ascii=False, indent=2)
 
 
-def should_skip(nickname: str) -> bool:
+def should_skip(nickname: str, username: str = "") -> bool:
     """判断是否应跳过该联系人"""
     skip_data = load_json(SKIP_FILE, {"skip_nicks": [], "skip_usernames": []})
     skip_nicks = skip_data.get("skip_nicks", [])
+    skip_usernames = skip_data.get("skip_usernames", [])
 
-    # 精确匹配
+    # 按 username 排除（如 wxid_anahkoom2m6222 等系统号）
+    if username and username in skip_usernames:
+        return True
+
+    # 精确匹配昵称
     if nickname in skip_nicks:
         return True
+
+    # 公众号/系统号前缀
+    lower_nick = nickname.lower()
+    for prefix in SKIP_PUBLIC_ACCOUNT_PREFIXES:
+        if lower_nick.startswith(prefix):
+            return True
 
     # 关键词匹配
     lower = nickname.lower()
@@ -71,18 +90,17 @@ def get_proactive_time(nickname: str) -> str:
 
 
 def in_cooldown(nickname: str) -> bool:
-    """判断是否在冷却期内"""
+    """判断是否在冷却期内（距上次主动联系 < COOLDOWN_DAYS 天）"""
     last_time = get_proactive_time(nickname)
     if not last_time:
         return False
     try:
         last_dt = datetime.strptime(last_time, "%Y-%m-%d %H:%M")
-        return (datetime.now() - last_dt) < timedelta(hours=COOLDOWN_HOURS)
+        return (datetime.now() - last_dt).days < COOLDOWN_DAYS
     except:
-        # 日期格式可能只是 "YYYY-MM-DD"
         try:
             last_dt = datetime.strptime(last_time, "%Y-%m-%d")
-            return (datetime.now() - last_dt).days < 1
+            return (datetime.now() - last_dt).days < COOLDOWN_DAYS
         except:
             return False
 
@@ -151,38 +169,59 @@ def compute_priority_score(profile: dict) -> tuple:
 def scan():
     client = WeFlowClient(base_url=config.WEFLOW_BASE, token=config.WEFLOW_TOKEN)
 
-    # 1. 获取联系人列表
-    print("[scan] 获取联系人列表...", file=sys.stderr)
-    contacts_data = client.get_contacts(limit=MAX_GET_LIMIT)
-    contacts = contacts_data.get("contacts", []) or contacts_data.get("data", [])
-
-    # 2. 获取会话列表作为补充
+    # 1. 获取会话列表
+    #    API docs: type==2 = 群聊, sessionType="private"/"group"/"channel" (实际返回)
+    #    用 sessionType 字段过滤（如果存在），否则用 type 字段
     print("[scan] 获取会话列表...", file=sys.stderr)
     sessions_data = client.get_sessions(limit=MAX_GET_LIMIT)
     sessions = sessions_data.get("sessions", []) or sessions_data.get("data", [])
 
-    # 3. 合并去重，只保留私聊（不含 @chatroom）
-    all_contacts = {}  # username -> {nickname, username}
-
-    for c in contacts:
-        username = c.get("username", "") or c.get("wxid", "") or c.get("id", "")
-        nickname = c.get("nickname", "") or c.get("name", "") or c.get("displayName", "")
-        if username and "@chatroom" not in username and nickname:
-            all_contacts[username] = {"nickname": nickname, "username": username}
+    # 2. 只保留私聊
+    #    - sessionType == "private" (实际API返回)
+    #    - type != 2 (API文档方式, 2=群聊)
+    #    - username 不含 @chatroom (最可靠的后备方式)
+    all_contacts = {}  # username -> {nickname, username, last_msg_date}
+    type_stats = {"private": 0, "group": 0, "channel": 0, "other": 0}
 
     for s in sessions:
-        talker = s.get("talker", "") or s.get("username", "") or s.get("sessionId", "")
-        name = s.get("name", "") or s.get("nickname", "") or s.get("displayName", "")
-        if talker and "@chatroom" not in talker and name and talker not in all_contacts:
-            all_contacts[talker] = {"nickname": name, "username": talker}
+        username = s.get("username", "")
+        session_type = s.get("sessionType", "").lower()
 
-    print(f"[scan] 共 {len(all_contacts)} 个私聊联系人", file=sys.stderr)
+        # 分类统计
+        if session_type:
+            type_stats[session_type] = type_stats.get(session_type, 0) + 1
+        elif s.get("type") == 2:
+            type_stats["group"] = type_stats.get("group", 0) + 1
+            session_type = "group"
+        elif "@chatroom" in username:
+            type_stats["group"] = type_stats.get("group", 0) + 1
+            session_type = "group"
+        else:
+            type_stats["other"] = type_stats.get("other", 0) + 1
+            session_type = "unknown"
+
+        # 跳过群聊/公众号
+        if session_type in ("group", "channel"):
+            continue
+
+        nickname = s.get("displayName", "") or s.get("nickname", "") or s.get("name", "")
+        last_ts = s.get("lastTimestamp", 0)
+        if username and nickname:
+            all_contacts[username] = {
+                "nickname": nickname,
+                "username": username,
+                "last_timestamp": last_ts,
+                "last_msg_date": datetime.fromtimestamp(last_ts).strftime("%Y-%m-%d %H:%M") if last_ts else "未知"
+            }
+
+    print(f"[scan] 会话分类: {type_stats}", file=sys.stderr)
+    print(f"[scan] 私聊联系人: {len(all_contacts)} 个", file=sys.stderr)
 
     # 4. 排除
     filtered = []
     for username, info in all_contacts.items():
         nick = info["nickname"]
-        if should_skip(nick):
+        if should_skip(nick, username):
             continue
         # 排除自己的号
         if "李生" in nick or username.startswith("wxid_test"):
@@ -219,7 +258,8 @@ def scan():
             "score": score,
             "label": label,
             "silent_days": silent_days,
-            "last_contact": last_contact or "未知",
+            "last_contact": last_contact or info.get("last_msg_date", "未知"),
+            "last_wechat_msg": info.get("last_msg_date", "未知"),
             "has_profile": profile is not None,
             "has_orders": len(orders) > 0,
             "order_count": len(orders),

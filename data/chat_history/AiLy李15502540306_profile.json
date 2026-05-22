@@ -2,7 +2,7 @@
   "customer_id": "AiLy_wxid",
   "nickname": "AiLy李15502540306",
   "first_contact": "2026-04-29",
-  "last_contact": "2026-05-08",
+  "last_contact": "2026-05-22",
   "profile": {
     "customer_type": {
       "value": "B端（公司采购）",
@@ -61,6 +61,14 @@
       "date": "2026-05-08",
       "type": "客服回复",
       "content": "这是T621椭圆管双电机款，白色。负载120Kg，升降平稳。需要多少套？",
+      "products_mentioned": [],
+      "intention": "已回复客户",
+      "next_action": "等待客户回复"
+    },
+    {
+      "date": "2026-05-22",
+      "type": "客服回复",
+      "content": "李总好，上次聊的办公升降桌，F4200和T412双电机款，六七十台的事考虑怎样了？需要我发些产品图看看吗？",
       "products_mentioned": [],
       "intention": "已回复客户",
       "next_action": "等待客户回复"

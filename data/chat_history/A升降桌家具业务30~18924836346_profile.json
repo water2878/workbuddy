@@ -1,0 +1,86 @@
+{
+  "customer_id": "",
+  "nickname": "A升降桌家具业务30~18924836346",
+  "first_contact": "2026-05-22",
+  "last_contact": "2026-05-22",
+  "profile": {
+    "customer_type": {
+      "value": "未知",
+      "source": "未知",
+      "confidence": 0
+    },
+    "customer_name": {
+      "value": "",
+      "source": "未知",
+      "confidence": 0
+    },
+    "company": {
+      "value": "",
+      "source": "未知",
+      "confidence": 0
+    },
+    "phone": {
+      "value": "",
+      "source": "未知",
+      "confidence": 0
+    },
+    "address": {
+      "value": "",
+      "source": "未知",
+      "confidence": 0
+    },
+    "industry": {
+      "value": "",
+      "source": "未知",
+      "confidence": 0
+    },
+    "business": {
+      "value": "",
+      "source": "未知",
+      "confidence": 0
+    },
+    "demand_type": {
+      "value": "未知",
+      "source": "未知",
+      "confidence": 0
+    },
+    "quantity": {
+      "value": "",
+      "source": "未知",
+      "confidence": 0
+    },
+    "pain_points": {
+      "value": "",
+      "source": "未知",
+      "confidence": 0
+    },
+    "usage_scenario": {
+      "value": "",
+      "source": "未知",
+      "confidence": 0
+    },
+    "budget": {
+      "value": "",
+      "source": "未知",
+      "confidence": 0
+    }
+  },
+  "interactions": [
+    {
+      "date": "2026-05-22",
+      "type": "客服回复",
+      "content": "你好！我是畅腾升降桌李生，同行呀。主要做哪类升降桌？有机会可以合作聊聊",
+      "products_mentioned": [],
+      "intention": "已回复客户",
+      "next_action": "等待客户回复"
+    }
+  ],
+  "orders": [],
+  "tags": [
+    "同行",
+    "潜在客户",
+    "升降桌业务"
+  ],
+  "notes": "5/19加好友打招呼。2026-05-22 17:03: 主动认识，问做哪类升降桌+探合作机会。同行/潜在客户。",
+  "priority": "中"
+}

@@ -355,6 +355,37 @@ class WeFlowClient:
             print(traceback.format_exc())
             return False
     
+    def get_messages_chatlab(
+        self,
+        talker: str,
+        limit: int = None,
+        offset: int = 0,
+        since: int = None,
+        end: int = None,
+    ) -> dict:
+        """
+        获取消息（ChatLab格式，比 /api/v1/messages 更可靠）
+        注意: 不要传 limit 参数，否则可能返回空（API bug）
+        
+        Args:
+            talker: 会话ID (wxid_xxx 或 xxx@chatroom)
+            limit: 返回条数（慎用，可能导致空结果）
+            offset: 分页偏移
+            since: 增量拉取的起始时间戳（秒）
+            end: 时间上界
+        """
+        params = {}
+        if limit is not None:
+            params["limit"] = limit
+        if offset:
+            params["offset"] = offset
+        if since:
+            params["since"] = since
+        if end:
+            params["end"] = end
+        
+        return self._get(f"/api/v1/sessions/{talker}/messages", params)
+    
     def download_media(self, media_url: str, save_path: str = None) -> Optional[str]:
         """
         下载媒体文件到本地
