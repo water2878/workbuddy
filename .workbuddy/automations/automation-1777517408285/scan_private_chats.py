@@ -1,159 +1,149 @@
-"""深度扫描私聊 - 输出JSON供AI主动对话"""
-import requests, json, re, os, time, sys
-from datetime import datetime
+"""拉取私聊列表供AI判断——不预设跳过规则，由AI现场判谁内谁外"""
+import requests, json, re, os, sys, time
+from datetime import datetime, timedelta
 
 BASE = 'http://127.0.0.1:5031'
 TOKEN = 'eaf98e9bc0c13ea0c8e7cf0b29586669'
+COOLDOWN_FILE = os.path.join(os.path.dirname(__file__), '..', '..', '..', 'data', 'proactive_chat_log.json')
+COOLDOWN_DAYS = 30
 
-SKIP_USERNAMES = {
+# 只有三个绝对不可能是客户的
+ABSOLUTE_SKIP = {
+    'wxid_anahkoom2m6222',   # 自己的微信号
     'wxid_w9c0bfuj8nw212',   # A畅腾升降桌09
-    'wxid_anahkoom2m6222',   # A智能升降桌李生
     'mmo9cq806ISzTTg_6oOmLeqOppkpeg@weclaw',  # 贾维斯
 }
-SKIP_NICKS = {'贾维斯', '文件传输助手', 'filehelper'}
 
-HIGH_KW = ['下单','合同','付款','发货','定了','确定','安排','急','明天','尽快','就这个','可以','成交','定了就','那就']
-MEDIUM_KW = ['报价','多少钱','价格','考虑','推荐','合适','优惠','便宜','样品','采购','批发','买几套','要多少','怎么卖','给个价','报个价','什么价','升降桌','办公桌','电动','电机','钢架','面板','T521','T523','T524','T621','T412','T423','T728','手摇']
-
-# 危险信号：系统乱回复、客户困惑
-CONFUSION_KW = ['你是谁','你是','系统','机器人','AI','自动回复','怎么不回','不回复','不在','又这样','什么情况']
-ANGRY_KW = ['不对','不行','错了','搞什么','太慢','无语','算了','拜拜']
+HIGH_KW = ['下单','合同','付款','发货','定了','确定','安排','急','尽快','就这个','成交','定了就','那就']
+MEDIUM_KW = ['报价','多少钱','价格','考虑','推荐','合适','优惠','便宜','样品','采购','批发','买几套','要多少','怎么卖','报个价','什么价','升降桌','办公桌','电动','电机','钢架','面板','T521','T523','T524','T621','T412','T423','T728','手摇']
 
 def api_get(endpoint, params):
     params['access_token'] = TOKEN
     return requests.get(f'{BASE}{endpoint}', params=params, timeout=60).json()
 
+def load_cooldown():
+    if os.path.exists(COOLDOWN_FILE):
+        with open(COOLDOWN_FILE, 'r', encoding='utf-8') as f:
+            return json.load(f)
+    return {}
+
+def mark_sent(nickname):
+    log = load_cooldown()
+    log[nickname] = datetime.now().strftime('%Y-%m-%d %H:%M')
+    os.makedirs(os.path.dirname(COOLDOWN_FILE), exist_ok=True)
+    with open(COOLDOWN_FILE, 'w', encoding='utf-8') as f:
+        json.dump(log, f, ensure_ascii=False, indent=2)
+
+# --mark-sent
+if '--mark-sent' in sys.argv:
+    idx = sys.argv.index('--mark-sent')
+    if idx + 1 < len(sys.argv):
+        mark_sent(sys.argv[idx + 1])
+        print(json.dumps({'marked': sys.argv[idx + 1]}, ensure_ascii=False))
+        sys.exit(0)
+
+# --get-messages 昵称: 拉指定客户的消息
+if '--get-messages' in sys.argv:
+    idx = sys.argv.index('--get-messages')
+    if idx + 1 < len(sys.argv):
+        nick = sys.argv[idx + 1]
+        # 先找 uid
+        data = api_get('/api/v1/sessions', {'limit': 500})
+        uid = None
+        for s in data['sessions']:
+            if s.get('displayName') == nick:
+                uid = s.get('username')
+                break
+        if uid:
+            today = datetime.now().strftime('%Y%m%d')
+            ago = (datetime.now() - timedelta(days=120)).strftime('%Y%m%d')
+            resp = api_get('/api/v1/messages', {'talker': uid, 'limit': 50, 'start': '20260101', 'end': '20991231'})
+            msgs = resp.get('messages', [])
+            # 只输出文本消息
+            lines = []
+            for m in msgs:
+                side = '客户' if m.get('isSend') == 0 else '我'
+                ct = m.get('content', '')[:200]
+                if ct and not ct.startswith('<'):
+                    t = m.get('createTime', 0)
+                    dt = datetime.fromtimestamp(t).strftime('%m-%d %H:%M') if t else ''
+                    lines.append(f'[{dt}] {side}: {ct}')
+            print(json.dumps({'nick': nick, 'uid': uid, 'msg_count': len(msgs), 'messages': lines[-50:]}, ensure_ascii=False, indent=2))
+        else:
+            print(json.dumps({'error': f'未找到 {nick}'}, ensure_ascii=False))
+        sys.exit(0)
+
+# 主流程：输出所有私聊供AI判断
 data = api_get('/api/v1/sessions', {'limit': 500})
 privates = [s for s in data['sessions'] if s['sessionType'] == 'private']
 
-results = []
+now = datetime.now()
+cutoff_30d = int((now - timedelta(days=30)).timestamp())
+cooldown = load_cooldown()
+
+all_contacts = []
 for s in privates:
     uid = s.get('username', '')
     nick = s.get('displayName', '') or uid[:20]
-    
-    if uid in SKIP_USERNAMES or nick in SKIP_NICKS:
-        continue
-    
-    try:
-        resp = api_get('/api/v1/messages', {
-            'talker': uid, 'limit': 500,
-            'start': '20260101', 'end': '20991231'
-        })
-        msgs = resp.get('messages', [])
-    except Exception:
-        continue
-    
-    time.sleep(0.3)
-    
-    if not msgs:
-        continue
-    
-    # 解析消息
-    cust = [m for m in msgs if m.get('isSend') == 0 and m.get('content')]
-    our = [m for m in msgs if m.get('isSend') == 1 and m.get('content')]
-    
-    cust_text = [m.get('content','') for m in cust if not m.get('content','').startswith('<')]
-    our_text = [m.get('content','') for m in our if not m.get('content','').startswith('<')]
-    
-    cust_all = ' '.join(cust_text)
-    all_text = cust_all + ' ' + ' '.join(our_text)
-    
-    # === 深度分析 ===
-    
-    # 1. 意向
-    high = sum(1 for k in HIGH_KW if k in cust_all)
-    medium = sum(1 for k in MEDIUM_KW if k in all_text)
-    
-    if high >= 3: intent = '高'
-    elif high >= 1 or medium >= 4: intent = '中'
-    elif medium >= 1: intent = '低'
-    else: intent = '无'
-    
-    # 2. 客户情绪
-    confusion = sum(1 for k in CONFUSION_KW if k in cust_all)
-    anger = sum(1 for k in ANGRY_KW if k in cust_all)
-    mood = '⚠️困惑' if confusion >= 2 else ('😡不满' if anger >= 2 else '正常')
-    
-    # 3. 最后实质性对话（非系统测试、非你好）
-    real_msgs = [m for m in cust if m.get('content','').strip() 
-                 and len(m.get('content','')) > 2
-                 and m.get('content','') not in ['你好','您好','在吗','在？','你是','你是谁','1','2','3']]
-    
-    last_real_ts = 0
-    last_real_text = ''
-    for m in real_msgs:
-        t = m.get('createTime', 0)
-        if t > last_real_ts:
-            last_real_ts = t
-            last_real_text = m.get('content','')[:80]
-    
-    days_since_real = 999
-    if last_real_ts:
-        days_since_real = (datetime.now() - datetime.fromtimestamp(last_real_ts)).days
-    
-    # 4. 时间线
     ts = s.get('lastTimestamp', 0)
-    last_dt = datetime.fromtimestamp(ts) if ts else None
-    days_total = (datetime.now() - last_dt).days if last_dt else 999
     
-    # 最近一条对方消息
-    last_cust = cust_text[-1][:60] if cust_text else ''
+    if uid in ABSOLUTE_SKIP:
+        continue
     
-    # 5. 提取型号和数量
-    models = set()
-    for kw in ['T521','T523','T524','T621','T412','T423','T728']:
-        if kw in all_text:
-            models.add(kw)
-    qty_matches = re.findall(r'(\d+)\s*套', all_text)
-    quantities = [int(q) for q in qty_matches if 1 < int(q) < 10000]
+    last_dt = datetime.fromtimestamp(ts).strftime('%m-%d %H:%M') if ts else '未知'
+    days = (now - datetime.fromtimestamp(ts)).days if ts else 999
+    inactive_1m = ts < cutoff_30d
+    in_cd = nick in cooldown
     
-    # 6. 判断是否需要主动聊
-    need_chat = False
-    chat_reason = ''
+    # 快速拉最近10条看有没有产品关键词
+    intent_hint = ''
+    if ts > 0:
+        try:
+            resp = api_get('/api/v1/messages', {'talker': uid, 'limit': 30, 'start': '20260101', 'end': '20991231'})
+            msgs = resp.get('messages', [])
+            time.sleep(0.2)
+            
+            if msgs:
+                cust_text = ' '.join([m.get('content','') for m in msgs 
+                                       if m.get('isSend')==0 and m.get('content','') and not m.get('content','').startswith('<')])
+                all_text = cust_text + ' ' + ' '.join([m.get('content','') for m in msgs 
+                                       if m.get('isSend')==1 and m.get('content','') and not m.get('content','').startswith('<')])
+                
+                high = sum(1 for k in HIGH_KW if k in cust_text)
+                medium = sum(1 for k in MEDIUM_KW if k in all_text)
+                models = [kw for kw in ['T521','T523','T524','T621','T412','T423','T728'] if kw in all_text]
+                
+                if high >= 2: intent_hint = '🔥高意向'
+                elif high >= 1 or medium >= 3: intent_hint = '🟡有产品兴趣'
+                elif medium >= 1: intent_hint = '⚪浅度'
+                
+                # 最后客户消息
+                last_cust = ''
+                for m in reversed(msgs):
+                    if m.get('isSend')==0 and m.get('content','') and not m.get('content','').startswith('<'):
+                        last_cust = m.get('content','')[:60]
+                        break
+        except:
+            pass
     
-    if mood != '正常' and days_since_real <= 7:
-        need_chat = True
-        chat_reason = f'客户情绪{mood}，需挽回信任'
-    elif intent in ('高','中') and days_since_real >= 3:
-        need_chat = True
-        chat_reason = f'{intent}意向 {days_since_real}天无实质对话'
-    elif intent in ('高','中') and days_since_real >= 1:
-        need_chat = True
-        chat_reason = f'{intent}意向客户，需持续跟进'
-    elif models and days_total >= 7:
-        need_chat = True
-        chat_reason = f'曾咨询{models}，{days_total}天未联系'
-    
-    results.append({
+    all_contacts.append({
         'nick': nick,
         'uid': uid,
-        'intent': intent,
-        'mood': mood,
-        'days_total': days_total,
-        'days_since_real': days_since_real,
-        'total_msgs': len(msgs),
-        'cust_msgs': len(cust),
-        'high_kw': high,
-        'med_kw': medium,
-        'models': list(models),
-        'quantities': quantities,
-        'last_cust': last_cust,
-        'last_real': last_real_text,
-        'last_ts': last_dt.strftime('%m-%d %H:%M') if last_dt else '未知',
-        'need_chat': need_chat,
-        'chat_reason': chat_reason,
-        'confusion': confusion,
-        'anger': anger
+        'last': last_dt,
+        'days': days,
+        'inactive_1m': inactive_1m,
+        'intent_hint': intent_hint,
+        'last_cust': last_cust if 'last_cust' in dir() else '',
+        'cooldown': in_cd
     })
 
-# 排序：需要聊的排前面
-results.sort(key=lambda r: (not r['need_chat'], -r['days_total']))
+# 排序：不活跃的排前面
+all_contacts.sort(key=lambda c: (-c['inactive_1m'], -c['days']))
 
-# 输出JSON
 print(json.dumps({
-    'scan_time': datetime.now().strftime('%Y-%m-%d %H:%M'),
-    'total_private': len(privates),
-    'with_messages': len(results),
-    'need_chat': len([r for r in results if r['need_chat']]),
-    'results': results
+    'scan_time': now.strftime('%Y-%m-%d %H:%M'),
+    'total': len(all_contacts),
+    'active': len([c for c in all_contacts if not c['inactive_1m']]),
+    'inactive_1m': len([c for c in all_contacts if c['inactive_1m']]),
+    'contacts': all_contacts
 }, ensure_ascii=False, indent=2))

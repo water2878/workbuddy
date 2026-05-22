@@ -1,0 +1,82 @@
+{
+  "customer_id": "",
+  "nickname": "L.",
+  "first_contact": "2026-05-22",
+  "last_contact": "2026-05-22",
+  "profile": {
+    "customer_type": {
+      "value": "未知",
+      "source": "未知",
+      "confidence": 0
+    },
+    "customer_name": {
+      "value": "",
+      "source": "未知",
+      "confidence": 0
+    },
+    "company": {
+      "value": "",
+      "source": "未知",
+      "confidence": 0
+    },
+    "phone": {
+      "value": "",
+      "source": "未知",
+      "confidence": 0
+    },
+    "address": {
+      "value": "",
+      "source": "未知",
+      "confidence": 0
+    },
+    "industry": {
+      "value": "",
+      "source": "未知",
+      "confidence": 0
+    },
+    "business": {
+      "value": "",
+      "source": "未知",
+      "confidence": 0
+    },
+    "demand_type": {
+      "value": "未知",
+      "source": "未知",
+      "confidence": 0
+    },
+    "quantity": {
+      "value": "",
+      "source": "未知",
+      "confidence": 0
+    },
+    "pain_points": {
+      "value": "",
+      "source": "未知",
+      "confidence": 0
+    },
+    "usage_scenario": {
+      "value": "",
+      "source": "未知",
+      "confidence": 0
+    },
+    "budget": {
+      "value": "",
+      "source": "未知",
+      "confidence": 0
+    }
+  },
+  "interactions": [
+    {
+      "date": "2026-05-22",
+      "type": "客服回复",
+      "content": "好久没联系，最近在忙什么呀？",
+      "products_mentioned": [],
+      "intention": "已回复客户",
+      "next_action": "等待客户回复"
+    }
+  ],
+  "orders": [],
+  "tags": [],
+  "notes": "",
+  "priority": "中"
+}
