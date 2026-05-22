@@ -740,6 +740,22 @@
       "products_mentioned": [],
       "intention": "已回复客户",
       "next_action": "等待客户回复"
+    },
+    {
+      "date": "2026-05-22",
+      "type": "客服回复",
+      "content": "你好正常了！",
+      "products_mentioned": [],
+      "intention": "已回复客户",
+      "next_action": "等待客户回复"
+    },
+    {
+      "date": "2026-05-22",
+      "type": "客服回复",
+      "content": "你好正常了，有需要找我！",
+      "products_mentioned": [],
+      "intention": "已回复客户",
+      "next_action": "等待客户回复"
     }
   ],
   "orders": [
