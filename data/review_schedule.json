@@ -1,0 +1,11 @@
+{
+  "enabled": true,
+  "daily_time": "09:00",
+  "days_threshold": 3,
+  "output_dir": "C:\\Users\\Lenovo\\WorkBuddy\\Claw\\data\\review_reports",
+  "last_run": "2026-05-22T14:20:57.493680",
+  "notification": {
+    "enabled": true,
+    "method": "console"
+  }
+}

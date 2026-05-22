@@ -192,21 +192,39 @@ def get_profile_summary(nickname: str) -> str:
     if not profile:
         return ""
     
-    p = profile["profile"]
+    p = profile.get("profile", {})
     summary_parts = []
     
-    if p["customer_type"]["value"] != "未知":
-        summary_parts.append(f"客户类型：{p['customer_type']['value']}")
-    if p["industry"]["value"]:
-        summary_parts.append(f"行业：{p['industry']['value']}")
-    if p["demand_type"]["value"] != "未知":
-        summary_parts.append(f"需求类型：{p['demand_type']['value']}")
-    if p["quantity"]["value"]:
-        summary_parts.append(f"需求量：{p['quantity']['value']}")
-    if p["budget"]["value"]:
-        summary_parts.append(f"预算：{p['budget']['value']}")
-    if p["pain_points"]["value"]:
-        summary_parts.append(f"痛点：{p['pain_points']['value']}")
+    # 安全获取字段值
+    def get_field_value(field_name: str) -> str:
+        field = p.get(field_name, {})
+        if isinstance(field, dict):
+            return field.get("value", "")
+        return str(field) if field else ""
+    
+    customer_type = get_field_value("customer_type")
+    if customer_type and customer_type != "未知":
+        summary_parts.append(f"客户类型：{customer_type}")
+    
+    industry = get_field_value("industry")
+    if industry:
+        summary_parts.append(f"行业：{industry}")
+    
+    demand_type = get_field_value("demand_type")
+    if demand_type and demand_type != "未知":
+        summary_parts.append(f"需求类型：{demand_type}")
+    
+    quantity = get_field_value("quantity")
+    if quantity:
+        summary_parts.append(f"需求量：{quantity}")
+    
+    budget = get_field_value("budget")
+    if budget:
+        summary_parts.append(f"预算：{budget}")
+    
+    pain_points = get_field_value("pain_points")
+    if pain_points:
+        summary_parts.append(f"痛点：{pain_points}")
     
     return " | ".join(summary_parts) if summary_parts else "新客户，画像待收集"
 

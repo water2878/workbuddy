@@ -756,6 +756,62 @@
       "products_mentioned": [],
       "intention": "已回复客户",
       "next_action": "等待客户回复"
+    },
+    {
+      "date": "2026-05-22",
+      "type": "客服回复",
+      "content": "[图片] T621 产品图 (1/3)",
+      "products_mentioned": [],
+      "intention": "已回复客户",
+      "next_action": "等待客户回复"
+    },
+    {
+      "date": "2026-05-22",
+      "type": "客服回复",
+      "content": "[图片] T621 产品图 (1/3)",
+      "products_mentioned": [],
+      "intention": "已回复客户",
+      "next_action": "等待客户回复"
+    },
+    {
+      "date": "2026-05-22",
+      "type": "客服回复",
+      "content": "[图片] 19.T621_03.jpg",
+      "products_mentioned": [],
+      "intention": "已回复客户",
+      "next_action": "等待客户回复"
+    },
+    {
+      "date": "2026-05-22",
+      "type": "客服回复",
+      "content": "[图片] 19.T621_04.jpg",
+      "products_mentioned": [],
+      "intention": "已回复客户",
+      "next_action": "等待客户回复"
+    },
+    {
+      "date": "2026-05-22",
+      "type": "客服回复",
+      "content": "T621椭圆管升降桌，双电机3节，颜值高，承重强。给你发张图看看。",
+      "products_mentioned": [],
+      "intention": "已回复客户",
+      "next_action": "等待客户回复"
+    },
+    {
+      "date": "2026-05-22",
+      "type": "客服回复",
+      "content": "[图片] T621 产品图 (1/3)",
+      "products_mentioned": [],
+      "intention": "已回复客户",
+      "next_action": "等待客户回复"
+    },
+    {
+      "date": "2026-05-22",
+      "type": "客服回复",
+      "content": "[图片] T621 产品图 (1/3)",
+      "products_mentioned": [],
+      "intention": "已回复客户",
+      "next_action": "等待客户回复"
     }
   ],
   "orders": [

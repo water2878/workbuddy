@@ -1,0 +1,183 @@
+{
+  "generated_at": "2026-05-22T14:20:57.491670",
+  "total_customers": 9,
+  "summary": {
+    "high_intention": 0,
+    "medium_intention": 0,
+    "low_intention": 0,
+    "with_orders": 1
+  },
+  "customers": [
+    {
+      "nickname": "健康办公研究社",
+      "customer_id": "",
+      "review_date": "2026-05-22",
+      "last_contact": "2026-05-22",
+      "days_since_contact": 0,
+      "priority": "高",
+      "tags": [
+        "B端客户",
+        "价格敏感",
+        "100套起订",
+        "合同已生成",
+        "经济款需求"
+      ],
+      "has_order_history": true,
+      "order_count": 2,
+      "last_order_date": "2026-05-14",
+      "intention_level": "未知",
+      "intention_reason": "近期无聊天记录",
+      "suggested_action": "保持联系",
+      "suggested_message": "健康办公研究社您好，跟进一下之前的订单进度，有任何问题随时联系。",
+      "recent_chat_summary": "近期无聊天记录"
+    },
+    {
+      "nickname": "A畅腾升降桌09-15989997886",
+      "customer_id": "wxid_w9c0bfuj8nw212",
+      "review_date": "2026-05-22",
+      "last_contact": "2026-05-21",
+      "days_since_contact": 1,
+      "priority": "中",
+      "tags": [],
+      "has_order_history": false,
+      "order_count": 0,
+      "last_order_date": null,
+      "intention_level": "未知",
+      "intention_reason": "近期无聊天记录",
+      "suggested_action": "保持曝光",
+      "suggested_message": "A畅腾升降桌09-15989997886您好，朋友圈有新动态，欢迎了解我们的产品。",
+      "recent_chat_summary": "近期无聊天记录"
+    },
+    {
+      "nickname": "A智能升降桌李生15015790609",
+      "customer_id": "wxid_bg285156vg5a22",
+      "review_date": "2026-05-22",
+      "last_contact": "2026-05-04",
+      "days_since_contact": 18,
+      "priority": "低",
+      "tags": [],
+      "has_order_history": false,
+      "order_count": 0,
+      "last_order_date": null,
+      "intention_level": "未知",
+      "intention_reason": "近期无聊天记录",
+      "suggested_action": "保持曝光",
+      "suggested_message": "A智能升降桌李生15015790609您好，朋友圈有新动态，欢迎了解我们的产品。",
+      "recent_chat_summary": "近期无聊天记录"
+    },
+    {
+      "nickname": "2026-05-18 15_40_27",
+      "customer_id": "",
+      "review_date": "2026-05-22",
+      "last_contact": "2026-05-18",
+      "days_since_contact": 4,
+      "priority": "high",
+      "tags": [
+        "高意向"
+      ],
+      "has_order_history": false,
+      "order_count": 0,
+      "last_order_date": null,
+      "intention_level": "未知",
+      "intention_reason": "近期无聊天记录",
+      "suggested_action": "保持曝光",
+      "suggested_message": "2026-05-18 15:40:27您好，朋友圈有新动态，欢迎了解我们的产品。",
+      "recent_chat_summary": "近期无聊天记录"
+    },
+    {
+      "nickname": "2026-05-18 15_40_30",
+      "customer_id": "",
+      "review_date": "2026-05-22",
+      "last_contact": "2026-05-18",
+      "days_since_contact": 4,
+      "priority": "high",
+      "tags": [
+        "高意向"
+      ],
+      "has_order_history": false,
+      "order_count": 0,
+      "last_order_date": null,
+      "intention_level": "未知",
+      "intention_reason": "近期无聊天记录",
+      "suggested_action": "保持曝光",
+      "suggested_message": "2026-05-18 15:40:30您好，朋友圈有新动态，欢迎了解我们的产品。",
+      "recent_chat_summary": "近期无聊天记录"
+    },
+    {
+      "nickname": "2026-05-18 15_40_49",
+      "customer_id": "",
+      "review_date": "2026-05-22",
+      "last_contact": "2026-05-18",
+      "days_since_contact": 4,
+      "priority": "high",
+      "tags": [
+        "高意向"
+      ],
+      "has_order_history": false,
+      "order_count": 0,
+      "last_order_date": null,
+      "intention_level": "未知",
+      "intention_reason": "近期无聊天记录",
+      "suggested_action": "保持曝光",
+      "suggested_message": "2026-05-18 15:40:49您好，朋友圈有新动态，欢迎了解我们的产品。",
+      "recent_chat_summary": "近期无聊天记录"
+    },
+    {
+      "nickname": "2026-05-18 15_50_07",
+      "customer_id": "",
+      "review_date": "2026-05-22",
+      "last_contact": "2026-05-18",
+      "days_since_contact": 4,
+      "priority": "high",
+      "tags": [
+        "高意向"
+      ],
+      "has_order_history": false,
+      "order_count": 0,
+      "last_order_date": null,
+      "intention_level": "未知",
+      "intention_reason": "近期无聊天记录",
+      "suggested_action": "保持曝光",
+      "suggested_message": "2026-05-18 15:50:07您好，朋友圈有新动态，欢迎了解我们的产品。",
+      "recent_chat_summary": "近期无聊天记录"
+    },
+    {
+      "nickname": "2026-05-18 15_50_10",
+      "customer_id": "",
+      "review_date": "2026-05-22",
+      "last_contact": "2026-05-18",
+      "days_since_contact": 4,
+      "priority": "high",
+      "tags": [
+        "高意向"
+      ],
+      "has_order_history": false,
+      "order_count": 0,
+      "last_order_date": null,
+      "intention_level": "未知",
+      "intention_reason": "近期无聊天记录",
+      "suggested_action": "保持曝光",
+      "suggested_message": "2026-05-18 15:50:10您好，朋友圈有新动态，欢迎了解我们的产品。",
+      "recent_chat_summary": "近期无聊天记录"
+    },
+    {
+      "nickname": "2026-05-18 15_50_29",
+      "customer_id": "",
+      "review_date": "2026-05-22",
+      "last_contact": "2026-05-18",
+      "days_since_contact": 4,
+      "priority": "high",
+      "tags": [
+        "高意向"
+      ],
+      "has_order_history": false,
+      "order_count": 0,
+      "last_order_date": null,
+      "intention_level": "未知",
+      "intention_reason": "近期无聊天记录",
+      "suggested_action": "保持曝光",
+      "suggested_message": "2026-05-18 15:50:29您好，朋友圈有新动态，欢迎了解我们的产品。",
+      "recent_chat_summary": "近期无聊天记录"
+    }
+  ]
+}
