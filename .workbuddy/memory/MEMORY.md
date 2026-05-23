@@ -14,22 +14,51 @@
 ### 2. 客户消息处理流程（必须严格执行）
 
 ```
-识别 [昵称] → 生成回复 → python send_reply.py "昵称" "回复内容" → 确认发送成功 → 手动更新客户画像
+识别 [昵称] → 拉WeFlow聊天上下文 → 生成回复 → python send_reply.py "昵称" "回复内容" → 确认发送成功 → 手动更新客户画像
 ```
 
 **完整步骤**：
 
 1. ✅ 识别 `[昵称] 内容` 格式为客户消息
-2. ✅ 分析客户需求，生成回复（50字以内，广东风格）
-3. ✅ 执行 `python send_reply.py "昵称" "回复内容"`
-4. ✅ 确认发送成功（看 Stdout 是否有"✅ 发送成功"）
-5. **⚠️ 必须：手动更新客户画像**（见下方第5节）
+2. **⚠️ 拉取WeFlow聊天上线文**（见下方 2.1 节）— 中途接手必须先补上下文
+3. ✅ 分析客户需求，生成回复（50字以内，广东风格）
+4. ✅ 执行 `python send_reply.py "昵称" "回复内容"`
+5. ✅ 确认发送成功（看 Stdout 是否有"✅ 发送成功"）
+6. **⚠️ 必须：手动更新客户画像**（见下方第5节）
+
+### 2.1 中途接手聊天 → 必须先拉WeFlow上下文 ⚠️（2026-05-23新增）
+
+**问题**：AI没有本次会话之前的记忆，中途接手聊天时不知道之前聊了什么，容易跑偏。
+
+**规则**：
+- **无画像客户**：必须先拉完整聊天记录（limit=200, chatlab=True），读懂关系、话题、身份后再回复
+- **有画像客户**：拉最近消息（limit=60），结合画像判断上下文
+- **主动复盘**：逐个翻候选时，拉消息→读上下文→判断是否有切入点，不是只看有没有消息
+
+**拉消息方式**：
+```python
+from dotenv import load_dotenv; load_dotenv()
+import os
+from core.weflow_client import WeFlowClient
+client = WeFlowClient(base_url=os.getenv('WEFLOW_BASE'), token=os.getenv('WEFLOW_TOKEN'))
+resp = client.get_messages('wxid_xxx', limit=200, chatlab=True)
+msgs = resp.get('messages', [])  # 优先ChatLab格式
+# 如果 ChatLab 返回空，用普通API：
+# resp = client.get_messages('wxid_xxx', limit=200)
+# msgs = resp.get('messages', [])
+```
+
+**判断标准**：
+- sender == talker（对方wxid）→ 对方发的
+- sender != talker → 我方（李生）发的
+- 看对方消息内容判断：升降桌相关？闲聊？劳务/招聘？游戏？纯广告？
 
 **禁止行为**：
 
 - ❌ 只打印不发送
 - ❌ 发送后不更新客户画像
 - ❌ 依赖 send\_reply.py 的"自动更新"（只更新 interactions，不更新 profile 字段）
+- ❌ **不拉上下文就直接回复无画像客户**
 
 ### 3. 绝对禁止
 

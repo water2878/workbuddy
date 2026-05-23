@@ -2,7 +2,7 @@
   "customer_id": "prestofff",
   "nickname": "地下城与勇士",
   "first_contact": "2026-04-30",
-  "last_contact": "2026-05-14",
+  "last_contact": "2026-05-23",
   "profile": {
     "customer_type": {
       "value": "未知",
@@ -43,7 +43,13 @@
       "value": "",
       "source": "未知",
       "confidence": 0
-    }
+    },
+    "last_proactive": "2026-05-23 08:40",
+    "last_proactive_note": "主动复盘fallback：游戏好友温和试探，顺带提升降桌",
+    "tags": [
+      "2026-05-23主动跟进",
+      "游戏好友"
+    ]
   },
   "interactions": [
     {
@@ -53,10 +59,18 @@
       "products_mentioned": [],
       "intention": "低",
       "next_action": ""
+    },
+    {
+      "date": "2026-05-23",
+      "type": "客服回复",
+      "content": "好久没联系，最近还玩DNF吗？我们这边做升降桌的，有需要可以找我呀",
+      "products_mentioned": [],
+      "intention": "已回复客户",
+      "next_action": "等待客户回复"
     }
   ],
   "orders": [],
   "tags": [],
-  "notes": "微信号: chinadnf\n2026-04-30: 意向度: 低",
+  "notes": "微信号: chinadnf\n2026-04-30: 意向度: 低\n【2026-05-23】AI主动复盘兜底联系：温和试探+提升降桌需求。",
   "priority": "低"
 }

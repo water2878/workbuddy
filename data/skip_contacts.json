@@ -24,11 +24,15 @@
     "熊敏",
     "张书君",
     "26℃网咖西源店",
-    "AiLy李15502540306"
+    "AiLy李15502540306",
+    "A宏锦志蔡蔡"
   ],
   "skip_usernames": [
     "wxid_w9c0bfuj8nw212",
     "wxid_anahkoom2m6222",
     "mmo9cq806ISzTTg_6oOmLeqOppkpeg@weclaw"
-  ]
+  ],
+  "skip_notes": {
+    "A宏锦志蔡蔡": "劳务中介(宏锦志劳务)，非客户"
+  }
 }
