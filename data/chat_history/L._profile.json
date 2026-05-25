@@ -2,7 +2,7 @@
   "customer_id": "",
   "nickname": "L.",
   "first_contact": "2026-05-22",
-  "last_contact": "2026-05-22",
+  "last_contact": "2026-05-25",
   "profile": {
     "customer_type": {
       "value": "未知",
@@ -70,6 +70,14 @@
       "date": "2026-05-22",
       "type": "客服回复",
       "content": "好久没联系，最近在忙什么呀？",
+      "products_mentioned": [],
+      "intention": "已回复客户",
+      "next_action": "等待客户回复"
+    },
+    {
+      "date": "2026-05-25",
+      "type": "客服回复",
+      "content": "宛咪，好久不见，最近忙啥呢？我这边做升降桌办公家具，有朋友需要可以介绍呀",
       "products_mentioned": [],
       "intention": "已回复客户",
       "next_action": "等待客户回复"
