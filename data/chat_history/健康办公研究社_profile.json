@@ -2,7 +2,7 @@
   "customer_id": "",
   "nickname": "健康办公研究社",
   "first_contact": "2026-04-28",
-  "last_contact": "2026-05-22",
+  "last_contact": "2026-05-25",
   "profile": {
     "customer_type": {
       "value": "B端（公司/工程）",
@@ -825,6 +825,30 @@
       "date": "2026-05-22",
       "type": "客服回复",
       "content": "上次T523图片收到了吗？你那两单合同（T524 100套+T523 30套）有需要随时说。最近还有新需求吗？",
+      "products_mentioned": [],
+      "intention": "已回复客户",
+      "next_action": "等待客户回复"
+    },
+    {
+      "date": "2026-05-25",
+      "type": "客服回复",
+      "content": "抱歉，图片识别暂时出问题了。您发的这张图，能简单描述下特征吗？比如：方管还是椭圆管？单电机还是双电机？我帮您判断型号",
+      "products_mentioned": [],
+      "intention": "已回复客户",
+      "next_action": "等待客户回复"
+    },
+    {
+      "date": "2026-05-25",
+      "type": "客服回复",
+      "content": "抱歉，图片识别暂时出问题了。您发的这张图，能简单描述下特征吗？比如：方管还是椭圆管？单电机还是双电机？我帮您判断型号",
+      "products_mentioned": [],
+      "intention": "已回复客户",
+      "next_action": "等待客户回复"
+    },
+    {
+      "date": "2026-05-25",
+      "type": "客服回复",
+      "content": "没有呀，您发的图我这边暂时识别不了。您直接说要什么款，我帮您推荐",
       "products_mentioned": [],
       "intention": "已回复客户",
       "next_action": "等待客户回复"
