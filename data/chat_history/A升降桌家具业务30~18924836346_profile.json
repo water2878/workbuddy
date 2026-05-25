@@ -2,7 +2,7 @@
   "customer_id": "",
   "nickname": "A升降桌家具业务30~18924836346",
   "first_contact": "2026-05-22",
-  "last_contact": "2026-05-22",
+  "last_contact": "2026-05-25",
   "profile": {
     "customer_type": {
       "value": "未知",
@@ -70,6 +70,14 @@
       "date": "2026-05-22",
       "type": "客服回复",
       "content": "你好！我是畅腾升降桌李生，同行呀。主要做哪类升降桌？有机会可以合作聊聊",
+      "products_mentioned": [],
+      "intention": "已回复客户",
+      "next_action": "等待客户回复"
+    },
+    {
+      "date": "2026-05-25",
+      "type": "客服回复",
+      "content": "你好，上次聊到升降桌合作，我们自研自产核心部件+整机，可代工配套，价格有优势，互补共赢。有需要聊聊吗？",
       "products_mentioned": [],
       "intention": "已回复客户",
       "next_action": "等待客户回复"
