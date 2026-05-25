@@ -852,6 +852,30 @@
       "products_mentioned": [],
       "intention": "已回复客户",
       "next_action": "等待客户回复"
+    },
+    {
+      "date": "2026-05-25",
+      "type": "客服回复",
+      "content": "对对，看错了，是三节立柱。那就是T423方管3节双电机款，比T412贵一点。您要这款？",
+      "products_mentioned": [],
+      "intention": "已回复客户",
+      "next_action": "等待客户回复"
+    },
+    {
+      "date": "2026-05-25",
+      "type": "客服回复",
+      "content": "那我看走眼了，这款是单电机还是双电机？您直接告诉我，我帮您匹配型号",
+      "products_mentioned": [],
+      "intention": "已回复客户",
+      "next_action": "等待客户回复"
+    },
+    {
+      "date": "2026-05-25",
+      "type": "客服回复",
+      "content": "圆管的话，我们常规款里没有正圆管的，椭圆管的有T621。您这款是定制的还是？",
+      "products_mentioned": [],
+      "intention": "已回复客户",
+      "next_action": "等待客户回复"
     }
   ],
   "orders": [
