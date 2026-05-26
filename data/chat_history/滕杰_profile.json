@@ -1,0 +1,82 @@
+{
+  "customer_id": "",
+  "nickname": "滕杰",
+  "first_contact": "2026-05-26",
+  "last_contact": "2026-05-26",
+  "profile": {
+    "customer_type": {
+      "value": "未知",
+      "source": "未知",
+      "confidence": 0
+    },
+    "customer_name": {
+      "value": "",
+      "source": "未知",
+      "confidence": 0
+    },
+    "company": {
+      "value": "",
+      "source": "未知",
+      "confidence": 0
+    },
+    "phone": {
+      "value": "",
+      "source": "未知",
+      "confidence": 0
+    },
+    "address": {
+      "value": "",
+      "source": "未知",
+      "confidence": 0
+    },
+    "industry": {
+      "value": "",
+      "source": "未知",
+      "confidence": 0
+    },
+    "business": {
+      "value": "",
+      "source": "未知",
+      "confidence": 0
+    },
+    "demand_type": {
+      "value": "未知",
+      "source": "未知",
+      "confidence": 0
+    },
+    "quantity": {
+      "value": "",
+      "source": "未知",
+      "confidence": 0
+    },
+    "pain_points": {
+      "value": "",
+      "source": "未知",
+      "confidence": 0
+    },
+    "usage_scenario": {
+      "value": "",
+      "source": "未知",
+      "confidence": 0
+    },
+    "budget": {
+      "value": "",
+      "source": "未知",
+      "confidence": 0
+    }
+  },
+  "interactions": [
+    {
+      "date": "2026-05-26",
+      "type": "客服回复",
+      "content": "杰哥，好久不见，最近忙啥呢？我这边做升降桌办公家具，有朋友需要可以介绍呀",
+      "products_mentioned": [],
+      "intention": "已回复客户",
+      "next_action": "等待客户回复"
+    }
+  ],
+  "orders": [],
+  "tags": [],
+  "notes": "",
+  "priority": "中"
+}
